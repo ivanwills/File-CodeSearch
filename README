@@ -1,0 +1,44 @@
+VCS-Which
+
+This module lets you perform some basic operations with unknown version
+control systems on a directory. Currently it only supports determining if
+the directory is up to date or not
+
+INSTALLATION
+
+To install this module, run the following commands:
+
+	perl Build.PL
+	./Build
+	./Build test
+	./Build install
+
+SUPPORT AND DOCUMENTATION
+
+After installing, you can find documentation for this module with the
+perldoc command.
+
+    perldoc VCS::Which
+
+You can also look for information at:
+
+    RT, CPAN's request tracker
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=VCS-Which
+
+    AnnoCPAN, Annotated CPAN documentation
+        http://annocpan.org/dist/VCS-Which
+
+    CPAN Ratings
+        http://cpanratings.perl.org/d/VCS-Which
+
+    Search CPAN
+        http://search.cpan.org/dist/VCS-Which/
+
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2009 Ivan Wills
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
