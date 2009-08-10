@@ -1,6 +1,6 @@
-package File::CodeSearch;
+package File::CodeSearch::Highlighter;
 
-# Created on: 2009-08-07 18:32:44
+# Created on: 2009-08-07 18:42:16
 # Create by:  Ivan Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
@@ -39,32 +39,28 @@ __END__
 
 =head1 NAME
 
-File::CodeSearch - Search file contents in code repositories
+File::CodeSearch::Highlighter - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch version 0.1.
+This documentation refers to File::CodeSearch::Highlighter version 0.1.
+
 
 =head1 SYNOPSIS
 
-   use File::CodeSearch;
+   use File::CodeSearch::Highlighter;
 
-   # Simple usage
-   code_search {
-	   my ($file, $line) = @_;
-	   // do stuff
-   },
-   @dirs;
+   # Brief but working code example(s) here showing the most common usage(s)
+   # This section will be as far as many users bother reading, so make it as
+   # educational and exemplary as possible.
 
-   # More control
-   my $cs = File::CodeSearch->new();
-   $cs->code_search(sub {}, @dirs);
 
 =head1 DESCRIPTION
 
-Module to search through directory trees ignoring certain directories,
-like version controll directories or log directory, also skipping certain
-files like backup files and binary file.
+A full description of the module and its features.
+
+May include numerous subsections (i.e., =head2, =head3, etc.).
+
 
 =head1 SUBROUTINES/METHODS
 
@@ -85,7 +81,7 @@ context to help them understand the methods that are subsequently described.
 
 Param: C<$search> - type (detail) - description
 
-Return: File::CodeSearch -
+Return: File::CodeSearch::Highlighter -
 
 Description:
 
