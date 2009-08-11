@@ -6,7 +6,7 @@ package File::CodeSearch;
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
-use strict;
+use Moose;
 use warnings;
 use version;
 use Carp;
@@ -15,22 +15,72 @@ use List::Util;
 #use List::MoreUtils;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
-use base qw/Exporter/;
 
 our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 #our @EXPORT      = qw//;
 
-sub new {
-	my $caller = shift;
-	my $class  = ref $caller ? ref $caller : $caller;
-	my %param  = @_;
-	my $self   = \%param;
+has regex => (
+	is  => 'rw',
+	isa => 'File::CodeSearch::RegexBuilder',
+);
+has files => (
+	is      => 'rw',
+	isa     => 'File::CodeSearch::Files',
+	default => sub { File::CodeSearch::Files->new },
+);
+has breadth => (
+	is      => 'rw',
+	isa     => 'Bool',
+	default => 0,
+);
+has depth => (
+	is      => 'rw',
+	isa     => 'Bool',
+	default => 0,
+);
 
-	bless $self, $class;
+sub search {
+	my ($self, $search, @dirs) = blessed $_[0] ? @_ : __PACKAGE__->new, @_;
 
-	return $self;
+	for my $dir (@dirs) {
+		$self->_find($search, $dir);
+	}
+
+	return;
+}
+
+sub _find {
+	my ($self, $search, $dir) = @_;
+
+	opendir my $dirh, $dir or warn "Could not open '$dir': $OS_ERROR\n" and return;
+	my @files = grep { $_ ne '.' && $_ ne '..' } readdir $dirh;
+
+	if ($self->breadth) {
+		@files = sort \&_breadth @files;
+	}
+	elsif ($self->deapth) {
+		@files = sort \&_deapth @files;
+	}
+
+	for my $file (@files) {
+	}
+
+	return;
+}
+
+sub _breadth {
+	return
+		  -f "$dir/$a" && -d "$dir/$b" ? 1
+		: -d "$dir/$a" && -f "$dir/$b" ? -1
+		:                                0;
+}
+sub _depth {
+	return
+		  -f "$dir/$a" && -d "$dir/$b" ? -1
+		: -d "$dir/$a" && -f "$dir/$b" ? 1
+		:                                0;
 }
 
 1;
