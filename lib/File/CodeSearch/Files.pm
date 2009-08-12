@@ -1,13 +1,12 @@
-package File::CodeSearch;
+package File::CodeSearch::Files;
 
-# Created on: 2009-08-07 18:32:44
+# Created on: 2009-08-11 06:20:53
 # Create by:  Ivan Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
 use Moose;
-use warnings;
 use version;
 use Carp;
 use Scalar::Util;
@@ -15,130 +14,27 @@ use List::Util;
 #use List::MoreUtils;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
-use IO::Handle;
-use File::chdir;
-use File::CodeSearch::Files;
+
 
 our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 #our @EXPORT      = qw//;
 
-has regex => (
-	is       => 'rw',
-	isa      => 'File::CodeSearch::RegexBuilder',
-	required => 1,
-);
-has files => (
-	is      => 'rw',
-	isa     => 'File::CodeSearch::Files',
-	default => sub { File::CodeSearch::Files->new },
-);
-has recurse => (
-	is      => 'rw',
-	isa     => 'Bool',
-	default => 1,
-);
-has breadth => (
-	is      => 'rw',
-	isa     => 'Bool',
-	default => 0,
-);
-has depth => (
-	is      => 'rw',
-	isa     => 'Bool',
-	default => 0,
+has ignore => (
+	is  => 'rw',
+	isa => 'ArrayRef',
+	default => sub{[qw/.git .bzr .svn CVS logs? cover_db .orig$ .copy$ ~\d*$ _build blib/]},
 );
 
-sub search {
-	my ($self, $search, @dirs) = blessed $_[0] ? @_ : (__PACKAGE__->new, @_);
+sub ok_file {
+	my ($self, $file) = @_;
 
-	for my $dir (@dirs) {
-		$self->_find($search, $dir);
+	for my $ignore (@{ $self->ignore }) {
+		return 0 if $file =~ /$ignore/;
 	}
 
-	return;
-}
-
-sub _find {
-	my ($self, $search, $dir, $parent) = @_;
-	my @files;
-	$dir =~ s{/$}{};
-
-	{
-		local $CWD = $dir;
-		opendir my $dirh, '.' or warn "Could not open the directory '$dir': $OS_ERROR ($CWD)\n" and return;
-		@files = sort _alpha_num grep { $_ ne '.' && $_ ne '..' } readdir $dirh;
-
-		if ($self->breadth) {
-			@files = sort _breadth @files;
-		}
-		elsif ($self->depth) {
-			@files = sort _depth @files;
-		}
-	}
-
-	$dir = $dir eq '.' ? '' : "$dir/";
-
-	FILE:
-	for my $file (@files) {
-		next FILE if !$self->files->ok_file("$dir$file");
-
-		if (-d "$dir$file") {
-			if ($self->recurse) {
-				$self->_find( $search, "$dir$file", $parent || $dir );
-			}
-		}
-		else {
-			$self->search_file( $search, "$dir$file", $parent || $dir );
-		}
-	}
-
-	return;
-}
-
-sub _alpha_num {
-	my $a1 = $a;
-	my $b1 = $b;
-	$a1 =~ s/(\d+)/sprintf "%5d", $1/exms;
-	$b1 =~ s/(\d+)/sprintf "%5d", $1/exms;
-	return $a1 cmp $b1;
-}
-sub _breadth {
-	return
-		  -f $a && -d $b ? 1
-		: -d $a && -f $b ? -1
-		:                                0;
-}
-sub _depth {
-	return
-		  -f $a && -d $b ? -1
-		: -d $a && -f $b ? 1
-		:                                0;
-}
-
-sub search_file {
-	my ($self, $search, $file, $parent) = @_;
-
-	open my $fh, '<', $file or warn "Could not open the file '$file': $OS_ERROR\n" and return;
-
-	$self->regex->reset_file;
-
-	LINE:
-	while ( my $line = <$fh> ) {
-		next LINE if !$self->regex->match($line);
-
-		if (defined $self->regex->sub_matches) {
-		}
-		else {
-			$search->($line, $file, $fh->input_line_number, $parent, $self);
-		}
-	}
-
-	if ($self->regex->sub_matches) {
-	}
-
-	return;
+	return 1;
 }
 
 1;
@@ -147,32 +43,28 @@ __END__
 
 =head1 NAME
 
-File::CodeSearch - Search file contents in code repositories
+File::CodeSearch::Files - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch version 0.1.
+This documentation refers to File::CodeSearch::Files version 0.1.
+
 
 =head1 SYNOPSIS
 
-   use File::CodeSearch;
+   use File::CodeSearch::Files;
 
-   # Simple usage
-   code_search {
-	   my ($file, $line) = @_;
-	   // do stuff
-   },
-   @dirs;
+   # Brief but working code example(s) here showing the most common usage(s)
+   # This section will be as far as many users bother reading, so make it as
+   # educational and exemplary as possible.
 
-   # More control
-   my $cs = File::CodeSearch->new();
-   $cs->code_search(sub {}, @dirs);
 
 =head1 DESCRIPTION
 
-Module to search through directory trees ignoring certain directories,
-like version controll directories or log directory, also skipping certain
-files like backup files and binary file.
+A full description of the module and its features.
+
+May include numerous subsections (i.e., =head2, =head3, etc.).
+
 
 =head1 SUBROUTINES/METHODS
 
@@ -189,13 +81,7 @@ form "An object of this class represents ...") to give the reader a high-level
 context to help them understand the methods that are subsequently described.
 
 
-=head3 C<new ( $search, )>
 
-Param: C<$search> - type (detail) - description
-
-Return: File::CodeSearch -
-
-Description:
 
 =head1 DIAGNOSTICS
 

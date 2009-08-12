@@ -17,6 +17,9 @@ use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use FindBin qw/$Bin/;
+use File::CodeSearch;
+use File::CodeSearch::RegexBuilder;
+use File::CodeSearch::Files;
 
 our $VERSION = version->new('0.0.1');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
@@ -41,31 +44,31 @@ sub main {
 	Getopt::Long::Configure('bundling');
 	GetOptions(
 		\%option,
-		'sre-all|A'
-		'sre-words|w'
-		'sre-ignore-case|i'
-		'replace|r=s'
-		'path=string|p=s'
-		'follow-symlinks|l'
-		'recurse|'
-		'file-contains=s'
-		'file-not-contains=s'
-		'file-include=string|n'
-		'file-include-glob=s'
-		'file-include-type=s'
-		'file-exclude|x=s'
-		'file-exclude-glob=s'
-		'file-exclude-type=s'
-		'file-ignore=string|'
-		'file-ignore-add|d=s'
-		'file-ignore-remove|r=s'
-		'out-suround|s=int'
-		'out-suround-before|f=int'
-		'out-suround-after|a=int'
-		'out-totals|t'
-		'out-files-only|f'
-		'project=string|P'
-		'config|C=s'
+		'sre-all|all|A',
+		'sre-words|words|w',
+		'sre-ignore-case|ignore|i',
+		'replace|r=s',
+		'path|p=s',
+		'follow-symlinks|links|l',
+		'recurse|',
+		'file-contains=s',
+		'file-not-contains=s',
+		'file-include|n=s',
+		'file-include-glob=s',
+		'file-include-type=s',
+		'file-exclude|x=s',
+		'file-exclude-glob=s',
+		'file-exclude-type=s',
+		'file-ignore=s',
+		'file-ignore-add|d=s',
+		'file-ignore-remove|r=s',
+		'out-suround|s=n',
+		'out-suround-before|f=n',
+		'out-suround-after|a=n',
+		'out-totals|t',
+		'out-files-only|f',
+		'project|P=s',
+		'config|C=s',
 		'verbose|v+',
 		'man',
 		'help',
@@ -85,6 +88,22 @@ sub main {
 
 	# do stuff here
 
+	my $re = File::CodeSearch::RegexBuilder->new( re => \@ARGV );
+	my $cs = File::CodeSearch->new( regex => $re );
+
+	$option{path} ||= ['.'];
+
+	my %found;
+	$cs->search( sub {
+			my ($line, $file, $line_no ) = @_;
+			if ( !$found{$file} ) {
+				print "${file}:\n";
+			}
+			$found{$file}++;
+			printf "%4i: $line", $line_no;
+		},
+		@{ $option{path} }
+	);
 
 	return;
 }

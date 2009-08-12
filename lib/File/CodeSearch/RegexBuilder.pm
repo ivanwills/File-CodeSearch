@@ -6,7 +6,7 @@ package File::CodeSearch::RegexBuilder;
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
-use strict;
+use Moose;
 use warnings;
 use version;
 use Carp;
@@ -15,23 +15,88 @@ use List::Util;
 #use List::MoreUtils;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
-use base qw/Exporter/;
 
 our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
-#our @EXPORT      = qw//;
 
-sub new {
-	my $caller = shift;
-	my $class  = ref $caller ? ref $caller : $caller;
-	my %param  = @_;
-	my $self   = \%param;
+has regex => (
+	is  => 'rw',
+	isa => 'RegexpRef',
+);
+has re => (
+	is  => 'ro',
+	isa => 'ArrayRef',
+);
+has all => (
+	is  => 'ro',
+	isa => 'Bool',
+);
+has words => (
+	is  => 'ro',
+	isa => 'Bool',
+);
+has files => (
+	is  => 'rw',
+	isa => 'HashRef',
+);
+has current_file => (
+	is  => 'rw',
+);
+has current_count => (
+	is  => 'rw',
+	isa => 'Int',
+);
 
-	bless $self, $class;
+#around 'new' => sub {
+#	my ($code, $package, %args) = @_;
+#
+#	if 
+#
+#	return $code->($package, @args);
+#}
 
-	return $self;
+sub make_regex {
+	my ($self) = @_;
+	my $re;
+
+	if ($self->all) {
+	}
+	elsif ( $self->words ) {
+		$re = join '.*', @{ $self->re };
+	}
+	else {
+		$re = join ' ', @{ $self->re };
+	}
+
+	return $self->regex(qr/$re/);
 }
+
+sub match {
+	my ($self, $line) = @_;
+	my $re = $self->regex || $self->make_regex;
+
+	return $line =~ /$re/;
+}
+
+sub sub_matches {
+	my ($self, $line) = @_;
+
+	return undef;
+}
+
+sub reset_file {
+	my ($self, $file) = @_;
+	if ( $self->current_count() ) {
+		$self->files->{$self->current_file} = $self->current_count;
+	}
+
+	$self->current_count(0);
+	$self->current_file($file);
+
+	return;
+}
+
 
 1;
 
@@ -86,7 +151,6 @@ Return: File::CodeSearch::RegexBuilder -
 Description:
 
 =cut
-
 
 =head1 DIAGNOSTICS
 
