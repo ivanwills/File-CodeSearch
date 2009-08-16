@@ -49,6 +49,16 @@ has depth => (
 	isa     => 'Bool',
 	default => 0,
 );
+has suround_before => (
+	is      => 'rw',
+	isa     => 'Int',
+	default => 0,
+);
+has suround_after => (
+	is      => 'rw',
+	isa     => 'Int',
+	default => 0,
+);
 
 sub search {
 	my ($self, $search, @dirs) = blessed $_[0] ? @_ : (__PACKAGE__->new, @_);
@@ -123,19 +133,48 @@ sub search_file {
 	open my $fh, '<', $file or warn "Could not open the file '$file': $OS_ERROR\n" and return;
 
 	$self->regex->reset_file;
+	my $before_max = $self->suround_before;
+	my $after_max  = $self->suround_after;
+	my @before;
+	my @after;
+	my $found = undef;
+	my %args = ( before => \@before, after => \@after, codesearch => $self, parent => $parent );
 
 	LINE:
 	while ( my $line = <$fh> ) {
+		if (!defined $found) {
+			push @before, $line;
+			shift @before if @before > $before_max + 1;
+		}
+		elsif ($found) {
+			push @after, $line;
+			if (@after > $after_max) {
+				undef $found;
+			}
+		}
+		else {
+		}
+
 		next LINE if !$self->regex->match($line);
 
 		if (defined $self->regex->sub_matches) {
 		}
 		else {
-			$search->($line, $file, $fh->input_line_number, $parent, $self);
+			pop @before;
+			pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
+			$search->($line, $file, $fh->input_line_number, %args);
+			$args{last_line_no} = $fh->input_line_number;
+			@after = ();
+			$found = 1;
 		}
 	}
 
 	if ($self->regex->sub_matches) {
+	}
+	if (@after) {
+		pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
+		@before = ();
+		$search->(undef, $file, $fh->input_line_number, %args);
 	}
 
 	return;

@@ -22,7 +22,6 @@ our %EXPORT_TAGS = ();
 
 has regex => (
 	is  => 'rw',
-	isa => 'RegexpRef',
 );
 has re => (
 	is  => 'ro',
@@ -51,7 +50,7 @@ has current_count => (
 #around 'new' => sub {
 #	my ($code, $package, %args) = @_;
 #
-#	if 
+#	if
 #
 #	return $code->($package, @args);
 #}

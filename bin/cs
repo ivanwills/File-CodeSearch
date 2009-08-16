@@ -17,15 +17,15 @@ use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use FindBin qw/$Bin/;
+use Term::ANSIColor qw/:constants/;
 use File::CodeSearch;
-use File::CodeSearch::RegexBuilder;
+use File::CodeSearch::Highlighter;
 use File::CodeSearch::Files;
 
 our $VERSION = version->new('0.0.1');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 
 my %option = (
-	out     => undef,
 	verbose => 0,
 	man     => 0,
 	help    => 0,
@@ -44,29 +44,29 @@ sub main {
 	Getopt::Long::Configure('bundling');
 	GetOptions(
 		\%option,
-		'sre-all|all|A',
-		'sre-words|words|w',
-		'sre-ignore-case|ignore|i',
+		'sre_all|all|A',
+		'sre_words|words|w',
+		'sre_ignore_case|ignore|i',
 		'replace|r=s',
-		'path|p=s',
-		'follow-symlinks|links|l',
+		'path|p=s@',
+		'follow_symlinks|links|l',
 		'recurse|',
-		'file-contains=s',
-		'file-not-contains=s',
-		'file-include|n=s',
-		'file-include-glob=s',
-		'file-include-type=s',
-		'file-exclude|x=s',
-		'file-exclude-glob=s',
-		'file-exclude-type=s',
-		'file-ignore=s',
-		'file-ignore-add|d=s',
-		'file-ignore-remove|r=s',
-		'out-suround|s=n',
-		'out-suround-before|f=n',
-		'out-suround-after|a=n',
-		'out-totals|t',
-		'out-files-only|f',
+		'file_contains=s',
+		'file_not_contains=s',
+		'file_include|n=s',
+		'file_include_glob=s',
+		'file_include_type=s',
+		'file_exclude|x=s',
+		'file_exclude_glob=s',
+		'file_exclude_type=s',
+		'file_ignore=s',
+		'file_ignore_add|d=s',
+		'file_ignore_remove|r=s',
+		'out_suround|suround|s=n',
+		'out_suround_before|before|f=n',
+		'out_suround_after|after|a=n',
+		'out_totals|totals|t',
+		'out_files_only|files-only|f',
 		'project|P=s',
 		'config|C=s',
 		'verbose|v+',
@@ -88,24 +88,68 @@ sub main {
 
 	# do stuff here
 
-	my $re = File::CodeSearch::RegexBuilder->new( re => \@ARGV );
-	my $cs = File::CodeSearch->new( regex => $re );
-
 	$option{path} ||= ['.'];
+
+	if ($option{out_suround}) {
+		$option{out_suround_before} ||= $option{out_suround};
+		$option{out_suround_after}  ||= $option{out_suround};
+		delete $option{out_suround};
+	}
+
+	warn Dumper \%option;
+	my $hl = File::CodeSearch::Highlighter->new( re => \@ARGV );
+	my $cs = File::CodeSearch->new( regex => $hl, params('out',%option) );
+	warn Dumper {params('out',%option)}, \%option;
 
 	my %found;
 	$cs->search( sub {
-			my ($line, $file, $line_no ) = @_;
+			my ($line, $file, $line_no, %stuff ) = @_;
 			if ( !$found{$file} ) {
 				print "${file}:\n";
 			}
 			$found{$file}++;
-			printf "%4i: $line", $line_no;
+
+			# check if there were lines after the last match and display them
+			if ( $stuff{after} && @{ $stuff{after} } ) {
+				my @after = @{ $stuff{after} };
+				my $count = $stuff{last_line_no} + 1;
+				for my $line ( @after ) {
+					printf REVERSE . '%4i: ' . RESET . $line, $count++;
+				}
+			}
+			# check if there were lines before this match and display them
+			if ( $stuff{before} && @{ $stuff{before} } ) {
+				my @before = @{ $stuff{before} };
+				my $count = @before;
+				for my $line ( @before ) {
+					printf REVERSE . '%4i: ' . RESET . $line, $line_no - $count--;
+				}
+			}
+			if ($line) {
+				printf REVERSE . BOLD . ON_RED . '%4i: ' . RESET . '%s', $line_no, $hl->highlight($line);
+			}
 		},
 		@{ $option{path} }
 	);
 
 	return;
+}
+
+sub params {
+	my ($name, %var) = @_;
+	my %params;
+
+	VAR:
+	for my $key (keys %var) {
+		warn "$key\n";
+		next VAR if $key !~ /^ $name _ /xms;
+		warn $key;
+		my $new_key = $key;
+		$new_key =~ s/^ $name _ //xms;
+		$params{$new_key} = $var{$key};
+	}
+
+	return %params;
 }
 
 __DATA__
@@ -172,15 +216,15 @@ This documentation refers to cs version 0.1.
    -r --file-ignore-remove=string
                  Remove this regex to the list of ignored files
   Output:
-   -s --out-suround=int
+   -s --suround=int
                  Show int lines before and after a match
-   -f --out-suround-before=int
+   -f --before=int
                  Show int lines before a match
-   -a --out-suround-after=int
+   -a --after=int
                  Show int lines after a match
-   -t --out-totals
+   -t --totals
                  Show the total number of lines & files matched
-   -f --out-files-only
+   -f --files-only
                  Show only the file names containg matches
   Other:
    -P --project=string

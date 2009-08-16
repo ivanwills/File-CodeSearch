@@ -6,7 +6,7 @@ package File::CodeSearch::Highlighter;
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
-use strict;
+use Moose;
 use warnings;
 use version;
 use Carp;
@@ -15,22 +15,66 @@ use List::Util;
 #use List::MoreUtils;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
-use base qw/Exporter/;
+use Term::ANSIColor qw/:constants/;
 
 our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 #our @EXPORT      = qw//;
 
-sub new {
-	my $caller = shift;
-	my $class  = ref $caller ? ref $caller : $caller;
-	my %param  = @_;
-	my $self   = \%param;
+extends 'File::CodeSearch::RegexBuilder';
 
-	bless $self, $class;
+has highlight_re => (
+	is  => 'rw',
+);
+has before_match => (
+	is      => 'rw',
+	isa     => 'Str',
+	default => BOLD . RED,
+);
+has after_match => (
+	is      => 'rw',
+	isa     => 'Str',
+	default => RESET,
+);
+has before_nomatch => (
+	is      => 'rw',
+	isa     => 'Str',
+	default => BOLD,
+);
+has after_nomatch => (
+	is      => 'rw',
+	isa     => 'Str',
+	default => RESET,
+);
 
-	return $self;
+sub make_highlight_re {
+	my ($self) = @_;
+	my $re = $self->regex || $self->make_regex;
+
+	# make sure that all brackets are for non capture groups
+	$re =~ s/ [(] (?! [?] ) /(?:/gxms;
+
+	return $self->highlight_re($re);
+}
+
+sub highlight {
+	my ($self, $string) = @_;
+	my $re  = $self->highlight_re || $self->make_highlight_re;
+	my $out = '';
+
+	my @parts = split /($re)/, $string;
+
+	for my $i ( 0 .. @parts - 1 ) {
+		if ( $i % 2 ) {
+			$out .= $self->before_match . $parts[$i] . $self->after_match;
+		}
+		else {
+			$out .= $self->before_nomatch . $parts[$i] . $self->after_nomatch;
+		}
+	}
+
+	return $out;
 }
 
 1;
