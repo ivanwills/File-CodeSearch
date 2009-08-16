@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 10 + 1;
+use Test::More tests => 07 + 1;
 use Test::NoWarnings;
 use Term::ANSIColor qw/:constants/;
 use File::CodeSearch::Highlighter;

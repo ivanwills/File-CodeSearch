@@ -27,6 +27,10 @@ has re => (
 	is  => 'ro',
 	isa => 'ArrayRef',
 );
+has whole => (
+	is  => 'ro',
+	isa => 'Bool',
+);
 has all => (
 	is  => 'ro',
 	isa => 'Bool',
@@ -47,25 +51,25 @@ has current_count => (
 	isa => 'Int',
 );
 
-#around 'new' => sub {
-#	my ($code, $package, %args) = @_;
-#
-#	if
-#
-#	return $code->($package, @args);
-#}
-
 sub make_regex {
 	my ($self) = @_;
 	my $re;
+	my $words = $self->re;
+
+	if ($self->whole) {
+		@{$words} = map { "(?<!\\w)$_(?!\\w)" } @{$words};
+	}
 
 	if ($self->all) {
+		if (@{ $words } == 2 ) {
+			$re = "$words->[0].*$words->[1]|$words->[1].*$words->[0]";
+		}
 	}
 	elsif ( $self->words ) {
-		$re = join '.*', @{ $self->re };
+		$re = join '.*', @{ $words };
 	}
 	else {
-		$re = join ' ', @{ $self->re };
+		$re = join ' ', @{ $words };
 	}
 
 	return $self->regex(qr/$re/);
