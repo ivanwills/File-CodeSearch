@@ -132,28 +132,13 @@ May include numerous subsections (i.e., =head2, =head3, etc.).
 
 =head1 SUBROUTINES/METHODS
 
-A separate section listing the public components of the module's interface.
+=head2 C<make_regex ()>
 
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
+=head2 C<match ($line)>
 
-Name the section accordingly.
+=head2 C<sub_matches ($line)>
 
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
-
-
-=head3 C<new ( $search, )>
-
-Param: C<$search> - type (detail) - description
-
-Return: File::CodeSearch::RegexBuilder -
-
-Description:
-
-=cut
+=head2 C<reset_file ()>
 
 =head1 DIAGNOSTICS
 
