@@ -21,7 +21,7 @@ my $builder = Module::Build->new(
 	},
 	add_to_cleanup     => [ 'File-CodeSearch-*' ],
 	create_makefile_pl => 'traditional',
-	create_license     => 1,
+#	create_license     => 1,
 );
 
 $builder->create_build_script();

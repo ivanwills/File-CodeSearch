@@ -1,0 +1,38 @@
+---
+name: File-CodeSearch
+version: v0.0.1
+author:
+  - 'Ivan Wills <ivan.wills@gmail.com>'
+abstract: Search file contents in code repositories
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+build_requires:
+  Test::More: 0
+requires:
+  File::Basename: 0
+  File::Slurp: 0
+  File::Spec: 0
+  File::chdir: 0
+  Path::Class: 0.16
+  perl: 5.008
+  version: 0
+configure_requires:
+  Module::Build: 0.34
+provides:
+  File::CodeSearch:
+    file: lib/File/CodeSearch.pm
+    version: v0.0.1
+  File::CodeSearch::Files:
+    file: lib/File/CodeSearch/Files.pm
+    version: v0.0.1
+  File::CodeSearch::Highlighter:
+    file: lib/File/CodeSearch/Highlighter.pm
+    version: v0.0.1
+  File::CodeSearch::RegexBuilder:
+    file: lib/File/CodeSearch/RegexBuilder.pm
+    version: v0.0.1
+generated_by: Module::Build version 0.34
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
