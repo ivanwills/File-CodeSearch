@@ -24,7 +24,7 @@ our %EXPORT_TAGS = ();
 has ignore => (
 	is  => 'rw',
 	isa => 'ArrayRef',
-	default => sub{[qw/.git .bzr .svn CVS logs? cover_db .orig$ .copy$ ~\d*$ _build blib/]},
+	default => sub{[qw{.git .bzr .svn CVS logs?(?:$|/) cover_db .orig$ .copy$ ~\d*$ _build blib \\.sw[po]$}]},
 );
 
 sub file_ok {

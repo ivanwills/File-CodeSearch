@@ -45,8 +45,10 @@ sub main {
 	GetOptions(
 		\%option,
 		'sre_all|all|A',
-		'sre_words|words|w',
+		'sre_words|words|W',
 		'sre_ignore_case|ignore|i',
+		'sre_whole|whole|w',
+		'sre_sub_matches|sub|S=s@',
 		'replace|r=s',
 		'path|p=s@',
 		'follow_symlinks|links|l',
@@ -96,10 +98,10 @@ sub main {
 		delete $option{out_suround};
 	}
 
-	warn Dumper \%option;
-	my $hl = File::CodeSearch::Highlighter->new( re => \@ARGV );
+	warn Dumper { params('sre', %option), re => \@ARGV } if $option{verbose};
+	my $hl = File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
 	my $cs = File::CodeSearch->new( regex => $hl, params('out',%option) );
-	warn Dumper {params('out',%option)}, \%option;
+	warn Dumper {params('out',%option)}, \%option if $option{verbose};
 
 	my %found;
 	$cs->search( sub {
@@ -128,6 +130,10 @@ sub main {
 			if ($line) {
 				printf REVERSE . BOLD . ON_RED . '%4i: ' . RESET . '%s', $line_no, $hl->highlight($line);
 			}
+			else {
+				print Dumper \@_;
+				print "no line\n";
+			}
 		},
 		@{ $option{path} }
 	);
@@ -141,9 +147,7 @@ sub params {
 
 	VAR:
 	for my $key (keys %var) {
-		warn "$key\n";
 		next VAR if $key !~ /^ $name _ /xms;
-		warn $key;
 		my $new_key = $key;
 		$new_key =~ s/^ $name _ //xms;
 		$params{$new_key} = $var{$key};
@@ -169,12 +173,14 @@ This documentation refers to cs version 0.1.
 
  OPTIONS:
   Search:
-   -A --sre-all  Find all parts on regardless of order on the line
-   -w --sre-words
+   -A --all      Find all parts on regardless of order on the line
+   -W --words
                  Similar to --all but with out the reordering
-   -i --sre-ignore-case
+   -i --ignore-case
                  Turn off case sensitive searching
-   -  --sre-
+   -w --whole    Makes the match only whole words (ie wraps with (?<\W) & (?=\W))
+   -S --sub=re   Only show matches if the file also matches this sub regex.
+                 This may be declared more that once and the results are ORed.
   Replace:
    -r --replace=string
                  String to replace found text with

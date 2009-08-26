@@ -42,6 +42,7 @@ has words => (
 has files => (
 	is  => 'rw',
 	isa => 'HashRef',
+	default => sub{{}},
 );
 has current_file => (
 	is  => 'rw',
@@ -49,6 +50,15 @@ has current_file => (
 has current_count => (
 	is  => 'rw',
 	isa => 'Int',
+	default => 0,
+);
+has sub_matches => (
+	is  => 'rw',
+	isa => 'ArrayRef',
+);
+has sub_match => (
+	is  => 'rw',
+	isa => 'Bool',
 );
 
 sub make_regex {
@@ -79,21 +89,40 @@ sub match {
 	my ($self, $line) = @_;
 	my $re = $self->regex || $self->make_regex;
 
-	return $line =~ /$re/;
+	$self->check_sub_matches($line);
+	my $match = $line =~ /$re/;
+
+	if ($match) {
+		$self->current_count( $self->current_count + 1 );
+	}
+
+	return $match;
 }
 
-sub sub_matches {
+sub check_sub_matches {
 	my ($self, $line) = @_;
+	my $matches = $self->sub_matches;
+	my $match = 0;
+
+	return if !$matches || !ref $matches;
+	return if $self->sub_match;
+
+	for my $match (@$matches) {
+		$match ||= $line =~ /$match/;
+	}
+
+	$self->sub_match($match);
 
 	return undef;
 }
 
 sub reset_file {
 	my ($self, $file) = @_;
-	if ( $self->current_count() ) {
+	if ( $self->current_count() && $self->current_file ) {
 		$self->files->{$self->current_file} = $self->current_count;
 	}
 
+	$self->sub_match(0);
 	$self->current_count(0);
 	$self->current_file($file);
 

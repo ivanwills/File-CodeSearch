@@ -18,6 +18,7 @@ use English qw/ -no_match_vars /;
 use IO::Handle;
 use File::chdir;
 use File::CodeSearch::Files;
+use Clone qw/clone/;
 
 our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
@@ -61,7 +62,7 @@ has suround_after => (
 );
 
 sub search {
-	my ($self, $search, @dirs) = blessed $_[0] ? @_ : (__PACKAGE__->new, @_);
+	my ($self, $search, @dirs) = @_;
 
 	for my $dir (@dirs) {
 		$self->_find($search, $dir);
@@ -92,7 +93,7 @@ sub _find {
 
 	FILE:
 	for my $file (@files) {
-		next FILE if !$self->files->ok_file("$dir$file");
+		next FILE if !$self->files->file_ok("$dir$file");
 
 		if (-d "$dir$file") {
 			if ($self->recurse) {
@@ -133,12 +134,14 @@ sub search_file {
 	open my $fh, '<', $file or warn "Could not open the file '$file': $OS_ERROR\n" and return;
 
 	$self->regex->reset_file;
+	$self->regex->current_file($file);
 	my $before_max = $self->suround_before;
 	my $after_max  = $self->suround_after;
 	my @before;
 	my @after;
 	my $found = undef;
-	my %args = ( before => \@before, after => \@after, codesearch => $self, parent => $parent );
+	my %args = ( before => \@before, after => \@after, parent => $parent );
+	my @sub_matches;
 
 	LINE:
 	while ( my $line = <$fh> ) {
@@ -157,24 +160,30 @@ sub search_file {
 
 		next LINE if !$self->regex->match($line);
 
+		pop @before;
+		pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
+
 		if (defined $self->regex->sub_matches) {
+			push @sub_matches, clone [ $line, $file, $fh->input_line_number, %args ];
 		}
 		else {
-			pop @before;
-			pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
-			$search->($line, $file, $fh->input_line_number, %args);
-			$args{last_line_no} = $fh->input_line_number;
-			@after = ();
-			$found = 1;
+			$search->($line, $file, $fh->input_line_number, codesearch => $self, %args);
 		}
+
+		$args{last_line_no} = $fh->input_line_number;
+		@after = ();
+		$found = 1;
 	}
 
-	if ($self->regex->sub_matches) {
+	if ($self->regex->sub_matches && $self->regex->sub_match) {
+		for my $args (@sub_matches) {
+			$search->( @$args, codesearch => $self );
+		}
 	}
-	if (@after) {
+	if (@after && ( ! $self->regex->sub_matches || $self->regex->sub_match ) ) {
 		pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
 		@before = ();
-		$search->(undef, $file, $fh->input_line_number, %args);
+		$search->(undef, $file, $fh->input_line_number, codesearch => $self, %args);
 	}
 
 	return;

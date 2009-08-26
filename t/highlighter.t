@@ -18,6 +18,7 @@ sub highlights {
 		before_nomatch => '',
 		after_nomatch  => '',
 	);
+	$hl->make_highlight_re;
 	is($hl->highlight('this test string'), 'this test string', 'no extra text gives back string');
 
 	$hl = File::CodeSearch::Highlighter->new(
@@ -41,6 +42,7 @@ sub highlights {
 
 sub regexes {
 	my $hl = File::CodeSearch::Highlighter->new( re => ['test'] );
+	$hl->make_regex;
 	$hl->make_highlight_re;
 	is($hl->highlight_re, '(?-xism:test)', 'simple re returns simple string');
 
