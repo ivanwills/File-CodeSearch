@@ -16,5 +16,9 @@ t/pod-coverage.t
 t/pod.t
 t/regexbuilder.t
 t/spelling.t
-
 META.yml
+Changes
+Debian_CPANTS.txt
+t/codesearch.t
+t/files.t
+t/perlcriticrc
