@@ -10,9 +10,6 @@ use Moose;
 use warnings;
 use version;
 use Carp;
-use Scalar::Util;
-use List::Util;
-#use List::MoreUtils;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 
@@ -113,7 +110,7 @@ sub check_sub_matches {
 
 	$self->sub_match($match);
 
-	return undef;
+	return;
 }
 
 sub reset_file {
@@ -167,7 +164,13 @@ May include numerous subsections (i.e., =head2, =head3, etc.).
 
 =head2 C<sub_matches ($line)>
 
-=head2 C<reset_file ()>
+=head2 C<reset_file ( $file )>
+
+Resets file baised counters and adds $file as the new file being processed
+
+=head2 C<check_sub_matches ( $line )>
+
+Checks that $line matches any specified sub matches
 
 =head1 DIAGNOSTICS
 

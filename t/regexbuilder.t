@@ -119,7 +119,7 @@ sub sub_match {
 	my $re = File::CodeSearch::RegexBuilder->new(
 		re             => ['test'],
 	);
-	$re->sub_matches('');
+	$re->sub_matches(['a']);
 
 	return;
 }
