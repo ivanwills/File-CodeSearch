@@ -33,7 +33,7 @@ has after_match => (
 has before_nomatch => (
 	is      => 'rw',
 	isa     => 'Str',
-	default => BOLD,
+	default => CYAN,
 );
 has after_nomatch => (
 	is      => 'rw',
@@ -46,7 +46,7 @@ sub make_highlight_re {
 	my $re = $self->regex || $self->make_regex;
 
 	# make sure that all brackets are for non capture groups
-	$re =~ s/ [(] (?! [?] ) /(?:/gxms;
+	$re =~ s/ (?<! \\ | \[ ) [(] (?! [?] ) /(?:/gxms;
 
 	return $self->highlight_re($re);
 }

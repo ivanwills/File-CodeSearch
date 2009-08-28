@@ -127,9 +127,6 @@ sub main {
 			if ($line) {
 				printf REVERSE . BOLD . ON_RED . '%4i: ' . RESET . '%s', $line_no, $hl->highlight($line);
 			}
-			else {
-				print "no line\n";
-			}
 		},
 		@{ $option{path} }
 	);
