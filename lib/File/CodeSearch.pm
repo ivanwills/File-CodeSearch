@@ -9,11 +9,6 @@ package File::CodeSearch;
 use Moose;
 use warnings;
 use version;
-use Carp;
-use Scalar::Util;
-use List::Util;
-#use List::MoreUtils;
-use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use IO::Handle;
 use File::chdir;
@@ -21,9 +16,6 @@ use File::CodeSearch::Files;
 use Clone qw/clone/;
 
 our $VERSION     = version->new('0.0.1');
-our @EXPORT_OK   = qw//;
-our %EXPORT_TAGS = ();
-#our @EXPORT      = qw//;
 
 has regex => (
 	is       => 'rw',
@@ -237,6 +229,14 @@ Param: C<$file> - file - A file to search through line by line
 Param: C<$parent> - path - The directory from @dirs which the file was found in
 
 Description:
+
+=over 4
+
+=item search
+
+=item search_file
+
+=back
 
 =head1 DIAGNOSTICS
 

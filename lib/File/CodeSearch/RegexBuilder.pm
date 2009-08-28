@@ -10,12 +10,9 @@ use Moose;
 use warnings;
 use version;
 use Carp;
-use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 
 our $VERSION     = version->new('0.0.1');
-our @EXPORT_OK   = qw//;
-our %EXPORT_TAGS = ();
 
 has regex => (
 	is  => 'rw',
