@@ -76,6 +76,8 @@ sub _find {
 	my @files;
 	$dir =~ s{/$}{};
 
+	return if !-d $dir;
+
 	{
 		local $CWD = $dir;
 		opendir my $dirh, '.' or warn "Could not open the directory '$dir': $OS_ERROR ($CWD)\n" and return;
