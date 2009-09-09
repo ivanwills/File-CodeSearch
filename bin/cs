@@ -70,6 +70,7 @@ sub main {
 		'out_totals|totals|t',
 		'out_files_only|files-only|f',
 		'project|P=s',
+		'smart|m',
 		'config|C=s',
 		'verbose|v+',
 		'man',
@@ -98,6 +99,13 @@ sub main {
 		delete $option{out_suround};
 	}
 
+	if ( $option{smart} && @ARGV > 1 ) {
+		$ARGV[0] =
+			  $ARGV[0] eq 'n'  ? 'function'
+			: $ARGV[0] eq 'ss' ? 'class'
+			:                    $ARGV[0];
+	}
+
 	warn Dumper { params('sre', %option), re => \@ARGV } if $option{verbose};
 	my $hl = File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
 	my $cs = File::CodeSearch->new( regex => $hl, params('out',%option) );
@@ -107,7 +115,7 @@ sub main {
 	$cs->search( sub {
 			my ($line, $file, $line_no, %stuff ) = @_;
 			if ( !$found{$file} ) {
-				print "${file}:\n";
+				print "${file}\n";
 			}
 			$found{$file}++;
 
