@@ -18,6 +18,7 @@ use Term::ANSIColor qw/:constants/;
 use File::CodeSearch;
 use File::CodeSearch::Highlighter;
 use File::CodeSearch::Files;
+use Config::General;
 
 our $VERSION = version->new('0.0.1');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
@@ -110,7 +111,7 @@ sub main {
 	my $hl = File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
 
 	warn Dumper {params('out',%option)}, \%option if $option{verbose};
-	my $cs = File::CodeSearch->new( regex => $hl, files => $files, params('out',%option) );
+	my $cs = File::CodeSearch->new( regex => $hl, params('out',%option) );
 
 	my %found;
 	$cs->search( sub {
@@ -186,6 +187,10 @@ This documentation refers to cs version 0.1.
    -w --whole    Makes the match only whole words (ie wraps with (?<\W) & (?=\W))
    -S --sub=re   Only show matches if the file also matches this sub regex.
                  This may be declared more that once and the results are ORed.
+   -m --smart    converts multi part regexes baised on what is imput
+                 eg cs ss Class is converted to cs class Class
+                    cs n func                   cs function func
+                    cs b subroutine             cs sub subroutine
   Replace:
    -r --replace=string
                  String to replace found text with

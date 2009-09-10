@@ -9,6 +9,7 @@ package File::CodeSearch::Files;
 use Moose;
 use warnings;
 use version;
+use Readonly;
 use Carp;
 use English qw/ -no_match_vars /;
 
@@ -16,7 +17,7 @@ our $VERSION     = version->new('0.0.1');
 
 has ignore => (
 	is  => 'rw',
-	isa => 'ArrayRef',
+	isa => 'ArrayRef[Str]',
 	default => sub{[qw{.git .bzr .svn CVS logs?(?:$|/) cover_db .orig$ .copy$ ~\d*$ _build blib \\.sw[po]$}]},
 );
 has include => (
@@ -27,12 +28,57 @@ has exclude => (
 	is  => 'rw',
 	isa => 'ArrayRef[Str]',
 );
+has types => (
+	is  => 'rw',
+	isa => 'ArrayRef[Str]',
+	default => sub{[]},
+);
+has notypes => (
+	is  => 'rw',
+	isa => 'ArrayRef[Str]',
+	default => sub{[]},
+);
+
+Readonly my %TYPE_SUFFIXES => (
+		perl => {
+			definite => [qw/ pl pm pod /],
+			possible => [qw/ t cgi /],
+			none     => 1,
+		},
+		php => {
+			definite => ['php'],
+			possible => [qw/ lib pkg /],
+		},
+		html => {
+			definite => [qw/ html xhtml /],
+			possible => [qw/xml/],
+		},
+		css => {
+			definite => ['css'],
+		},
+		javascript => {
+			definite => ['js'],
+			possible => [qw/ lib pkg /],
+		},
+		web => {
+			other_types => [qw/ html css javascript /],
+		},
+	);
+
 
 sub file_ok {
 	my ($self, $file) = @_;
 
 	for my $ignore (@{ $self->ignore }) {
 		return 0 if $file =~ /$ignore/;
+	}
+
+	for my $type (@{ $self->types }) {
+		return 0 if !$self->types_match($file, $type);
+	}
+
+	for my $type (@{ $self->notypes }) {
+		return 0 if $self->types_match($file, $type);
 	}
 
 	if ($self->include) {
@@ -50,6 +96,11 @@ sub file_ok {
 	}
 
 	return 1;
+}
+
+sub types_match {
+	my ($self, $file, $type) = @_;
+
 }
 
 1;
