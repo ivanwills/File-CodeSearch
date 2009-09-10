@@ -55,10 +55,10 @@ sub main {
 		'recurse|',
 		'file_contains=s',
 		'file_not_contains=s',
-		'file_include|n=s',
+		'file_include|n=s@',
 		'file_include_glob=s',
 		'file_include_type=s',
-		'file_exclude|x=s',
+		'file_exclude|x=s@',
 		'file_exclude_glob=s',
 		'file_exclude_type=s',
 		'file_ignore=s',
@@ -106,10 +106,14 @@ sub main {
 			:                    $ARGV[0];
 	}
 
+	warn Dumper { params('file', %option) } if $option{verbose};
+	my $files = File::CodeSearch::Files->new(params('file', %option));
+
 	warn Dumper { params('sre', %option), re => \@ARGV } if $option{verbose};
 	my $hl = File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
-	my $cs = File::CodeSearch->new( regex => $hl, params('out',%option) );
+
 	warn Dumper {params('out',%option)}, \%option if $option{verbose};
+	my $cs = File::CodeSearch->new( regex => $hl, files => $files, params('out',%option) );
 
 	my %found;
 	$cs->search( sub {
