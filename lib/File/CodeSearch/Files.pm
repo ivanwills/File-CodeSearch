@@ -19,12 +19,34 @@ has ignore => (
 	isa => 'ArrayRef',
 	default => sub{[qw{.git .bzr .svn CVS logs?(?:$|/) cover_db .orig$ .copy$ ~\d*$ _build blib \\.sw[po]$}]},
 );
+has include => (
+	is  => 'rw',
+	isa => 'ArrayRef[Str]',
+);
+has exclude => (
+	is  => 'rw',
+	isa => 'ArrayRef[Str]',
+);
 
 sub file_ok {
 	my ($self, $file) = @_;
 
 	for my $ignore (@{ $self->ignore }) {
 		return 0 if $file =~ /$ignore/;
+	}
+
+	if ($self->include) {
+		my $matches = 0;
+		for my $include (@{ $self->include }) {
+			$matches ||= $file =~ /$include/;
+		}
+		return 0 if !$matches;
+	}
+
+	if ($self->exclude) {
+		for my $exclude (@{ $self->exclude }) {
+			return 0 if $file =~ /$exclude/;
+		}
 	}
 
 	return 1;
