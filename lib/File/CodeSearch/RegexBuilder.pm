@@ -48,11 +48,20 @@ has current_count => (
 );
 has sub_matches => (
 	is  => 'rw',
-	isa => 'ArrayRef',
+	isa => 'ArrayRef[Str]',
 );
 has sub_match => (
 	is  => 'rw',
 	isa => 'Bool',
+);
+has last => (
+	is  => 'rw',
+	isa => 'ArrayRef[Str]',
+);
+has lasts => (
+	is  => 'rw',
+	isa => 'HashRef[Str]',
+	default => sub{{}},
 );
 
 sub make_regex {
@@ -84,6 +93,8 @@ sub match {
 	my $re = $self->regex || $self->make_regex;
 
 	$self->check_sub_matches($line);
+	$self->check_lasts($line);
+
 	my $match = $line =~ /$re/;
 
 	if ($match) {
@@ -110,6 +121,36 @@ sub check_sub_matches {
 	return;
 }
 
+sub check_lasts {
+	my ($self, $line) = @_;
+
+	if ($self->last) {
+		for my $last (@{ $self->last }) {
+			my ($match) =
+				  $last eq 'function' ? $line =~ /function \s+ (?: & \s*)? (\w+)/xms
+				: $last eq 'class'    ? $line =~ /class \s+ (\w+)/xms
+				: $last eq 'sub'      ? $line =~ /sub \s+ (\w+)/xms
+				:                       $line =~ /$last \s+ (\w+)/xms;
+			$self->lasts->{$last} = $match if $match;
+		}
+	}
+
+	return;
+}
+
+sub get_last_found {
+	my ($self) = @_;
+	my $out    = '';
+
+	return '' if ! %{$self->lasts};
+
+	for my $last (keys %{$self->lasts} ) {
+		$out .= "$last " . $self->lasts->{$last} . "\n";
+	}
+
+	return $out;
+}
+
 sub reset_file {
 	my ($self, $file) = @_;
 	if ( $self->current_count() && $self->current_file ) {
@@ -119,6 +160,7 @@ sub reset_file {
 	$self->sub_match(0);
 	$self->current_count(0);
 	$self->current_file($file);
+	$self->lasts({});
 
 	return;
 }

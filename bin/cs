@@ -47,6 +47,7 @@ sub main {
 		'sre_ignore_case|ignore|i',
 		'sre_whole|whole|w',
 		'sre_sub_matches|sub|S=s@',
+		'sre_last|last|L=s@',
 		'replace|r=s',
 		'path|p=s@',
 		'follow_symlinks|links|l',
@@ -138,6 +139,10 @@ sub main {
 				}
 			}
 			if ($line) {
+				my $last = $hl->get_last_found();
+				if ($last) {
+					print BLUE . $last . RESET;
+				}
 				printf REVERSE . BOLD . ON_RED . '%4i: ' . RESET . '%s', $line_no, $hl->highlight($line);
 			}
 		},
