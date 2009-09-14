@@ -11,6 +11,7 @@ use warnings;
 use version;
 use Getopt::Long;
 use Pod::Usage;
+use List::MoreUtils qw/uniq/;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use FindBin qw/$Bin/;
@@ -46,7 +47,8 @@ sub main {
 		'sre_words|words|W',
 		'sre_ignore_case|ignore|i',
 		'sre_whole|whole|w',
-		'sre_sub_matches|sub|S=s@',
+		'sre_sub_matches|contains|S=s@',
+		'sre_sub_no_matches|notcontains|S=s@',
 		'sre_last|last|L=s@',
 		'replace|r=s',
 		'path|p=s@',
@@ -55,10 +57,8 @@ sub main {
 		'file_contains=s',
 		'file_not_contains=s',
 		'file_include|n=s@',
-		'file_include_glob=s',
 		'file_include_type=s',
 		'file_exclude|x=s@',
-		'file_exclude_glob=s',
 		'file_exclude_type=s',
 		'file_ignore=s',
 		'file_ignore_add|d=s',
@@ -104,6 +104,8 @@ sub main {
 			: $ARGV[0] eq 'ss' ? 'class'
 			:                    $ARGV[0];
 	}
+
+	parse_config(\%option);
 
 	warn Dumper { params('file', %option) } if $option{verbose};
 	my $files = File::CodeSearch::Files->new(params('file', %option));
@@ -167,6 +169,49 @@ sub params {
 	return %params;
 }
 
+sub parse_config {
+	my ($opt) = @_;
+
+	my $conf_file = $opt->{config} || "$ENV{HOME}/.csrc";
+
+	return if !-r $conf_file;
+
+	my $conf = Config::General->new($conf_file);
+	my %conf = $conf->getall();
+
+	$conf{default} ||= {};
+	$conf{project} ||= {};
+
+	my $default = $conf{default};
+
+	my $project =
+		$opt->{project} ? $opt->{project}
+		: $name ne 'cs' ? $name
+		:                 undef;
+	if ( $project && $conf{project} && keys %{$conf{project}} && $conf{project}{$project} ) {
+		$default = merge($conf{project}{$project} || {}, $default);
+	}
+
+	%$opt = %{ merge($default, $opt) };
+
+	return;
+}
+
+sub merge {
+	my ($hash1, $hash2, @rest) = @_;
+	my $merge = {};
+
+	for my $key (uniq sort keys %{$hash1}, keys %{$hash2}) {
+		$merge->{$key} =
+			exists $hash1->{$key} ? $hash1->{$key}
+		:                           $hash2->{$key};
+	}
+
+	return merge($merge, @rest) if @rest;
+
+	return $merge;
+}
+
 __DATA__
 
 =head1 NAME
@@ -190,8 +235,11 @@ This documentation refers to cs version 0.1.
    -i --ignore-case
                  Turn off case sensitive searching
    -w --whole    Makes the match only whole words (ie wraps with (?<\W) & (?=\W))
-   -S --sub=re   Only show matches if the file also matches this sub regex.
+   -S --contains=re
+                 Only show matches if the file also matches this sub regex.
                  This may be declared more that once and the results are ORed.
+   -S --not-contains=re
+                 Ignore any files whoes contents match this regex.
    -m --smart    converts multi part regexes baised on what is imput
                  eg cs ss Class is converted to cs class Class
                     cs n func                   cs function func
@@ -210,23 +258,13 @@ This documentation refers to cs version 0.1.
       --recurse  Recurse into subdirectories (Default)
       --no-recurse
                  Turns off recursing into subdirectories
-      --file-contains=string
-                 Only show results of search if the file (somewhere) also
-                 contains this regex (Multiple)
-      --file-not-contains=string
-                 Only show results of search if the file does not contain
-                 any where this regex
    -n --file-include=string
                  Only include files mathcing the regex (Multiple)
-      --file-include-glob=string
-                 Only include files matching this glob (Multiple)
       --file-include-type=string
                  Only include files the specified type (Mulitple)
                  see perldoc File::CodeSearch::FileTypes available types
    -x --file-exclude=string
                  Don't include files mathcing the regex (Multiple)
-      --file-exclude-glob=string
-                 Don't include files matching this glob (Multiple)
       --file-exclude-type=string
                  Don't include files the specified type (Mulitple)
                  see perldoc File::CodeSearch::FileTypes available types
@@ -266,6 +304,19 @@ This documentation refers to cs version 0.1.
 =head1 DIAGNOSTICS
 
 =head1 CONFIGURATION AND ENVIRONMENT
+
+A configuration file placed in ~/.csrc (or specified through --conf) allows
+allows the setting of default values
+
+  <default>
+      smart = 1
+  </default>
+  <project proj>
+    exclude = /path/to/excluded/dir
+  </project>
+
+If you were to create a symlink to cs called proj the proj options would be
+selected automatically (unless you specify a project with --project).
 
 =head1 DEPENDENCIES
 
