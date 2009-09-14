@@ -114,7 +114,7 @@ sub main {
 	my $hl = File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
 
 	warn Dumper {params('out',%option)}, \%option if $option{verbose};
-	my $cs = File::CodeSearch->new( regex => $hl, params('out',%option) );
+	my $cs = File::CodeSearch->new( regex => $hl, files => $files, params('out',%option) );
 
 	my %found;
 	$cs->search( sub {
