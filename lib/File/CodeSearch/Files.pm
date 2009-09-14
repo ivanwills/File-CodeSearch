@@ -10,6 +10,7 @@ use Moose;
 use warnings;
 use version;
 use Readonly;
+use Data::Dumper qw/Dumper/;
 use Carp;
 use English qw/ -no_match_vars /;
 
@@ -38,6 +39,12 @@ has notypes => (
 	isa => 'ArrayRef[Str]',
 	default => sub{[]},
 );
+around new => sub {
+	my $exe = shift;
+	my $self = $exe->(@_);
+	warn Dumper $self->exclude if $ENV{TEST};
+	return $self;
+};
 
 Readonly my %TYPE_SUFFIXES => (
 		perl => {
@@ -90,6 +97,7 @@ sub file_ok {
 	}
 
 	if ($self->exclude) {
+		warn "testing for excluded!" if $ENV{TEST};
 		for my $exclude (@{ $self->exclude }) {
 			return 0 if $file =~ /$exclude/;
 		}
