@@ -123,6 +123,7 @@ sub main {
 				print "${file}\n";
 			}
 			$found{$file}++;
+			return if $option{out_files_only};
 
 			# check if there were lines after the last match and display them
 			if ( $stuff{after} && @{ $stuff{after} } ) {

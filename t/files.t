@@ -2,13 +2,14 @@
 
 use strict;
 use warnings;
-use Test::More tests => 10 + 1;
+use Test::More tests => 12 + 1;
 use Test::NoWarnings;
 use Term::ANSIColor qw/:constants/;
 use File::CodeSearch::Files;
 
 files_ok();
 files_nok();
+files_exclude();
 
 sub files_ok {
 	my $files = File::CodeSearch::Files->new();
@@ -40,6 +41,15 @@ sub files_nok {
 	for my $file (@nok_files) {
 		ok(!$files->file_ok($file), $file);
 	}
+
+	return;
+}
+
+sub files_exclude {
+	my $files = File::CodeSearch::Files->new( exclude => [qw{/test/}] );
+
+	ok($files->file_ok("perl/test"), 'not excluded');
+	ok(!$files->file_ok("perl/test/"), 'excluded');
 
 	return;
 }
