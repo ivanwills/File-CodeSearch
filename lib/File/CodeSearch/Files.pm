@@ -29,12 +29,12 @@ has exclude => (
 	is  => 'rw',
 	isa => 'ArrayRef[Str]',
 );
-has types => (
+has include_type => (
 	is  => 'rw',
 	isa => 'ArrayRef[Str]',
 	default => sub{[]},
 );
-has notypes => (
+has exclude_type => (
 	is  => 'rw',
 	isa => 'ArrayRef[Str]',
 	default => sub{[]},
@@ -42,27 +42,88 @@ has notypes => (
 
 Readonly my %TYPE_SUFFIXES => (
 		perl => {
-			definite => [qw/ pl pm pod /],
-			possible => [qw/ t cgi /],
+			definite => [qw/ [.]pl$ [.]pm$ [.]pod$ [.]PL$ /],
+			possible => [qw/ [.]t$ [.]cgi$ /],
+			other_types => [qw/  /],
 			none     => 1,
 		},
 		php => {
-			definite => ['php'],
-			possible => [qw/ lib pkg /],
+			definite => [qw/ [.]php$ /],
+			possible => [qw/ [.]lib$ [.]pkg$ [.]t$ /],
+			other_types => [qw/  /],
+			none     => 0,
+		},
+		c => {
+			definite => [qw/ [.]c$ [.]cpp$ [.]c++$ [.]h$ [.]hpp$ [.]hxx$ [.]h++$ /],
+			possible => [qw/  /],
+			other_types => [qw/  /],
+			none     => 0,
 		},
 		html => {
-			definite => [qw/ html xhtml /],
-			possible => [qw/xml/],
+			definite => [qw/ [.]html$ [.]xhtml$ /],
+			possible => [qw/ [.]xml$ /],
+			other_types => [qw/  /],
+			none     => 0,
+		},
+		test => {
+			definite => [qw/ [.]t$ /],
+			possible => [qw/  /],
+			other_types => [qw/  /],
+			none     => 0,
+		},
+		svg => {
+			definite => [qw/ svg /],
+			possible => [qw/  /],
+			other_types => [qw/  /],
+			none     => 0,
 		},
 		css => {
-			definite => ['css'],
+			definite => [qw/ [.]css$ /],
+			possible => [qw/  /],
+			other_types => [qw/  /],
+			none     => 0,
 		},
 		javascript => {
-			definite => ['js'],
-			possible => [qw/ lib pkg /],
+			definite => [qw/ [.]js$ /],
+			possible => [qw/ [.]lib$ [.]pkg$ /],
+			other_types => [qw/  /],
+			none     => 0,
+		},
+		js => {
+			definite => [qw/  /],
+			possible => [qw/  /],
+			other_types => [qw/ javascript /],
+			none     => 0,
+		},
+		xml => {
+			definite => [qw/xml$ [.]xsd$ [.]xslt$ [.]dtd/],
+			possible => [qw/  /],
+			other_types => [qw/  /],
+			none     => 0,
 		},
 		web => {
-			other_types => [qw/ html css javascript /],
+			definite => [qw/  /],
+			possible => [qw/  /],
+			other_types => [qw/ html svg css javascript /],
+			none     => 0,
+		},
+		scripting => {
+			definite => [qw/  /],
+			possible => [qw/  /],
+			other_types => [qw/ perl php javascript /],
+			none     => 0,
+		},
+		package => {
+			definite => [qw/ [.]PL$ MANIFEST$ MANIFEST.SKIP$ Meta.yml$ README$ Changes$ /],
+			possible => [qw/  /],
+			other_types => [qw/  /],
+			none     => 0,
+		},
+		config => {
+			definite => [qw/  /],
+			possible => [qw/ rc$ tab$ [.]cfg$ [.]conf$ [.]config$  [.]yml$ /],
+			other_types => [qw/  /],
+			none     => 0,
 		},
 	);
 
@@ -74,11 +135,11 @@ sub file_ok {
 		return 0 if $file =~ /$ignore/;
 	}
 
-	for my $type (@{ $self->types }) {
+	for my $type (@{ $self->include_type }) {
 		return 0 if !$self->types_match($file, $type);
 	}
 
-	for my $type (@{ $self->notypes }) {
+	for my $type (@{ $self->exclude_type }) {
 		return 0 if $self->types_match($file, $type);
 	}
 
@@ -102,6 +163,26 @@ sub file_ok {
 sub types_match {
 	my ($self, $file, $type) = @_;
 
+	my $types = \%TYPE_SUFFIXES;
+
+	return 0 if !exists $types->{$type};
+
+	for my $suffix ( @{ $types->{$type}{definite} } ) {
+		return 3 if $file =~ /$suffix/;
+	}
+
+	for my $suffix ( @{ $types->{$type}{possible} } ) {
+		return 2 if $file =~ /$suffix/;
+	}
+
+	return 1 if $types->{$type}{none} && $file !~ m{ [^/] [.] [^/]+ $}xms;
+
+	for my $other ( @{ $types->{$type}{other_types} } ) {
+		my $match = $self->types_match($file, $other);
+		return $match if $match;
+	}
+
+	return 0;
 }
 
 1;

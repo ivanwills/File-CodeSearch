@@ -56,10 +56,10 @@ sub main {
 		'recurse|',
 		'file_contains=s',
 		'file_not_contains=s',
-		'file_include|n=s@',
-		'file_include_type=s',
-		'file_exclude|x=s@',
-		'file_exclude_type=s',
+		'file_include|include|n=s@',
+		'file_include_type|include_type|int=s@',
+		'file_exclude|exclude|x=s@',
+		'file_exclude_type|exclude_type|ext=s@',
 		'file_ignore=s',
 		'file_ignore_add|d=s',
 		'file_ignore_remove|r=s',
@@ -225,7 +225,7 @@ This documentation refers to cs version 0.1.
 
 =head1 SYNOPSIS
 
-   cs [option] re
+   cs [option] search
    cr [option] search replace
 
  OPTIONS:
@@ -261,14 +261,16 @@ This documentation refers to cs version 0.1.
                  Turns off recursing into subdirectories
    -n --file-include=string
                  Only include files mathcing the regex (Multiple)
-      --file-include-type=string
+      --int string
+      --include-type=string
                  Only include files the specified type (Mulitple)
-                 see perldoc File::CodeSearch::FileTypes available types
+                 see perldoc File::CodeSearch::Files available types
    -x --file-exclude=string
                  Don't include files mathcing the regex (Multiple)
-      --file-exclude-type=string
+      --ext string
+      --exclude-type=string
                  Don't include files the specified type (Mulitple)
-                 see perldoc File::CodeSearch::FileTypes available types
+                 see perldoc File::CodeSearch::Files available types
       --file-ignore=string
                  Replace the default ignore regex
    -d --file-ignore-add=string
