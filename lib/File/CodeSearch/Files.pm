@@ -19,7 +19,7 @@ our $VERSION     = version->new('0.0.1');
 has ignore => (
 	is  => 'rw',
 	isa => 'ArrayRef[Str]',
-	default => sub{[qw{.git .bzr .svn CVS logs?(?:$|/) cover_db .orig$ .copy$ ~\d*$ _build blib \\.sw[po]$}]},
+	default => sub{[qw{.git .bzr .svn CVS logs?(?:$|/) cover_db .orig$ .copy$ ~\d*$ _build blib \\.sw[po]$ [.]png$ [.]jpe?g$ [.]gif$ [.]swf$ [.]ttf$ }]},
 );
 has include => (
 	is  => 'rw',
@@ -77,6 +77,12 @@ Readonly my %TYPE_SUFFIXES => (
 			other_types => [qw/  /],
 			none     => 0,
 		},
+		sql => {
+			definite => [qw/ [.]sql$ [.]plsql$ /],
+			possible => [qw/  /],
+			other_types => [qw/  /],
+			none     => 0,
+		},
 		css => {
 			definite => [qw/ [.]css$ /],
 			possible => [qw/  /],
@@ -125,6 +131,12 @@ Readonly my %TYPE_SUFFIXES => (
 			other_types => [qw/  /],
 			none     => 0,
 		},
+		binary => {
+			definite => [qw/ [.]jpe?g$ [.]png$ [.]gif$ [.]bmp$ [.]swf$ [.]psd$ [.]exe$ /],
+			possible => [qw/  /],
+			other_types => [qw/  /],
+			none     => 0,
+		},
 	);
 
 
@@ -147,6 +159,7 @@ sub file_ok {
 		my $matches = 0;
 		for my $include (@{ $self->include }) {
 			$matches ||= $file =~ /$include/;
+			last if $matches;
 		}
 		return 0 if !$matches;
 	}
