@@ -39,6 +39,11 @@ has exclude_type => (
 	isa => 'ArrayRef[Str]',
 	default => sub{[]},
 );
+has symlinks => (
+	is  => 'rw',
+	isa => 'Bool',
+	default => 0,
+);
 
 Readonly my %TYPE_SUFFIXES => (
 		perl => {
@@ -142,6 +147,8 @@ Readonly my %TYPE_SUFFIXES => (
 
 sub file_ok {
 	my ($self, $file) = @_;
+
+	return 0 if !$self->symlinks && -l $file;
 
 	for my $ignore (@{ $self->ignore }) {
 		return 0 if $file =~ /$ignore/;
