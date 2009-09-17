@@ -288,6 +288,9 @@ This documentation refers to cs version 0.1.
                  Show the total number of lines & files matched
    -f --files-only
                  Show only the file names containg matches
+   -L --last=[function|class|sub]
+                 Show the last function, class or sub name found before the
+                 matched line.
   Other:
    -P --project=string
                  Use the specified projects default settings
