@@ -154,12 +154,20 @@ sub file_ok {
 		return 0 if $file =~ /$ignore/;
 	}
 
-	for my $type (@{ $self->include_type }) {
-		return 0 if !$self->types_match($file, $type);
-	}
+	if ( -f $file ) {
+		my $possible = 0;
+		for my $type (@{ $self->include_type }) {
+			my $match = $self->types_match($file, $type);
+			return 0 if !$match;
+			$possible-- if $match == 2;
+		}
 
-	for my $type (@{ $self->exclude_type }) {
-		return 0 if $self->types_match($file, $type);
+		for my $type (@{ $self->exclude_type }) {
+			my $match = $self->types_match($file, $type);
+			return 0 if $match && $match != 2;
+			$possible++ if $match == 2;
+		}
+		return 0 if $possible > 0;
 	}
 
 	if ($self->include) {
