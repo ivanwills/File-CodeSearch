@@ -156,18 +156,22 @@ sub file_ok {
 
 	if ( -f $file ) {
 		my $possible = 0;
+		my $matched = 0;
 		for my $type (@{ $self->include_type }) {
 			my $match = $self->types_match($file, $type);
 			return 0 if !$match;
 			$possible-- if $match == 2;
+			$matched++;
 		}
 
-		for my $type (@{ $self->exclude_type }) {
-			my $match = $self->types_match($file, $type);
-			return 0 if $match && $match != 2;
-			$possible++ if $match == 2;
+		if (!$matched) {
+			for my $type (@{ $self->exclude_type }) {
+				my $match = $self->types_match($file, $type);
+				return 0 if $match && $match != 2;
+				$possible++ if $match == 2;
+			}
+			return 0 if $possible > 0;
 		}
-		return 0 if $possible > 0;
 	}
 
 	if ($self->include) {
