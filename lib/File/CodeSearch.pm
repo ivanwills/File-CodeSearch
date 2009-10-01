@@ -152,12 +152,14 @@ sub search_file {
 		else {
 		}
 
+		last LINE if @{$self->regex->sub_not_matches} && $self->regex->sub_not_match;
+
 		next LINE if !$self->regex->match($line);
 
 		pop @before;
 		pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
 
-		if (defined $self->regex->sub_matches) {
+		if (@{$self->regex->sub_matches}) {
 			push @sub_matches, clone [ $line, $file, $fh->input_line_number, %args ];
 		}
 		else {
@@ -169,12 +171,12 @@ sub search_file {
 		$found = 1;
 	}
 
-	if ($self->regex->sub_matches && $self->regex->sub_match) {
+	if (@{$self->regex->sub_matches} && $self->regex->sub_match) {
 		for my $args (@sub_matches) {
 			$search->( @$args, codesearch => $self );
 		}
 	}
-	if (@after && ( ! $self->regex->sub_matches || $self->regex->sub_match ) ) {
+	if (@after && ( ! @{$self->regex->sub_matches} || $self->regex->sub_match ) ) {
 		pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
 		@before = ();
 		$search->(undef, $file, $fh->input_line_number, codesearch => $self, %args);

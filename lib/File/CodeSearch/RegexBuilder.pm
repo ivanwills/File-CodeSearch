@@ -49,8 +49,18 @@ has current_count => (
 has sub_matches => (
 	is  => 'rw',
 	isa => 'ArrayRef[Str]',
+	default => sub{[]},
 );
 has sub_match => (
+	is  => 'rw',
+	isa => 'Bool',
+);
+has sub_not_matches => (
+	is  => 'rw',
+	isa => 'ArrayRef[Str]',
+	default => sub{[]},
+);
+has sub_not_match => (
 	is  => 'rw',
 	isa => 'Bool',
 );
@@ -108,15 +118,23 @@ sub check_sub_matches {
 	my ($self, $line) = @_;
 	my $matches = $self->sub_matches;
 	my $match = 0;
+	my $not_matches = $self->sub_not_matches;
+	my $not_match = 0;
 
-	return if !$matches || !ref $matches;
 	return if $self->sub_match;
+	return if $self->sub_not_match;
 
-	for my $match (@$matches) {
-		$match ||= $line =~ /$match/;
+	for my $match_re (@$matches) {
+		$match ||= $line =~ /$match_re/;
 	}
 
 	$self->sub_match($match);
+
+	for my $not_match_re (@$not_matches) {
+		$not_match ||= $line =~ /$not_match_re/;
+	}
+
+	$self->sub_not_match($not_match);
 
 	return;
 }
@@ -158,6 +176,7 @@ sub reset_file {
 	}
 
 	$self->sub_match(0);
+	$self->sub_not_match(0);
 	$self->current_count(0);
 	$self->current_file($file);
 	$self->lasts({});
