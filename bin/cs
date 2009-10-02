@@ -47,7 +47,7 @@ sub main {
 		'sre_words|words|W',
 		'sre_ignore_case|ignore|i',
 		'sre_whole|whole|w',
-		'sre_sub_matches|contains|S=s@',
+		'sre_sub_matches|contains|c=s@',
 		'sre_sub_no_matches|not-contains|notcontains|S=s@',
 		'sre_last|last|L=s@',
 		'replace|r=s',
@@ -57,9 +57,9 @@ sub main {
 		'file_contains=s',
 		'file_not_contains=s',
 		'file_include|include|n=s@',
-		'file_include_type|include_type|int=s@',
+		'file_include_type|include_type|int|N=s@',
 		'file_exclude|exclude|x=s@',
-		'file_exclude_type|exclude_type|ext=s@',
+		'file_exclude_type|exclude_type|ext|X=s@',
 		'file_ignore=s',
 		'file_ignore_add|d=s',
 		'file_ignore_remove|r=s',
@@ -236,7 +236,7 @@ This documentation refers to cs version 0.1.
    -i --ignore-case
                  Turn off case sensitive searching
    -w --whole    Makes the match only whole words (ie wraps with (?<\W) & (?=\W))
-   -S --contains=re
+   -c --contains=re
                  Only show matches if the file also matches this sub regex.
                  This may be declared more that once and the results are ORed.
    -S --not-contains=re
@@ -261,13 +261,13 @@ This documentation refers to cs version 0.1.
                  Turns off recursing into subdirectories
    -n --file-include=string
                  Only include files mathcing the regex (Multiple)
-      --int string
+   -N --int=string
       --include-type=string
                  Only include files the specified type (Mulitple)
                  see perldoc File::CodeSearch::Files available types
    -x --file-exclude=string
                  Don't include files mathcing the regex (Multiple)
-      --ext string
+   -X --ext=string
       --exclude-type=string
                  Don't include files the specified type (Mulitple)
                  see perldoc File::CodeSearch::Files available types
