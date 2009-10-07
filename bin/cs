@@ -64,7 +64,7 @@ sub main {
 		'file_ignore_add|d=s',
 		'file_ignore_remove|r=s',
 		'out_suround|suround|s=n',
-		'out_suround_before|before|f=n',
+		'out_suround_before|before|b=n',
 		'out_suround_after|after|a=n',
 		'out_totals|totals|t',
 		'out_files_only|files-only|f',
@@ -280,7 +280,7 @@ This documentation refers to cs version 0.1.
   Output:
    -s --suround=int
                  Show int lines before and after a match
-   -f --before=int
+   -b --before=int
                  Show int lines before a match
    -a --after=int
                  Show int lines after a match
