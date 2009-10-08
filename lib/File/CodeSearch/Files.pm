@@ -96,7 +96,7 @@ Readonly my %TYPE_SUFFIXES => (
 		},
 		javascript => {
 			definite => [qw/ [.]js$ /],
-			possible => [qw/ [.]lib$ [.]pkg$ /],
+			possible => [qw/ /],
 			other_types => [qw/  /],
 			none     => 0,
 		},
