@@ -70,6 +70,7 @@ sub main {
 		'out_files_only|files-only|f',
 		'project|P=s',
 		'smart|m',
+		'execute|execute-files|E=s',
 		'config|C=s',
 		'verbose|v+',
 		'man',
@@ -151,6 +152,10 @@ sub main {
 		},
 		@{ $option{path} }
 	);
+
+	if ($option{execute}) {
+		system $option{execute} . ' ' . join ' ', sort keys %found;
+	}
 
 	return;
 }
@@ -292,6 +297,8 @@ This documentation refers to cs version 0.1.
                  Show the last function, class or sub name found before the
                  matched line.
   Other:
+   -E --execute=cmd
+                 Run this command with the found files as arguments
    -P --project=string
                  Use the specified projects default settings
    -C --config=file
