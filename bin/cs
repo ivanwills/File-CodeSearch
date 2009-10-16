@@ -100,10 +100,13 @@ sub main {
 	}
 
 	if ( $option{smart} && @ARGV > 1 ) {
-		$ARGV[0] =
-			  $ARGV[0] eq 'n'  ? 'function'
-			: $ARGV[0] eq 'ss' ? 'class'
-			:                    $ARGV[0];
+		my $start = shift @ARGV;
+		unshift @ARGV,
+			  $start eq 'n'  ? 'function'
+			: $start eq 'b'  ? 'sub'
+			: $start eq 'ss' ? 'class'
+			:                  $start;
+		$ARGV[1] = '(?:&\s*)?' . $ARGV[1] if $start eq 'n';
 	}
 
 	parse_config(\%option);
