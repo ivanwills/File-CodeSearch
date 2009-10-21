@@ -33,6 +33,10 @@ has words => (
 	is  => 'ro',
 	isa => 'Bool',
 );
+has ignore_case => (
+	is  => 'ro',
+	isa => 'Bool',
+);
 has files => (
 	is  => 'rw',
 	isa => 'HashRef',
@@ -93,6 +97,10 @@ sub make_regex {
 	}
 	else {
 		$re = join ' ', @{ $words };
+	}
+
+	if ($self->ignore_case) {
+		$re = "(?i:$re)";
 	}
 
 	return $self->regex(qr/$re/);
