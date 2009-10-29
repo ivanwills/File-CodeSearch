@@ -9,16 +9,29 @@ resources:
   license: http://dev.perl.org/licenses/
 build_requires:
   Test::More: 0
+  Test::NoWarnings: 0
 requires:
+  Carp: 0
+  Clone: 0
+  Config::General: 0
   File::Basename: 0
   File::Slurp: 0
   File::Spec: 0
   File::chdir: 0
+  IO::Handle: 0
+  List::MoreUtils: 0
+  List::Util: 0
+  Moose: 0
   Path::Class: 0.16
-  perl: 5.008
+  Pod::Usage: 0
+  Readonly: 0
+  Scalar::Util: 0
+  Term::ANSIColor: 0
+  perl: 5.006
   version: 0
+  warnings: 0
 configure_requires:
-  Module::Build: 0.34
+  Module::Build: 0.35
 provides:
   File::CodeSearch:
     file: lib/File/CodeSearch.pm
@@ -32,7 +45,7 @@ provides:
   File::CodeSearch::RegexBuilder:
     file: lib/File/CodeSearch/RegexBuilder.pm
     version: v0.0.1
-generated_by: Module::Build version 0.34
+generated_by: Module::Build version 0.35
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
