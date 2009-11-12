@@ -50,10 +50,11 @@ sub main {
 		'sre_sub_matches|contains|c=s@',
 		'sre_sub_no_matches|not-contains|notcontains|S=s@',
 		'sre_last|last|L=s@',
+		'sre_smart|smart|m',
 		'replace|r=s',
 		'path|p=s@',
 		'follow_symlinks|links|l',
-		'recurse|',
+		'recurse|R!',
 		'file_contains=s',
 		'file_not_contains=s',
 		'file_include|include|n=s@',
@@ -69,7 +70,6 @@ sub main {
 		'out_totals|totals|t',
 		'out_files_only|files-only|f',
 		'project|P=s',
-		'smart|m',
 		'execute|execute-files|E=s',
 		'config|C=s',
 		'verbose|v+',
@@ -97,16 +97,6 @@ sub main {
 		$option{out_suround_before} ||= $option{out_suround};
 		$option{out_suround_after}  ||= $option{out_suround};
 		delete $option{out_suround};
-	}
-
-	if ( $option{smart} && @ARGV > 1 ) {
-		my $start = shift @ARGV;
-		unshift @ARGV,
-			  $start eq 'n'  ? 'function'
-			: $start eq 'b'  ? 'sub'
-			: $start eq 'ss' ? 'class'
-			:                  $start;
-		$ARGV[1] = '(?:&\s*)?' . $ARGV[1] if $start eq 'n';
 	}
 
 	parse_config(\%option);

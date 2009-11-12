@@ -10,6 +10,7 @@ use Moose;
 use warnings;
 use version;
 use Carp;
+use List::MoreUtils qw/any/;
 use English qw/ -no_match_vars /;
 
 our $VERSION     = version->new('0.0.1');
@@ -77,11 +78,21 @@ has lasts => (
 	isa => 'HashRef[Str]',
 	default => sub{{}},
 );
+has smart => (
+	is  => 'rw',
+	isa => 'Bool',
+);
 
 sub make_regex {
 	my ($self) = @_;
 	my $re;
 	my $words = $self->re;
+
+	my $start = shift @{ $words };
+	if (!any {$start eq $_} qw/n b ss/) {
+		unshift @{ $words }, $start;
+		undef $start;
+	}
 
 	if ($self->whole) {
 		@{$words} = map { "(?<!\\w)$_(?!\\w)" } @{$words};
@@ -102,6 +113,13 @@ sub make_regex {
 	if ($self->ignore_case) {
 		$re = "(?i:$re)";
 	}
+
+	$re =
+		  $start eq 'n'  ? "function\s+$re|$re\s+=\s+function"
+		: $start eq 'b'  ? "sub\s+$re"
+		: $start eq 'ss' ? "class\s+$re"
+		:                  $re;
+
 
 	return $self->regex(qr/$re/);
 }
