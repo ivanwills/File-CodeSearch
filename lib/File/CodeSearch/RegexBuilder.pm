@@ -121,7 +121,6 @@ sub make_regex {
 		: $start eq 'ss'  ? "class\\s+$re"
 		:                   $re;
 
-
 	return $self->regex(qr/$re/);
 }
 
