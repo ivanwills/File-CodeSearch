@@ -91,7 +91,7 @@ sub main {
 
 	# do stuff here
 
-	$option{path} ||= ['.'];
+	$option{path} = $option{path} ? [ map {split /:/, $_} @{$option{path}} ] : ['.'];
 
 	if ($option{out_suround}) {
 		$option{out_suround_before} ||= $option{out_suround};
