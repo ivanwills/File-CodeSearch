@@ -248,6 +248,11 @@ This documentation refers to File::CodeSearch::Files version 0.1.
 
 Determines weather B<$file> should be searched
 
+=head2 C<types_match ($file, $type)>
+
+Checks that the file $file is of type $type and returns true if it is false
+otherwise
+
 =head1 DIAGNOSTICS
 
 =head1 CONFIGURATION AND ENVIRONMENT

@@ -218,7 +218,7 @@ This documentation refers to File::CodeSearch version 0.1.
 
 =head2 C<serach ( $search, @dirs )>
 
-Param: C<$search> - code ref - subroutine to be exicuted each time a match is found
+Param: C<$search> - code ref - subroutine to be executed each time a match is found
 
 Param: C<@dir> - paths - an array of the directory paths to search through
 
@@ -226,7 +226,7 @@ Description:
 
 =head2 C<serach_file ( $search, $file, $parent )>
 
-Param: C<$search> - code ref - subroutine to be exicuted each time a match is found
+Param: C<$search> - code ref - subroutine to be executed each time a match is found
 
 Param: C<$file> - file - A file to search through line by line
 
