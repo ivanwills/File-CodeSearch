@@ -115,10 +115,11 @@ sub make_regex {
 	}
 
 	$re =
-		  $start eq 'n'  ? "function\s+$re|$re\s+=\s+function"
-		: $start eq 'b'  ? "sub\s+$re"
-		: $start eq 'ss' ? "class\s+$re"
-		:                  $re;
+		  !defined $start ? $re
+		: $start eq 'n'   ? "function\\s+$re|$re\\s+=\\s+function"
+		: $start eq 'b'   ? "sub\\s+$re"
+		: $start eq 'ss'  ? "class\\s+$re"
+		:                   $re;
 
 
 	return $self->regex(qr/$re/);
