@@ -131,9 +131,9 @@ sub match {
 	$self->check_sub_matches($line);
 	$self->check_lasts($line);
 
-	my $match = $line =~ /$re/;
+	my ($match) = $line =~ /($re)/;
 
-	if ($match) {
+	if (defined $match) {
 		$self->current_count( $self->current_count + 1 );
 	}
 

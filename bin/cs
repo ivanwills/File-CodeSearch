@@ -69,6 +69,7 @@ sub main {
 		'out_suround_after|after|a=n',
 		'out_totals|totals|t',
 		'out_files_only|files-only|f',
+		'out_unique|unique|u!',
 		'project|P=s',
 		'execute|execute-files|E=s',
 		'config|C=s',
@@ -110,10 +111,11 @@ sub main {
 	warn Dumper {params('out',%option)}, \%option if $option{verbose};
 	my $cs = File::CodeSearch->new( regex => $hl, files => $files, params('out',%option) );
 
+	my %match;
 	my %found;
 	$cs->search( sub {
 			my ($line, $file, $line_no, %stuff ) = @_;
-			if ( !$found{$file} ) {
+			if ( !$found{$file} && !$option{out_unique}) {
 				print "${file}\n";
 			}
 			$found{$file}++;
@@ -135,7 +137,10 @@ sub main {
 					printf REVERSE . '%4i: ' . RESET . $line, $line_no - $count--;
 				}
 			}
-			if ($line) {
+			if ($option{out_unique}) {
+				$match{$hl->match($line)}++ if ($line);
+			}
+			elsif ($line) {
 				my $last = $hl->get_last_found();
 				if ($last) {
 					print BLUE . $last . RESET;
@@ -146,6 +151,10 @@ sub main {
 		@{ $option{path} }
 	);
 
+	if ($option{out_unique}) {
+		print join "\n", sort keys %match;
+		print "\n";
+	}
 	if ($option{execute}) {
 		system $option{execute} . ' ' . join ' ', sort keys %found;
 	}
@@ -289,6 +298,7 @@ This documentation refers to cs version 0.1.
    -L --last=[function|class|sub]
                  Show the last function, class or sub name found before the
                  matched line.
+   -u --unique   Show only unique matches (just the match not the whole line)
   Other:
    -E --execute=cmd
                  Run this command with the found files as arguments
