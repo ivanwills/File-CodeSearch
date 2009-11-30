@@ -11,6 +11,7 @@ use warnings;
 use version;
 use Getopt::Long;
 use Pod::Usage;
+use List::Util qw/sum/;
 use List::MoreUtils qw/uniq/;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
@@ -113,12 +114,19 @@ sub main {
 
 	my %match;
 	my %found;
+	my $last_file = undef;
 	$cs->search( sub {
 			my ($line, $file, $line_no, %stuff ) = @_;
-			if ( !$found{$file} && !$option{out_unique}) {
+			if ( !$found{$file} && !$option{out_unique} && !($option{out_files_only} && $option{out_totals}) ) {
 				print "${file}\n";
 			}
 			$found{$file}++;
+			if (!defined $last_file || $file ne $last_file) {
+				if ( defined $last_file && $option{out_files_only} && $option{out_totals} ) {
+					print "$last_file ($found{$last_file})\n";
+				}
+				$last_file = $file;
+			}
 			return if $option{out_files_only};
 
 			# check if there were lines after the last match and display them
@@ -157,6 +165,9 @@ sub main {
 	}
 	if ($option{execute}) {
 		system $option{execute} . ' ' . join ' ', sort keys %found;
+	}
+	if ($option{out_totals}) {
+		print "\nTotal matches " . (sum values %found) . "\n";
 	}
 
 	return;
