@@ -19,7 +19,7 @@ sub highlights {
 		after_nomatch  => '',
 	);
 	$hl->make_highlight_re;
-	is($hl->highlight('this test string'), 'this test string', 'no extra text gives back string');
+	is($hl->highlight('this test string'), 'this test string' . RESET . "\\N\n", 'no extra text gives back string');
 
 	$hl = File::CodeSearch::Highlighter->new(
 		re             => ['test'],
@@ -28,7 +28,7 @@ sub highlights {
 		before_nomatch => '*',
 		after_nomatch  => '#',
 	);
-	is($hl->highlight('this test string'), '*this #-test=* string#', 'the appropriate higlights are put in');
+	is($hl->highlight('this test string'), '*this #-test=* string#' . RESET . "\\N\n", 'the appropriate higlights are put in');
 
 	$hl = File::CodeSearch::Highlighter->new(
 		re             => ['test'],
@@ -37,7 +37,7 @@ sub highlights {
 		before_nomatch => '*',
 		after_nomatch  => '#',
 	);
-	is($hl->highlight('this test string with test again'), '*this #-test=* string with #-test=* again#', 'the appropriate higlights are put in');
+	is($hl->highlight('this test string with test again'), '*this #-test=* string with #-test=* again#' . RESET . "\\N\n", 'the appropriate higlights are put in');
 }
 
 sub regexes {

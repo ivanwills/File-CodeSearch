@@ -40,6 +40,11 @@ has after_nomatch => (
 	isa     => 'Str',
 	default => RESET,
 );
+has limit => (
+	is      => 'rw',
+	isa     => 'Int',
+	default => '255',
+);
 
 sub make_highlight_re {
 	my ($self) = @_;
@@ -63,9 +68,20 @@ sub highlight {
 			$out .= $self->before_match . $parts[$i] . $self->after_match;
 		}
 		else {
-			$out .= $self->before_nomatch . $parts[$i] . $self->after_nomatch;
+			my $part = $parts[$i];
+			if (length $string > $self->limit) {
+				my $chars = int $self->limit / ( @parts - 1 ) / 2 / 2 - 5;
+				if ($chars * 2 < length $parts[$i]) {
+					my ($front) = $parts[$i] =~ /\A (.{$chars}) /xms;
+					my ($back)  = $parts[$i] =~ / (.{$chars}) \Z/xms;
+					$part = $front . RESET . RED . ON_BLACK  . ' ... ' . RESET . $self->before_nomatch . $back;
+				}
+			}
+			$out .= $self->before_nomatch . $part . $self->after_nomatch;
 		}
 	}
+
+	$out .= RESET . "\\N\n" if $string !~ /\n\Z/xms;
 
 	return $out;
 }
