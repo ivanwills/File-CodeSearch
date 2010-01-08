@@ -13,6 +13,7 @@ use Readonly;
 use Data::Dumper qw/Dumper/;
 use Carp;
 use English qw/ -no_match_vars /;
+use Path::Class qw/file dir/;
 
 our $VERSION     = version->new('0.0.1');
 
@@ -43,6 +44,11 @@ has symlinks => (
 	is  => 'rw',
 	isa => 'Bool',
 	default => 0,
+);
+has links => (
+	is  => 'rw',
+	isa => 'HashRef',
+	default => sub {{}},
 );
 
 Readonly my %TYPE_SUFFIXES => (
@@ -149,6 +155,13 @@ sub file_ok {
 	my ($self, $file) = @_;
 
 	return 0 if !$self->symlinks && -l $file;
+
+	if ( -l $file ) {
+		my $real = -f $file ? file($file) : dir($file);
+		$real = $real->absolute->resolve;
+		$self->links->{$real} ||= 0;
+		return 0 if $self->links->{$real}++;
+	}
 
 	for my $ignore (@{ $self->ignore }) {
 		return 0 if $file =~ /$ignore/;
