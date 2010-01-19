@@ -74,14 +74,18 @@ sub highlight {
 				if ($chars * 2 < length $parts[$i]) {
 					my ($front) = $parts[$i] =~ /\A (.{$chars}) /xms;
 					my ($back)  = $parts[$i] =~ / (.{$chars}) \Z/xms;
-					$part = $front . RESET . RED . ON_BLACK  . ' ... ' . RESET . $self->before_nomatch . $back;
+					warn "Front missing!\n" if !$front;
+					warn "Back missing!\n" if !$back;
+					$part = ($front || '') . RESET . RED . ON_BLACK  . ' ... ' . RESET . $self->before_nomatch . ($back || '');
 				}
 			}
 			$out .= $self->before_nomatch . $part . $self->after_nomatch;
+			$out .= "\n" if $out !~ /\n/xms;
 		}
 	}
 
-	$out .= RESET . "\\N\n" if $string !~ /\n\Z/xms;
+	$out .= RESET;
+	$out .= "\\N\n" if $string !~ /\n/xms;
 
 	return $out;
 }
