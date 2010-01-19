@@ -52,6 +52,17 @@ has suround_after => (
 	isa     => 'Int',
 	default => 0,
 );
+has limit => (
+	is      => 'rw',
+	isa     => 'Int',
+	default => 0,
+);
+has found => (
+	is      => 'ro',
+	isa     => 'Int',
+	default => 0,
+	writer  => '_found',
+);
 
 sub search {
 	my ($self, $search, @dirs) = @_;
@@ -88,6 +99,7 @@ sub _find {
 	FILE:
 	for my $file (@files) {
 		next FILE if !$self->files->file_ok("$dir$file");
+		last FILE if $self->limit && $self->found >= $self->limit;
 
 		if (-l "$dir$file") {
 			next FILE if !$self->files->symlinks;
@@ -172,7 +184,9 @@ sub search_file {
 			push @sub_matches, clone [ $line, $file, $fh->input_line_number, %args ];
 		}
 		else {
+			$self->_found( $self->found + 1 );
 			$search->($line, $file, $fh->input_line_number, codesearch => $self, %args);
+			last LINE if $self->limit && $self->found >= $self->limit;
 		}
 
 		$args{last_line_no} = $fh->input_line_number;
@@ -181,13 +195,17 @@ sub search_file {
 	}
 
 	if (@{$self->regex->sub_matches} && $self->regex->sub_match) {
+		SUB:
 		for my $args (@sub_matches) {
+			$self->_found( $self->found + 1 );
 			$search->( @$args, codesearch => $self );
+			last SUB if $self->limit && $self->found >= $self->limit;
 		}
 	}
 	if (@after && ( ! @{$self->regex->sub_matches} || $self->regex->sub_match ) ) {
 		pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
 		@before = ();
+		$self->_found( $self->found + 1 );
 		$search->(undef, $file, $fh->input_line_number, codesearch => $self, %args);
 	}
 

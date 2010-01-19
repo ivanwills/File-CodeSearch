@@ -80,7 +80,6 @@ sub highlight {
 				}
 			}
 			$out .= $self->before_nomatch . $part . $self->after_nomatch;
-			$out .= "\n" if $out !~ /\n/xms;
 		}
 	}
 
