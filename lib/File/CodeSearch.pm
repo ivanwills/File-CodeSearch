@@ -89,6 +89,15 @@ sub _find {
 	for my $file (@files) {
 		next FILE if !$self->files->file_ok("$dir$file");
 
+		if (-l "$dir$file") {
+			next FILE if !$self->files->symlinks;
+
+			my $real = -f "$dir$file" ? file("$dir$file") : dir("$dir$file");
+			$real = $real->absolute->resolve;
+			$self->links->{$real} ||= 0;
+
+			next FILE if $self->links->{$real}++;
+		}
 		if (-d "$dir$file") {
 			if ($self->recurse) {
 				$self->_find( $search, "$dir$file", $parent || $dir );

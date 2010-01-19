@@ -154,15 +154,6 @@ Readonly my %TYPE_SUFFIXES => (
 sub file_ok {
 	my ($self, $file) = @_;
 
-	return 0 if !$self->symlinks && -l $file;
-
-	if ( -l $file ) {
-		my $real = -f $file ? file($file) : dir($file);
-		$real = $real->absolute->resolve;
-		$self->links->{$real} ||= 0;
-		return 0 if $self->links->{$real}++;
-	}
-
 	for my $ignore (@{ $self->ignore }) {
 		return 0 if $file =~ /$ignore/;
 	}
