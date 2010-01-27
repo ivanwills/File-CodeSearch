@@ -14,6 +14,7 @@ use IO::Handle;
 use File::chdir;
 use File::CodeSearch::Files;
 use Clone qw/clone/;
+use Path::Class qw/file dir/;
 
 our $VERSION     = version->new('0.0.1');
 
@@ -56,6 +57,11 @@ has limit => (
 	is      => 'rw',
 	isa     => 'Int',
 	default => 0,
+);
+has links => (
+	is      => 'rw',
+	isa     => 'HashRef',
+	default => sub{{}},
 );
 has found => (
 	is      => 'ro',
