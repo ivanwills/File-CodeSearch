@@ -13,7 +13,6 @@ use Readonly;
 use Data::Dumper qw/Dumper/;
 use Carp;
 use English qw/ -no_match_vars /;
-use Path::Class qw/file dir/;
 
 our $VERSION     = version->new('0.0.1');
 
