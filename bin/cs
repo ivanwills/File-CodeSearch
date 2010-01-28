@@ -113,18 +113,25 @@ sub main {
 	warn Dumper {params('out',%option)}, \%option if $option{verbose};
 	my $cs = File::CodeSearch->new( regex => $hl, files => $files, params('out',%option) );
 
+	my $fh    = \*STDOUT;
+	my $lines = 80;
+	if ($option{sre_smart}) {
+		($lines) = split /\s+/, `stty size` || 40;
+	}
+
 	my %match;
 	my %found;
 	my $last_file = undef;
+	my $out = '';
 	$cs->search( sub {
 			my ($line, $file, $line_no, %stuff ) = @_;
 			if ( !$found{$file} && !$option{out_unique} && !($option{out_files_only} && $option{out_totals}) ) {
-				print "${file}\n";
+				$out .= "${file}\n";
 			}
 			$found{$file}++;
 			if (!defined $last_file || $file ne $last_file) {
 				if ( defined $last_file && $option{out_files_only} && $option{out_totals} ) {
-					print "$last_file ($found{$last_file})\n";
+					$out .= "$last_file ($found{$last_file})\n";
 				}
 				$last_file = $file;
 			}
@@ -135,7 +142,7 @@ sub main {
 				my @after = @{ $stuff{after} };
 				my $count = $stuff{last_line_no} + 1;
 				for my $line ( @after ) {
-					printf REVERSE . '%4i: ' . RESET . $line, $count++;
+					$out .= sprintf REVERSE . '%4i: ' . RESET . $line, $count++;
 				}
 			}
 			# check if there were lines before this match and display them
@@ -143,7 +150,7 @@ sub main {
 				my @before = @{ $stuff{before} };
 				my $count = @before;
 				for my $line ( @before ) {
-					printf REVERSE . '%4i: ' . RESET . $line, $line_no - $count--;
+					$out .= sprintf REVERSE . '%4i: ' . RESET . $line, $line_no - $count--;
 				}
 			}
 			if ($option{out_unique}) {
@@ -152,13 +159,31 @@ sub main {
 			elsif ($line) {
 				my $last = $hl->get_last_found();
 				if ($last) {
-					print BLUE . $last . RESET;
+					$out .= BLUE . $last . RESET;
 				}
-				printf REVERSE . BOLD . ON_RED . '%4i: ' . RESET . '%s', $line_no, $hl->highlight($line);
+				$out .= sprintf REVERSE . BOLD . ON_RED . '%4i: ' . RESET . '%s', $line_no, $hl->highlight($line);
+			}
+
+			if ( $out && ( !$option{sre_smart} || (my @tmp = split /\n/, $out) >= $lines) ) {
+				if ($option{sre_smart}) {
+					open my $tmp, '|-', 'less -R';
+					$fh = $tmp || $fh;
+				}
+				print {$fh} $out;
+				$out = '';
+				$option{sre_smart} = 0;
 			}
 		},
 		@{ $option{path} }
 	);
+	if ($out) {
+		if ($option{sre_smart}) {
+			print $out;
+		}
+		else {
+			print {$fh} $out;
+		}
+	}
 
 	if ($option{out_unique}) {
 		print join "\n", sort keys %match;
