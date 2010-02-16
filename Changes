@@ -1,4 +1,19 @@
 Revision history for File-CodeSearch
 
-v0.0.1    2009-08-17
-	Initial Release
+0.1.0   2010-02-16
+        Added the ability to send the output through less if more than a screen worth is displayed (in smart mode)
+        Removed unused module
+        Fixed opperations with symbolic links
+        Added the ability to limit the found results
+        Better checking of new lines etc
+        Moved link checking out of Files so that directory links can be checked for revisits correctly
+        Added limiting displaying of very long line (>255 characters)
+        Fixed not searching into symlink when asked
+        Added counting matches perl file when files_only and totals are specified as well as actually specifing the total number of matches
+        Added the ability to return unique results of a search
+        Removed excess line
+        Fixed warning when $start is not defined
+        Added the ability to split colon (:) speerated paths
+
+v0.0.1  2009-08-17
+        Initial Release
