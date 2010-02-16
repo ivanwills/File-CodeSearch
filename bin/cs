@@ -22,7 +22,7 @@ use File::CodeSearch::Highlighter;
 use File::CodeSearch::Files;
 use Config::General;
 
-our $VERSION = version->new('0.0.1');
+our $VERSION = version->new('0.1.0');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 
 my %option = (
@@ -265,7 +265,7 @@ cs - Search & replace text (with some intelligence)
 
 =head1 VERSION
 
-This documentation refers to cs version 0.1.
+This documentation refers to cs version 0.1.0.
 
 =head1 SYNOPSIS
 

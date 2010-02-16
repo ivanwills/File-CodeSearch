@@ -1,15 +1,31 @@
 ---
-name: File-CodeSearch
-version: v0.0.1
+abstract: 'Search file contents in code repositories'
 author:
   - 'Ivan Wills <ivan.wills@gmail.com>'
-abstract: Search file contents in code repositories
-license: perl
-resources:
-  license: http://dev.perl.org/licenses/
 build_requires:
   Test::More: 0
   Test::NoWarnings: 0
+configure_requires:
+  Module::Build: 0.36
+generated_by: 'Module::Build version 0.3603'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: File-CodeSearch
+provides:
+  File::CodeSearch:
+    file: lib/File/CodeSearch.pm
+    version: v0.1.0
+  File::CodeSearch::Files:
+    file: lib/File/CodeSearch/Files.pm
+    version: v0.1.0
+  File::CodeSearch::Highlighter:
+    file: lib/File/CodeSearch/Highlighter.pm
+    version: v0.1.0
+  File::CodeSearch::RegexBuilder:
+    file: lib/File/CodeSearch/RegexBuilder.pm
+    version: v0.1.0
 requires:
   Carp: 0
   Clone: 0
@@ -30,22 +46,6 @@ requires:
   perl: 5.006
   version: 0
   warnings: 0
-configure_requires:
-  Module::Build: 0.35
-provides:
-  File::CodeSearch:
-    file: lib/File/CodeSearch.pm
-    version: v0.0.1
-  File::CodeSearch::Files:
-    file: lib/File/CodeSearch/Files.pm
-    version: v0.0.1
-  File::CodeSearch::Highlighter:
-    file: lib/File/CodeSearch/Highlighter.pm
-    version: v0.0.1
-  File::CodeSearch::RegexBuilder:
-    file: lib/File/CodeSearch/RegexBuilder.pm
-    version: v0.0.1
-generated_by: Module::Build version 0.35
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
+resources:
+  license: http://dev.perl.org/licenses/
+version: v0.1.0

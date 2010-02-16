@@ -14,7 +14,7 @@ use Data::Dumper qw/Dumper/;
 use Carp;
 use English qw/ -no_match_vars /;
 
-our $VERSION     = version->new('0.0.1');
+our $VERSION     = version->new('0.1.0');
 
 has ignore => (
 	is  => 'rw',
@@ -230,7 +230,7 @@ File::CodeSearch::Files - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Files version 0.1.
+This documentation refers to File::CodeSearch::Files version 0.1.0.
 
 
 =head1 SYNOPSIS
