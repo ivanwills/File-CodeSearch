@@ -24,6 +24,11 @@ use Config::General;
 
 our $VERSION = version->new('0.0.1');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
+my $REVERSE = REVERSE;
+my $RESET   = RESET;
+my $BLUE    = BLUE;
+my $BOLD    = BOLD;
+my $ON_RED  = ON_RED;
 
 my %option = (
 	verbose => 0,
@@ -75,6 +80,7 @@ sub main {
 		'project|P=s',
 		'execute|execute-files|E=s',
 		'config|C=s',
+		'bw|g',
 		'verbose|v+',
 		'man',
 		'help',
@@ -110,6 +116,17 @@ sub main {
 	warn Dumper { params('sre', %option), re => \@ARGV } if $option{verbose};
 	my $hl = File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
 
+	if ($option{bw}) {
+		$REVERSE = '';
+		$RESET   = '';
+		$BLUE    = '';
+		$BOLD    = '';
+		$ON_RED  = '';
+		$hl->before_match('');
+		$hl->after_match('');
+		$hl->before_nomatch('');
+		$hl->after_nomatch('');
+	}
 	warn Dumper {params('out',%option)}, \%option if $option{verbose};
 	my $cs = File::CodeSearch->new( regex => $hl, files => $files, params('out',%option) );
 
@@ -123,6 +140,9 @@ sub main {
 	my %found;
 	my $last_file = undef;
 	my $out = '';
+	if (!$option{sre_smart}) {
+		$option{bw} = 1;
+	}
 	$cs->search( sub {
 			my ($line, $file, $line_no, %stuff ) = @_;
 			if ( !$found{$file} && !$option{out_unique} && !($option{out_files_only} && $option{out_totals}) ) {
@@ -142,7 +162,7 @@ sub main {
 				my @after = @{ $stuff{after} };
 				my $count = $stuff{last_line_no} + 1;
 				for my $line ( @after ) {
-					$out .= sprintf REVERSE . '%4i: ' . RESET . $line, $count++;
+					$out .= sprintf $REVERSE . '%4i: ' . $RESET . $line, $count++;
 				}
 			}
 			# check if there were lines before this match and display them
@@ -150,7 +170,7 @@ sub main {
 				my @before = @{ $stuff{before} };
 				my $count = @before;
 				for my $line ( @before ) {
-					$out .= sprintf REVERSE . '%4i: ' . RESET . $line, $line_no - $count--;
+					$out .= sprintf $REVERSE . '%4i: ' . $RESET . $line, $line_no - $count--;
 				}
 			}
 			if ($option{out_unique}) {
@@ -159,11 +179,15 @@ sub main {
 			elsif ($line) {
 				my $last = $hl->get_last_found();
 				if ($last) {
-					$out .= BLUE . $last . RESET;
+					$out .= $BLUE . $last . $RESET;
 				}
-				$out .= sprintf REVERSE . BOLD . ON_RED . '%4i: ' . RESET . '%s', $line_no, $hl->highlight($line);
+				$out .= sprintf $REVERSE . $BOLD . $ON_RED . '%4i: ' . $RESET . '%s', $line_no, $hl->highlight($line);
 			}
 
+			if ($option{bw}) {
+				print {$fh} $out;
+				$out = '';
+			}
 			if ( $out && ( !$option{sre_smart} || (my @tmp = split /\n/, $out) >= $lines) ) {
 				if ($option{sre_smart}) {
 					open my $tmp, '|-', 'less -R';
