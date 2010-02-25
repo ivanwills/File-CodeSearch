@@ -89,7 +89,7 @@ sub make_regex {
 	my $words = $self->re;
 
 	my $start = shift @{ $words };
-	if (!any {$start eq $_} qw/n b ss/) {
+	if ($start && !any {$start eq $_} qw/n b ss/) {
 		unshift @{ $words }, $start;
 		undef $start;
 	}
