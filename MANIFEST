@@ -11,6 +11,7 @@ lib/File/CodeSearch.pm
 lib/File/CodeSearch/Files.pm
 lib/File/CodeSearch/Highlighter.pm
 lib/File/CodeSearch/RegexBuilder.pm
+lib/File/CodeSearch/Replacer.pm
 t/00-load.t
 t/critic.t
 t/kwalitee.t

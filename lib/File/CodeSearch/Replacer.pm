@@ -1,4 +1,4 @@
-package File::CodeSearch::Highlighter;
+package File::CodeSearch::Replacer;
 
 # Created on: 2009-08-07 18:42:16
 # Create by:  Ivan Wills
@@ -15,50 +15,13 @@ use Term::ANSIColor qw/:constants/;
 
 our $VERSION     = version->new('0.1.0');
 
-extends 'File::CodeSearch::RegexBuilder';
+extends 'File::CodeSearch::Highlighter';
 
-has highlight_re => (
+has replace => (
 	is  => 'rw',
 );
-has before_match => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => BOLD . RED,
-);
-has after_match => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => RESET,
-);
-has before_nomatch => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => CYAN,
-);
-has after_nomatch => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => RESET,
-);
-has before_snip => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => RESET . RED . ON_BLACK,
-);
-has after_snip => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => RESET,
-);
-has limit => (
-	is      => 'rw',
-	isa     => 'Int',
-	default => '255',
-);
-has snip => (
-	is      => 'rw',
-	isa     => 'Bool',
-	default => 1,
+has level => (
+	is => 'rw',
 );
 
 sub make_highlight_re {
@@ -72,36 +35,49 @@ sub make_highlight_re {
 }
 
 sub highlight {
+die;
 	my ($self, $string) = @_;
 	my $re  = $self->highlight_re || $self->make_highlight_re;
-	my $out = '';
+	my $replace_re = $self->highlight;;
+	my $replace = $self->replace;
+	my $before = '';
+	my $after = '';
+	my $changed = '';
 
 	my @parts = split /($re)/, $string;
 
 	for my $i ( 0 .. @parts - 1 ) {
 		if ( $i % 2 ) {
-			$out .= $self->before_match . $parts[$i] . $self->after_match;
+			$before .= $self->before_match . $parts[$i] . $self->after_match;
+			my $part = $parts[$i];
+			$part =~ s/$replace_re/$replace/;
+			$after   .= $self->before_match . $part . $self->after_match;
+			$changed .= $part;
 		}
 		else {
-			my $part = $parts[$i];
-			if ($self->snip && length $string > $self->limit) {
-				my $chars = int $self->limit / ( @parts - 1 ) / 2 / 2 - 5;
-				if ($chars * 2 < length $parts[$i]) {
-					my ($front) = $parts[$i] =~ /\A (.{$chars}) /xms;
-					my ($back)  = $parts[$i] =~ / (.{$chars}) \Z/xms;
-					warn "Front missing! (chars = $chars, length = ".(length $parts[$i]).")\n" if !$front;
-					warn "Back missing! (chars = $chars, length = ".(length $parts[$i]).")\n" if !$back;
-					$part = ($front || '') . $self->before_snip  . ' ... ' . $self->after_snip . $self->before_nomatch . ($back || '');
-				}
-			}
-			$out .= $self->before_nomatch . $part . $self->after_nomatch;
+			$before  .= $self->before_nomatch . $parts[$i] . $self->after_nomatch;
+			$after   .= $self->before_nomatch . $parts[$i] . $self->after_nomatch;
+			$changed .= $parts[$i];
 		}
 	}
 
-	$out .= RESET;
-	$out .= "\\N\n" if $string !~ /\n/xms;
+	if ($string !~ /\n/xms) {
+		$before .= "\\N\n";
+		$after  .= "\\N\n";
+	}
 
-	return $out;
+	print "Change: $before\n";
+	print "To:     $after\n";
+	my $ans = prompt(-prompt => "[yna]", -default => 'n');
+
+	if ($ans eq 'a') {
+		$self->all(1);
+	}
+	elsif ($ans ne 'n') {
+		die "Save changes?";
+	}
+
+	return '';
 }
 
 1;
@@ -110,16 +86,16 @@ __END__
 
 =head1 NAME
 
-File::CodeSearch::Highlighter - <One-line description of module's purpose>
+File::CodeSearch::Replacer - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Highlighter version 0.1.0.
+This documentation refers to File::CodeSearch::Replacer version 0.1.0.
 
 
 =head1 SYNOPSIS
 
-   use File::CodeSearch::Highlighter;
+   use File::CodeSearch::Replacer;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as
@@ -134,7 +110,7 @@ This documentation refers to File::CodeSearch::Highlighter version 0.1.0.
 
 Param: C<$search> - type (detail) - description
 
-Return: File::CodeSearch::Highlighter -
+Return: File::CodeSearch::Replacer -
 
 Description:
 

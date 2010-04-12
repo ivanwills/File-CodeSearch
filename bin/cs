@@ -9,6 +9,7 @@
 use strict;
 use warnings;
 use version;
+use Carp qw/carp croak confess cluck/;
 use Getopt::Long;
 use Pod::Usage;
 use List::Util qw/sum/;
@@ -18,7 +19,7 @@ use English qw/ -no_match_vars /;
 use FindBin qw/$Bin/;
 use Term::ANSIColor qw/:constants/;
 use File::CodeSearch;
-use File::CodeSearch::Highlighter;
+use File::CodeSearch::Replacer;
 use File::CodeSearch::Files;
 use Config::General;
 
@@ -114,7 +115,9 @@ sub main {
 	my $files = File::CodeSearch::Files->new(params('file', %option));
 
 	warn Dumper { params('sre', %option), re => \@ARGV } if $option{verbose};
-	my $hl = File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
+	my $hl =
+		$option{replace} ? File::CodeSearch::Replacer->new( params('sre', %option), re => \@ARGV, replace => $option{replace} )
+		:                  File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
 
 	if ($option{bw}) {
 		$REVERSE = '';
@@ -143,8 +146,7 @@ sub main {
 		$option{bw} = 1;
 	}
 	$cs->search(
-		searcher(\%found, \$out, \%match, $hl, $lines, \$fh),
-			my ($line, $file, $line_no, %stuff ) = @_;
+		searcher(\%found, \$out, \%match, $hl, $lines, $fh),
 		@{ $option{path} }
 	);
 	if ($out) {
@@ -176,6 +178,8 @@ sub searcher {
 
 	return sub {
 		my ($line, $file, $line_no, %stuff ) = @_;
+		confess "No line number provided!\n" if !defined $line_no;
+
 		if ( !$found->{$file} && !$option{out_unique} && !($option{out_files_only} && $option{out_totals}) ) {
 			$$out .= "${file}\n";
 		}
@@ -193,7 +197,7 @@ sub searcher {
 			my @after = @{ $stuff{after} };
 			my $count = $stuff{last_line_no} + 1;
 			for my $line ( @after ) {
-				$$out .= sprintf $REVERSE . '%4i: ' . $RESET . $line, $count++;
+				$$out .= sprintf $REVERSE . '%4i: ' . $RESET . '%s', $count++, $line;
 			}
 		}
 		# check if there were lines before this match and display them
@@ -201,6 +205,7 @@ sub searcher {
 			my @before = @{ $stuff{before} };
 			my $count = @before;
 			for my $line ( @before ) {
+				confess Dumper(\%stuff) . "Bad line" if !defined $line || !defined $count;
 				$$out .= sprintf $REVERSE . '%4i: ' . $RESET . $line, $line_no - $count--;
 			}
 		}
@@ -208,6 +213,7 @@ sub searcher {
 			$match->{$hl->match($line)}++ if ($line);
 		}
 		elsif ($line) {
+			confess "No line provided!\n" if !defined $line;
 			my $last = $hl->get_last_found();
 			if ($last) {
 				$$out .= $BLUE . $last . $RESET;
@@ -216,15 +222,15 @@ sub searcher {
 		}
 
 		if ($option{bw}) {
-			print {$fh} $out;
-			$out = '';
+			print {$fh} $$out;
+			$$out = '';
 		}
 		if ( $$out && ( !$option{sre_smart} || (my @tmp = split /\n/, $$out) >= $lines) ) {
 			if ($option{sre_smart}) {
 				open my $tmp, '|-', 'less -R';
-				$$fh = $tmp || $$fh;
+				$fh = $tmp || $fh;
 			}
-			print {$$fh} $$out;
+			print {$fh} $$out;
 			$$out = '';
 			$option{sre_smart} = 0;
 		}

@@ -208,6 +208,7 @@ sub search_file {
 			last SUB if $self->limit && $self->found >= $self->limit;
 		}
 	}
+	# check if the line is an after match
 	if (@after && ( ! @{$self->regex->sub_matches} || $self->regex->sub_match ) ) {
 		pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
 		@before = ();
