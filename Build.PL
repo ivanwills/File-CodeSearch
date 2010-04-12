@@ -36,6 +36,12 @@ my $builder = Module::Build->new(
 	add_to_cleanup     => [ 'File-CodeSearch-*' ],
 	create_makefile_pl => 'traditional',
 	create_license     => 1,
+	meta_merge => {
+		resources => {
+			repository => 'git://github.com/ivanwills/File-CodeSearch.git',
+			bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-CodeSearch',
+		},
+	},
 );
 
 $builder->create_build_script();
