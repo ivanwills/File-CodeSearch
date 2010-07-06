@@ -100,6 +100,7 @@ sub highlight {
 
 	$out .= RESET;
 	$out .= "\\N\n" if $string !~ /\n/xms;
+	$out .= "\n" if $out !~ /\n/xms;
 
 	return $out;
 }
