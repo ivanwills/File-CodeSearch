@@ -89,8 +89,6 @@ sub highlight {
 				if ($chars * 2 < length $parts[$i]) {
 					my ($front) = $parts[$i] =~ /\A (.{$chars}) /xms;
 					my ($back)  = $parts[$i] =~ / (.{$chars}) \Z/xms;
-					warn "Front missing! (chars = $chars, length = ".(length $parts[$i]).")\n" if !$front;
-					warn "Back missing! (chars = $chars, length = ".(length $parts[$i]).")\n" if !$back;
 					$part = ($front || '') . $self->before_snip  . ' ... ' . $self->after_snip . $self->before_nomatch . ($back || '');
 				}
 			}
