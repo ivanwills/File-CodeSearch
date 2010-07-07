@@ -26,6 +26,7 @@ my $builder = Module::Build->new(
 		'Readonly'        => 0,
 		'Scalar::Util'    => 0,
 		'Term::ANSIColor' => 0,
+		'Term::Size::Any' => 0,
 		'version'         => 0,
 		'warnings'        => 0,
 	},

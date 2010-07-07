@@ -12,6 +12,7 @@ use version;
 use Carp;
 use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
+use Term::Size::Any;
 
 our $VERSION     = version->new('0.1.0');
 
@@ -53,7 +54,10 @@ has after_snip => (
 has limit => (
 	is      => 'rw',
 	isa     => 'Int',
-	default => '255',
+	default => sub {
+		my ($cols, $rows) = Term::Size::Any::chars;
+		return $cols || 212;
+	}
 );
 has snip => (
 	is      => 'rw',
@@ -78,6 +82,33 @@ sub highlight {
 
 	my @parts = split /($re)/, $string;
 
+	my $match_length = 0;
+	for my $i ( 0 .. @parts - 1 ) {
+		if ( $i % 2 ) {
+			$match_length += length $parts[$i];
+		}
+	}
+	# 5 is the magic number of characters used to show the line number
+	my $limit = $self->limit - $match_length - 5;
+	my $joins = @parts - ( @parts - 1 ) / 2;
+	my $chars = ( $limit / $joins ) / 2 - 2;
+	my $chars_front = int $chars;
+	my $chars_back  = int $chars;
+	my $total = $joins * ( $chars_front + $chars_back + 3 ) + 1;
+	if (length $parts[-1] < $chars * 2) {
+		$total -= $chars_front + $chars_back - length $parts[-1];
+	}
+	#warn "Big\n" if $limit - $total > $joins * 2;
+	my $inc = $limit - $total > $joins * 2 ? 1 : 0;
+	$chars += $inc;
+	$chars_front = int $chars;
+	$chars_back  = int $chars;
+	$total = $joins * ( $chars_front + $chars_back + 3 ) + 1;
+	if (length $parts[-1] < $chars * 2) {
+		$total -= $chars_front + $chars_back - length $parts[-1];
+	}
+	#warn "match = $match_length\nchars = $chars\nlimit = $limit ($total)\nparts = " . (scalar @parts) . "\njoins = $joins\n";
+
 	for my $i ( 0 .. @parts - 1 ) {
 		if ( $i % 2 ) {
 			$out .= $self->before_match . $parts[$i] . $self->after_match;
@@ -85,11 +116,21 @@ sub highlight {
 		else {
 			my $part = $parts[$i];
 			if ($self->snip && length $string > $self->limit) {
-				my $chars = int $self->limit / ( @parts - 1 ) / 2 / 2 - 5;
-				if ($chars * 2 < length $parts[$i]) {
-					my ($front) = $parts[$i] =~ /\A (.{$chars}) /xms;
-					my ($back)  = $parts[$i] =~ / (.{$chars}) \Z/xms;
-					$part = ($front || '') . $self->before_snip  . ' ... ' . $self->after_snip . $self->before_nomatch . ($back || '');
+				my $chars_front_tmp = $chars_front;
+				my $chars_back_tmp = $chars_back;
+				if ($total < $limit) {
+					$chars_front_tmp++;
+					$total++;
+				}
+				if ($total < $limit) {
+					$chars_back_tmp++;
+					$total++;
+				}
+				# Check if 
+				if ($chars_front_tmp + $chars_back_tmp < length $parts[$i]) {
+					my ($front) = $parts[$i] =~ /\A (.{$chars_front_tmp}) /xms;
+					my ($back)  = $parts[$i] =~ / (.{$chars_back_tmp}) \Z/xms;
+					$part = (defined $front ? $front : '') . $self->before_snip  . '...' . $self->after_snip . $self->before_nomatch . (defined $back ? $back : '');
 				}
 			}
 			$out .= $self->before_nomatch . $part . $self->after_nomatch;
