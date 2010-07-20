@@ -61,3 +61,5 @@ Debian_CPANTS.txt
 
 # Avoid archives of this distribution
 \bFile-CodeSearch-[\d\.\_]+
+
+tmp*
