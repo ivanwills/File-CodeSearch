@@ -1,5 +1,16 @@
 Revision history for File-CodeSearch
 
+0.2.0   2010-07-20
+        Added Replace to tested modules
+        Fixed problem when tests are not run in TEST_AUTHOR mode
+        Fixed (mostly) display of long lines with matches so that they fit on one line
+        Removed debug warning statements
+        Fixed not re-adding newline when the it was removed on very long lines
+        Started to implement replacing
+        Changed the smart regex to be able to find php functions which return references
+        Moved find search sub into seperate function call
+        Added the ability to out put with out any colouring or less usage
+
 0.1.0   2010-02-16
         Added the ability to send the output through less if more than a screen worth is displayed (in smart mode)
         Removed unused module
