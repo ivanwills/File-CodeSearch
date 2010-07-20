@@ -14,7 +14,7 @@ use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
 use Term::Size::Any;
 
-our $VERSION     = version->new('0.1.0');
+our $VERSION     = version->new('0.2.0');
 
 extends 'File::CodeSearch::RegexBuilder';
 
@@ -126,7 +126,7 @@ sub highlight {
 					$chars_back_tmp++;
 					$total++;
 				}
-				# Check if 
+				# Check if
 				if ($chars_front_tmp + $chars_back_tmp < length $parts[$i]) {
 					my ($front) = $parts[$i] =~ /\A (.{$chars_front_tmp}) /xms;
 					my ($back)  = $parts[$i] =~ / (.{$chars_back_tmp}) \Z/xms;
@@ -154,7 +154,7 @@ File::CodeSearch::Highlighter - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Highlighter version 0.1.0.
+This documentation refers to File::CodeSearch::Highlighter version 0.2.0.
 
 
 =head1 SYNOPSIS

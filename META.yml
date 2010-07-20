@@ -7,7 +7,7 @@ build_requires:
   Test::NoWarnings: 0
 configure_requires:
   Module::Build: 0.36
-generated_by: 'Module::Build version 0.3603'
+generated_by: 'Module::Build version 0.3607'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -16,16 +16,19 @@ name: File-CodeSearch
 provides:
   File::CodeSearch:
     file: lib/File/CodeSearch.pm
-    version: v0.1.0
+    version: v0.2.0
   File::CodeSearch::Files:
     file: lib/File/CodeSearch/Files.pm
-    version: v0.1.0
+    version: v0.2.0
   File::CodeSearch::Highlighter:
     file: lib/File/CodeSearch/Highlighter.pm
-    version: v0.1.0
+    version: v0.2.0
   File::CodeSearch::RegexBuilder:
     file: lib/File/CodeSearch/RegexBuilder.pm
-    version: v0.1.0
+    version: v0.2.0
+  File::CodeSearch::Replacer:
+    file: lib/File/CodeSearch/Replacer.pm
+    version: v0.2.0
 requires:
   Carp: 0
   Clone: 0
@@ -43,9 +46,12 @@ requires:
   Readonly: 0
   Scalar::Util: 0
   Term::ANSIColor: 0
+  Term::Size::Any: 0
   perl: 5.006
   version: 0
   warnings: 0
 resources:
+  bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-CodeSearch
   license: http://dev.perl.org/licenses/
-version: v0.1.0
+  repository: git://github.com/ivanwills/File-CodeSearch.git
+version: v0.2.0
