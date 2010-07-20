@@ -30,7 +30,6 @@ WriteMakefile
                          },
           'INSTALLDIRS' => 'site',
           'EXE_FILES' => [
-                           'bin/.cs.swp',
                            'bin/cs'
                          ],
           'PL_FILES' => {}
