@@ -64,7 +64,7 @@ Readonly my %TYPE_SUFFIXES => (
 			none     => 0,
 		},
 		c => {
-			definite => [qw/ [.]c$ [.]cpp$ [.]c++$ [.]h$ [.]hpp$ [.]hxx$ [.]h++$ /],
+			definite => [qw/ [.]c$ [.]cpp$ [.]c[+][+]$ [.]h$ [.]hpp$ [.]hxx$ [.]h[+][+]$ /],
 			possible => [qw/  /],
 			other_types => [qw/  /],
 			none     => 0,
@@ -127,6 +127,12 @@ Readonly my %TYPE_SUFFIXES => (
 			definite => [qw/  /],
 			possible => [qw/  /],
 			other_types => [qw/ perl php javascript /],
+			none     => 0,
+		},
+		programing => {
+			definite => [qw/  /],
+			possible => [qw/  /],
+			other_types => [qw/ scripting c /],
 			none     => 0,
 		},
 		package => {
