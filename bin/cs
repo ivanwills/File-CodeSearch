@@ -23,7 +23,7 @@ use File::CodeSearch::Replacer;
 use File::CodeSearch::Files;
 use Config::General;
 
-our $VERSION = version->new('0.2.0');
+our $VERSION = version->new('0.1.0');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 my $REVERSE = REVERSE;
 my $RESET   = RESET;
@@ -303,7 +303,7 @@ cs - Search & replace text (with some intelligence)
 
 =head1 VERSION
 
-This documentation refers to cs version 0.2.0.
+This documentation refers to cs version 0.1.0.
 
 =head1 SYNOPSIS
 
