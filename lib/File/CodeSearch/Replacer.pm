@@ -12,33 +12,43 @@ use version;
 use Carp;
 use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
+use IO::Prompt qw/prompt/;
 
 our $VERSION     = version->new('0.1.0');
 
 extends 'File::CodeSearch::Highlighter';
 
+has replace_re => (
+	is  => 'rw',
+);
 has replace => (
 	is  => 'rw',
 );
 has level => (
 	is => 'rw',
 );
+has all => (
+	is => 'rw',
+	isa => 'Int',
+);
 
-sub make_highlight_re {
+sub make_replace_re {
 	my ($self) = @_;
+
+	return $self->replace_re if $self->replace_re;
+
 	my $re = $self->regex || $self->make_regex;
 
 	# make sure that all brackets are for non capture groups
 	$re =~ s/ (?<! \\ | \[ ) [(] (?! [?] ) /(?:/gxms;
 
-	return $self->highlight_re($re);
+	return $self->replace_re($re);
 }
 
 sub highlight {
-die;
 	my ($self, $string) = @_;
 	my $re  = $self->highlight_re || $self->make_highlight_re;
-	my $replace_re = $self->highlight;;
+	my $replace_re = $self->make_replace_re;;
 	my $replace = $self->replace;
 	my $before = '';
 	my $after = '';
@@ -66,15 +76,20 @@ die;
 		$after  .= "\\N\n";
 	}
 
-	print "Change: $before\n";
+	print "Change: $before";
 	print "To:     $after\n";
-	my $ans = prompt(-prompt => "[yna]", -default => 'n');
+	my $ans = '';
+	if ( !$self->all ) {
+		$ans = lc prompt(-prompt => "Change? [yNa] ", -default => 'n', '-1t');
+		print "\n";
+	}
 
-	if ($ans eq 'a') {
+	if ( $ans eq 'a') {
 		$self->all(1);
 	}
-	elsif ($ans ne 'n') {
-		die "Save changes?";
+	if ( $ans eq 'y' || $self->all ) {
+		warn "Save changes to \$file? [yNa] ", -default => 'n', '-1';
+		warn $changed;
 	}
 
 	return '';

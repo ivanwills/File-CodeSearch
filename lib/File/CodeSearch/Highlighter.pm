@@ -67,6 +67,9 @@ has snip => (
 
 sub make_highlight_re {
 	my ($self) = @_;
+
+	return $self->highlight_re if $self->highlight_re;
+
 	my $re = $self->regex || $self->make_regex;
 
 	# make sure that all brackets are for non capture groups

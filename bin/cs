@@ -70,7 +70,7 @@ sub main {
 		'file_exclude_type|exclude_type|ext|X=s@',
 		'file_ignore=s',
 		'file_ignore_add|d=s',
-		'file_ignore_remove|r=s',
+		'file_ignore_remove|I=s',
 		'out_suround|suround|s=n',
 		'out_suround_before|before|b=n',
 		'out_suround_after|after|a=n',
@@ -111,6 +111,14 @@ sub main {
 
 	parse_config(\%option);
 
+	my $lines = 80;
+	if ($option{sre_smart}) {
+		($lines) = split /\s+/, `stty size` || 40;
+		if (( !$option{file_include_type} || !@{ $option{file_include_type} }) && grep {$_ eq $ARGV[0]} qw/n b ss/) {
+			$option{file_include_type}[0] = 'programing';
+		}
+	}
+
 	warn Dumper { params('file', %option) } if $option{verbose};
 	my $files = File::CodeSearch::Files->new(params('file', %option));
 
@@ -133,16 +141,11 @@ sub main {
 	warn Dumper {params('out',%option)}, \%option if $option{verbose};
 	my $cs = File::CodeSearch->new( regex => $hl, files => $files, params('out',%option) );
 
-	my $fh    = \*STDOUT;
-	my $lines = 80;
-	if ($option{sre_smart}) {
-		($lines) = split /\s+/, `stty size` || 40;
-	}
-
+	my $fh = \*STDOUT;
 	my %match;
 	my %found;
 	my $out = '';
-	if (!$option{sre_smart}) {
+	if ( !$option{sre_smart} || $option{replace} ) {
 		$option{bw} = 1;
 	}
 	$cs->search(
@@ -218,7 +221,10 @@ sub searcher {
 			if ($last) {
 				$$out .= $BLUE . $last . $RESET;
 			}
-			$$out .= sprintf $REVERSE . $BOLD . $ON_RED . '%4i: ' . $RESET . '%s', $line_no, $hl->highlight($line);
+			my $found = $hl->highlight($line);
+			if ($found) {
+				$$out .= sprintf $REVERSE . $BOLD . $ON_RED . '%4i: ' . $RESET . '%s', $line_no, $found;
+			}
 		}
 
 		if ($option{bw}) {
@@ -234,7 +240,9 @@ sub searcher {
 			$$out = '';
 			$option{sre_smart} = 0;
 		}
-	}
+
+		return;
+	};
 }
 
 sub params {
