@@ -12,7 +12,6 @@ use version;
 use Carp;
 use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
-use IO::Prompt qw/prompt/;
 
 our $VERSION     = version->new('0.1.0');
 
@@ -76,23 +75,7 @@ sub highlight {
 		$after  .= "\\N\n";
 	}
 
-	print "Change: $before";
-	print "To:     $after\n";
-	my $ans = '';
-	if ( !$self->all ) {
-		$ans = lc prompt(-prompt => "Change? [yNa] ", -default => 'n', '-1t');
-		print "\n";
-	}
-
-	if ( $ans eq 'a') {
-		$self->all(1);
-	}
-	if ( $ans eq 'y' || $self->all ) {
-		warn "Save changes to \$file? [yNa] ", -default => 'n', '-1';
-		warn $changed;
-	}
-
-	return '';
+	return ( '', $before, $after, $changed );
 }
 
 1;

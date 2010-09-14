@@ -69,6 +69,11 @@ has found => (
 	default => 0,
 	writer  => '_found',
 );
+has replace => (
+	is      => 'rw',
+	isa     => 'Bool',
+	default => 0,
+);
 
 sub search {
 	my ($self, $search, @dirs) = @_;
@@ -160,12 +165,16 @@ sub search_file {
 	my $after_max  = $self->suround_after;
 	my @before;
 	my @after;
+	my @lines;
 	my $found = undef;
-	my %args = ( before => \@before, after => \@after, parent => $parent );
+	my %args = ( before => \@before, after => \@after, lines => \@lines, parent => $parent );
 	my @sub_matches;
 
 	LINE:
 	while ( my $line = <$fh> ) {
+		if ( $self->replace ) {
+			push @lines, $line;
+		}
 		if (!defined $found) {
 			push @before, $line;
 			shift @before if @before > $before_max + 1;
@@ -200,7 +209,7 @@ sub search_file {
 		$found = 1;
 	}
 
-	if (@{$self->regex->sub_matches} && $self->regex->sub_match) {
+	if ( @{$self->regex->sub_matches} && $self->regex->sub_match ) {
 		SUB:
 		for my $args (@sub_matches) {
 			$self->_found( $self->found + 1 );

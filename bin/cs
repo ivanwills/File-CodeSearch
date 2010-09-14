@@ -18,18 +18,22 @@ use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use FindBin qw/$Bin/;
 use Term::ANSIColor qw/:constants/;
+use Path::Class;
+use File::Copy;
 use File::CodeSearch;
 use File::CodeSearch::Replacer;
 use File::CodeSearch::Files;
 use Config::General;
+use IO::Prompt qw/prompt/;
 
 our $VERSION = version->new('0.1.0');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
-my $REVERSE = REVERSE;
-my $RESET   = RESET;
-my $BLUE    = BLUE;
-my $BOLD    = BOLD;
-my $ON_RED  = ON_RED;
+my $REVERSE  = REVERSE;
+my $RESET    = RESET;
+my $BLUE     = BLUE;
+my $BOLD     = BOLD;
+my $ON_RED   = ON_RED;
+my $ON_GREEN = ON_GREEN;
 
 my %option = (
 	verbose => 0,
@@ -139,7 +143,7 @@ sub main {
 		$hl->after_nomatch('');
 	}
 	warn Dumper {params('out',%option)}, \%option if $option{verbose};
-	my $cs = File::CodeSearch->new( regex => $hl, files => $files, params('out',%option) );
+	my $cs = File::CodeSearch->new( regex => $hl, files => $files, replace => !!$option{replace}, params('out',%option) );
 
 	my $fh = \*STDOUT;
 	my %match;
@@ -178,18 +182,23 @@ sub main {
 sub searcher {
 	my ($found, $out, $match, $hl, $lines, $fh) = @_;
 	my $last_file = undef;
+	my $answer = {};
+	my $content = '';
 
 	return sub {
 		my ($line, $file, $line_no, %stuff ) = @_;
 		confess "No line number provided!\n" if !defined $line_no;
+		my $saved = 0;
 
 		if ( !$found->{$file} && !$option{out_unique} && !($option{out_files_only} && $option{out_totals}) ) {
 			$$out .= "${file}\n";
 		}
 		$found->{$file}++;
 		if (!defined $last_file || $file ne $last_file) {
-			if ( defined $last_file && $option{out_files_only} && $option{out_totals} ) {
-				$$out .= "$last_file ($found->{$last_file})\n";
+			if ( defined $last_file ) {
+				if ( $option{out_files_only} && $option{out_totals} ) {
+					$$out .= "$last_file ($found->{$last_file})\n";
+				}
 			}
 			$last_file = $file;
 		}
@@ -199,32 +208,68 @@ sub searcher {
 		if ( $stuff{after} && @{ $stuff{after} } ) {
 			my @after = @{ $stuff{after} };
 			my $count = $stuff{last_line_no} + 1;
-			for my $line ( @after ) {
-				$$out .= sprintf $REVERSE . '%4i: ' . $RESET . '%s', $count++, $line;
+			for my $after_line ( @after ) {
+				last if $line && $line eq $after_line;
+				$$out .= sprintf $REVERSE . '%4i: ' . $RESET . '%s', $count++, $after_line;
 			}
 		}
 		# check if there were lines before this match and display them
 		if ( $stuff{before} && @{ $stuff{before} } ) {
 			my @before = @{ $stuff{before} };
 			my $count = @before;
-			for my $line ( @before ) {
-				confess Dumper(\%stuff) . "Bad line" if !defined $line || !defined $count;
-				$$out .= sprintf $REVERSE . '%4i: ' . $RESET . $line, $line_no - $count--;
+			for my $before_line ( @before ) {
+				confess Dumper(\%stuff) . "Bad line" if !defined $before_line || !defined $count;
+				$$out .= sprintf $REVERSE . '%4i: ' . $RESET . $before_line, $line_no - $count--;
 			}
 		}
+
 		if ($option{out_unique}) {
 			$match->{$hl->match($line)}++ if ($line);
 		}
 		elsif ($line) {
-			confess "No line provided!\n" if !defined $line;
 			my $last = $hl->get_last_found();
 			if ($last) {
 				$$out .= $BLUE . $last . $RESET;
 			}
-			my $found = $hl->highlight($line);
+
+			my ( $found, $before, $after, $to ) = $hl->highlight($line);
 			if ($found) {
 				$$out .= sprintf $REVERSE . $BOLD . $ON_RED . '%4i: ' . $RESET . '%s', $line_no, $found;
 			}
+			elsif ($before) {
+				my $ans = '';
+				if ( $answer->{all} ) {
+					$$out .= sprintf $REVERSE . $BOLD . $ON_GREEN . '%4i: ' . $RESET . '%s', $line_no, $after;
+				}
+				else {
+					$$out .= sprintf $REVERSE . $BOLD . $ON_RED . 'From: ' . $RESET . '%s', $before;
+					$$out .= sprintf $REVERSE . $BOLD . $ON_RED . 'To    ' . $RESET . '%s', $after;
+					print {$fh} $$out;
+					$$out = '';
+
+					$ans = lc prompt(-prompt => $RESET . "Change? [yNa] ", -default => 'n', '-1t');
+					print "\n";
+				}
+
+				if ( $ans eq 'a') {
+					$answer->{all} = 1;
+				}
+				if ( $ans eq 'y' || $answer->{all} ) {
+					$stuff{lines}[-1] = $to;
+					$answer->{yes} = 1;
+					#warn $changed;
+				}
+			}
+		}
+
+		if ( $stuff{lines} && @{ $stuff{lines} } ) {
+			$content .= join '', @{ $stuff{lines} };
+			@{ $stuff{lines} } = ();
+		}
+
+		if ( !$line && $out ) {
+			warn Dumper { line => !$line, out => !!$out, saved => !$saved, last_file => $last_file };
+			save_replace( $last_file, $content, $answer );
 		}
 
 		if ($option{bw}) {
@@ -243,6 +288,40 @@ sub searcher {
 
 		return;
 	};
+}
+
+sub save_replace {
+	my ( $file, $content, $answer ) = @_;
+
+	# check that we have something to do
+	return if !$answer->{yes};
+
+	delete $answer->{yes};
+
+	my $ans = $answer->{save_all} ? 'y' : 'n';
+	if ( !$answer->{save_all} ) {
+		$ans = prompt "Save changes to $file? [yNa] ", -default => 'n', '-1t';
+	}
+
+	if ( $ans eq 'a' ) {
+		$answer->{save_all} = 1;
+	}
+	if ( $ans eq 'y' || $answer->{save_all} ) {
+		$file = file($file);
+		my $backup = $file->parent->file($file->basename . '~');
+		my $i = 1;
+		while (-f $backup) {
+			$backup = $file->parent->file($file->basename . '~' . $i);
+		}
+		move $file, $backup;
+		my $fh = $file->openw;
+		print {$fh} $content;
+		close $fh;
+		$content = '';
+		print "Saved $file\n";
+	}
+
+	return;
 }
 
 sub params {
