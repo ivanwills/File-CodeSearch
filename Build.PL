@@ -42,6 +42,7 @@ my $builder = Module::Build->new(
 			repository => 'http://github.com/ivanwills/File-CodeSearch',
 			bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-CodeSearch',
 		},
+		abstract => 'Manages different Version Control Systems with a single interface',
 	},
 );
 

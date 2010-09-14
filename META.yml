@@ -16,7 +16,7 @@ name: File-CodeSearch
 provides:
   File::CodeSearch:
     file: lib/File/CodeSearch.pm
-    version: v0.2.0
+    version: v0.2.1
   File::CodeSearch::Files:
     file: lib/File/CodeSearch/Files.pm
     version: v0.2.0
