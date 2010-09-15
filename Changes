@@ -1,5 +1,12 @@
 Revision history for File-CodeSearch
 
+0.5.0_1 2010-09-15
+        Fixed not clearing last files contents
+        Almost working (fails for final files)
+        Started trying to get replaceing working
+        Updated the distribution description
+        Cleaned Build.PL
+
 0.2.0   2010-07-20
         Added Replace to tested modules
         Fixed problem when tests are not run in TEST_AUTHOR mode
