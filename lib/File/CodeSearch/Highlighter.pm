@@ -14,7 +14,7 @@ use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
 use Term::Size::Any;
 
-our $VERSION     = version->new('0.1.0');
+our $VERSION     = version->new('0.5.0');
 
 extends 'File::CodeSearch::RegexBuilder';
 
@@ -157,7 +157,7 @@ File::CodeSearch::Highlighter - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Highlighter version 0.1.0.
+This documentation refers to File::CodeSearch::Highlighter version 0.5.0.
 
 
 =head1 SYNOPSIS

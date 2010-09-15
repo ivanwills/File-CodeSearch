@@ -13,7 +13,7 @@ use Carp;
 use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
 
-our $VERSION     = version->new('0.1.0');
+our $VERSION     = version->new('0.5.0');
 
 extends 'File::CodeSearch::Highlighter';
 
@@ -84,12 +84,11 @@ __END__
 
 =head1 NAME
 
-File::CodeSearch::Replacer - <One-line description of module's purpose>
+File::CodeSearch::Replacer - Sorts out file content that should be changed.
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Replacer version 0.1.0.
-
+This documentation refers to File::CodeSearch::Replacer version 0.5.0.
 
 =head1 SYNOPSIS
 
@@ -98,7 +97,6 @@ This documentation refers to File::CodeSearch::Replacer version 0.1.0.
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as
    # educational and exemplary as possible.
-
 
 =head1 DESCRIPTION
 
@@ -112,7 +110,9 @@ Return: File::CodeSearch::Replacer -
 
 Description:
 
-=head3 C<make_highlight_re ( $search, )>
+=head3 C<make_replace_re ( )>
+
+Creates the regular expression for replacing the searched for text.
 
 =head1 DIAGNOSTICS
 

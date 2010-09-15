@@ -1,5 +1,5 @@
 ---
-abstract: 'Search file contents in code repositories'
+abstract: 'Search file contents in code repositories or other places'
 author:
   - 'Ivan Wills <ivan.wills@gmail.com>'
 build_requires:
@@ -16,19 +16,19 @@ name: File-CodeSearch
 provides:
   File::CodeSearch:
     file: lib/File/CodeSearch.pm
-    version: v0.2.1
+    version: v0.5.0
   File::CodeSearch::Files:
     file: lib/File/CodeSearch/Files.pm
-    version: v0.2.0
+    version: v0.5.0
   File::CodeSearch::Highlighter:
     file: lib/File/CodeSearch/Highlighter.pm
-    version: v0.2.0
+    version: v0.5.0
   File::CodeSearch::RegexBuilder:
     file: lib/File/CodeSearch/RegexBuilder.pm
-    version: v0.2.0
+    version: v0.5.0
   File::CodeSearch::Replacer:
     file: lib/File/CodeSearch/Replacer.pm
-    version: v0.2.0
+    version: v0.5.0
 requires:
   Carp: 0
   Clone: 0
@@ -53,5 +53,5 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-CodeSearch
   license: http://dev.perl.org/licenses/
-  repository: git://github.com/ivanwills/File-CodeSearch.git
-version: v0.2.0
+  repository: http://github.com/ivanwills/File-CodeSearch
+version: v0.5.0
