@@ -268,8 +268,8 @@ sub searcher {
 		}
 
 		if ( !$line && $out ) {
-			warn Dumper { line => !$line, out => !!$out, saved => !$saved, last_file => $last_file };
 			save_replace( $last_file, $content, $answer );
+			$content = '';
 		}
 
 		if ($option{bw}) {
