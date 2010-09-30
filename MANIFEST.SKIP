@@ -63,3 +63,5 @@ Debian_CPANTS.txt
 \bFile-CodeSearch-[\d\.\_]+
 
 tmp*
+.vimtagsdisplay
+tags
