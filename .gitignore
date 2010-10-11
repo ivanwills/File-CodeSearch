@@ -15,3 +15,8 @@ tmp
 File-CodeSearch-*
 MYMETA.yml
 tmp*
+Build
+_build/
+blib/
+.vimtagsdisplay
+tags

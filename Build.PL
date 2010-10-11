@@ -32,6 +32,7 @@ my $builder = Module::Build->new(
 		'warnings'        => 0,
 	},
 	build_requires => {
+		'File::Spec'       => 0,
 		'Test::More'       => 0,
 		'Test::NoWarnings' => 0,
 	},
