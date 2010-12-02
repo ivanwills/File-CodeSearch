@@ -121,6 +121,15 @@ sub main {
 		if (( !$option{file_include_type} || !@{ $option{file_include_type} }) && grep {$_ eq $ARGV[0]} qw/n b ss/) {
 			$option{file_include_type}[0] = 'programing';
 		}
+		if ( !exists $option{ignore} ) {
+			my $re = join ' ', @ARGV;
+			if ( $re =~ /[A-Z]/ && /[a-z]/ ) {
+				$option{ignore} = 0;
+			}
+			else {
+				$option{ignore} = 1;
+			}
+		}
 	}
 
 	warn Dumper { params('file', %option) } if $option{verbose};
