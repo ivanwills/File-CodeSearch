@@ -19,132 +19,132 @@ our $VERSION     = version->new('0.5.0');
 extends 'File::CodeSearch::RegexBuilder';
 
 has highlight_re => (
-	is  => 'rw',
+    is  => 'rw',
 );
 has before_match => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => BOLD . RED,
+    is      => 'rw',
+    isa     => 'Str',
+    default => BOLD . RED,
 );
 has after_match => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => RESET,
+    is      => 'rw',
+    isa     => 'Str',
+    default => RESET,
 );
 has before_nomatch => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => CYAN,
+    is      => 'rw',
+    isa     => 'Str',
+    default => CYAN,
 );
 has after_nomatch => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => RESET,
+    is      => 'rw',
+    isa     => 'Str',
+    default => RESET,
 );
 has before_snip => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => RESET . RED . ON_BLACK,
+    is      => 'rw',
+    isa     => 'Str',
+    default => RESET . RED . ON_BLACK,
 );
 has after_snip => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => RESET,
+    is      => 'rw',
+    isa     => 'Str',
+    default => RESET,
 );
 has limit => (
-	is      => 'rw',
-	isa     => 'Int',
-	default => sub {
-		my ($cols, $rows) = Term::Size::Any::chars;
-		return $cols || 212;
-	}
+    is      => 'rw',
+    isa     => 'Int',
+    default => sub {
+        my ($cols, $rows) = Term::Size::Any::chars;
+        return $cols || 212;
+    }
 );
 has snip => (
-	is      => 'rw',
-	isa     => 'Bool',
-	default => 1,
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 1,
 );
 
 sub make_highlight_re {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	return $self->highlight_re if $self->highlight_re;
+    return $self->highlight_re if $self->highlight_re;
 
-	my $re = $self->regex || $self->make_regex;
+    my $re = $self->regex || $self->make_regex;
 
-	# make sure that all brackets are for non capture groups
-	$re =~ s/ (?<! \\ | \[ ) [(] (?! [?] ) /(?:/gxms;
+    # make sure that all brackets are for non capture groups
+    $re =~ s/ (?<! \\ | \[ ) [(] (?! [?] ) /(?:/gxms;
 
-	return $self->highlight_re($re);
+    return $self->highlight_re($re);
 }
 
 sub highlight {
-	my ($self, $string) = @_;
-	my $re  = $self->highlight_re || $self->make_highlight_re;
-	my $out = '';
+    my ($self, $string) = @_;
+    my $re  = $self->highlight_re || $self->make_highlight_re;
+    my $out = '';
 
-	my @parts = split /($re)/, $string;
+    my @parts = split /($re)/, $string;
 
-	my $match_length = 0;
-	for my $i ( 0 .. @parts - 1 ) {
-		if ( $i % 2 ) {
-			$match_length += length $parts[$i];
-		}
-	}
-	# 5 is the magic number of characters used to show the line number
-	my $limit = $self->limit - $match_length - 5;
-	my $joins = @parts - ( @parts - 1 ) / 2;
-	my $chars = ( $limit / $joins ) / 2 - 2;
-	my $chars_front = int $chars;
-	my $chars_back  = int $chars;
-	my $total = $joins * ( $chars_front + $chars_back + 3 ) + 1;
-	if (length $parts[-1] < $chars * 2) {
-		$total -= $chars_front + $chars_back - length $parts[-1];
-	}
-	#warn "Big\n" if $limit - $total > $joins * 2;
-	my $inc = $limit - $total > $joins * 2 ? 1 : 0;
-	$chars += $inc;
-	$chars_front = int $chars;
-	$chars_back  = int $chars;
-	$total = $joins * ( $chars_front + $chars_back + 3 ) + 1;
-	if (length $parts[-1] < $chars * 2) {
-		$total -= $chars_front + $chars_back - length $parts[-1];
-	}
-	#warn "match = $match_length\nchars = $chars\nlimit = $limit ($total)\nparts = " . (scalar @parts) . "\njoins = $joins\n";
+    my $match_length = 0;
+    for my $i ( 0 .. @parts - 1 ) {
+        if ( $i % 2 ) {
+            $match_length += length $parts[$i];
+        }
+    }
+    # 5 is the magic number of characters used to show the line number
+    my $limit = $self->limit - $match_length - 5;
+    my $joins = @parts - ( @parts - 1 ) / 2;
+    my $chars = ( $limit / $joins ) / 2 - 2;
+    my $chars_front = int $chars;
+    my $chars_back  = int $chars;
+    my $total = $joins * ( $chars_front + $chars_back + 3 ) + 1;
+    if (length $parts[-1] < $chars * 2) {
+        $total -= $chars_front + $chars_back - length $parts[-1];
+    }
+    #warn "Big\n" if $limit - $total > $joins * 2;
+    my $inc = $limit - $total > $joins * 2 ? 1 : 0;
+    $chars += $inc;
+    $chars_front = int $chars;
+    $chars_back  = int $chars;
+    $total = $joins * ( $chars_front + $chars_back + 3 ) + 1;
+    if (length $parts[-1] < $chars * 2) {
+        $total -= $chars_front + $chars_back - length $parts[-1];
+    }
+    #warn "match = $match_length\nchars = $chars\nlimit = $limit ($total)\nparts = " . (scalar @parts) . "\njoins = $joins\n";
 
-	for my $i ( 0 .. @parts - 1 ) {
-		if ( $i % 2 ) {
-			$out .= $self->before_match . $parts[$i] . $self->after_match;
-		}
-		else {
-			my $part = $parts[$i];
-			if ($self->snip && length $string > $self->limit) {
-				my $chars_front_tmp = $chars_front;
-				my $chars_back_tmp = $chars_back;
-				if ($total < $limit) {
-					$chars_front_tmp++;
-					$total++;
-				}
-				if ($total < $limit) {
-					$chars_back_tmp++;
-					$total++;
-				}
-				# Check if
-				if ($chars_front_tmp + $chars_back_tmp < length $parts[$i]) {
-					my ($front) = $parts[$i] =~ /\A (.{$chars_front_tmp}) /xms;
-					my ($back)  = $parts[$i] =~ / (.{$chars_back_tmp}) \Z/xms;
-					$part = (defined $front ? $front : '') . $self->before_snip  . '...' . $self->after_snip . $self->before_nomatch . (defined $back ? $back : '');
-				}
-			}
-			$out .= $self->before_nomatch . $part . $self->after_nomatch;
-		}
-	}
+    for my $i ( 0 .. @parts - 1 ) {
+        if ( $i % 2 ) {
+            $out .= $self->before_match . $parts[$i] . $self->after_match;
+        }
+        else {
+            my $part = $parts[$i];
+            if ($self->snip && length $string > $self->limit) {
+                my $chars_front_tmp = $chars_front;
+                my $chars_back_tmp = $chars_back;
+                if ($total < $limit) {
+                    $chars_front_tmp++;
+                    $total++;
+                }
+                if ($total < $limit) {
+                    $chars_back_tmp++;
+                    $total++;
+                }
+                # Check if
+                if ($chars_front_tmp + $chars_back_tmp < length $parts[$i]) {
+                    my ($front) = $parts[$i] =~ /\A (.{$chars_front_tmp}) /xms;
+                    my ($back)  = $parts[$i] =~ / (.{$chars_back_tmp}) \Z/xms;
+                    $part = (defined $front ? $front : '') . $self->before_snip  . '...' . $self->after_snip . $self->before_nomatch . (defined $back ? $back : '');
+                }
+            }
+            $out .= $self->before_nomatch . $part . $self->after_nomatch;
+        }
+    }
 
-	$out .= RESET;
-	$out .= "\\N\n" if $string !~ /\n/xms;
-	$out .= "\n" if $out !~ /\n/xms;
+    $out .= RESET;
+    $out .= "\\N\n" if $string !~ /\n/xms;
+    $out .= "\n" if $out !~ /\n/xms;
 
-	return $out;
+    return $out;
 }
 
 1;

@@ -19,213 +19,213 @@ use Path::Class qw/file dir/;
 our $VERSION     = version->new('0.5.0');
 
 has regex => (
-	is       => 'rw',
-	isa      => 'File::CodeSearch::RegexBuilder',
-	required => 1,
+    is       => 'rw',
+    isa      => 'File::CodeSearch::RegexBuilder',
+    required => 1,
 );
 has files => (
-	is      => 'rw',
-	isa     => 'File::CodeSearch::Files',
-	default => sub { File::CodeSearch::Files->new },
+    is      => 'rw',
+    isa     => 'File::CodeSearch::Files',
+    default => sub { File::CodeSearch::Files->new },
 );
 has recurse => (
-	is      => 'rw',
-	isa     => 'Bool',
-	default => 1,
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 1,
 );
 has breadth => (
-	is      => 'rw',
-	isa     => 'Bool',
-	default => 0,
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
 );
 has depth => (
-	is      => 'rw',
-	isa     => 'Bool',
-	default => 0,
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
 );
 has suround_before => (
-	is      => 'rw',
-	isa     => 'Int',
-	default => 0,
+    is      => 'rw',
+    isa     => 'Int',
+    default => 0,
 );
 has suround_after => (
-	is      => 'rw',
-	isa     => 'Int',
-	default => 0,
+    is      => 'rw',
+    isa     => 'Int',
+    default => 0,
 );
 has limit => (
-	is      => 'rw',
-	isa     => 'Int',
-	default => 0,
+    is      => 'rw',
+    isa     => 'Int',
+    default => 0,
 );
 has links => (
-	is      => 'rw',
-	isa     => 'HashRef',
-	default => sub{{}},
+    is      => 'rw',
+    isa     => 'HashRef',
+    default => sub{{}},
 );
 has found => (
-	is      => 'ro',
-	isa     => 'Int',
-	default => 0,
-	writer  => '_found',
+    is      => 'ro',
+    isa     => 'Int',
+    default => 0,
+    writer  => '_found',
 );
 has replace => (
-	is      => 'rw',
-	isa     => 'Bool',
-	default => 0,
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
 );
 
 sub search {
-	my ($self, $search, @dirs) = @_;
+    my ($self, $search, @dirs) = @_;
 
-	for my $dir (@dirs) {
-		$self->_find($search, $dir);
-	}
+    for my $dir (@dirs) {
+        $self->_find($search, $dir);
+    }
 
-	return;
+    return;
 }
 
 sub _find {
-	my ($self, $search, $dir, $parent) = @_;
-	my @files;
-	$dir =~ s{/$}{};
+    my ($self, $search, $dir, $parent) = @_;
+    my @files;
+    $dir =~ s{/$}{};
 
-	return if !-d $dir;
+    return if !-d $dir;
 
-	{
-		local $CWD = $dir;
-		opendir my $dirh, '.' or warn "Could not open the directory '$dir': $OS_ERROR ($CWD)\n" and return;
-		@files = sort _alpha_num grep { $_ ne '.' && $_ ne '..' } readdir $dirh;
+    {
+        local $CWD = $dir;
+        opendir my $dirh, '.' or warn "Could not open the directory '$dir': $OS_ERROR ($CWD)\n" and return;
+        @files = sort _alpha_num grep { $_ ne '.' && $_ ne '..' } readdir $dirh;
 
-		if ($self->breadth) {
-			@files = sort _breadth @files;
-		}
-		elsif ($self->depth) {
-			@files = sort _depth @files;
-		}
-	}
+        if ($self->breadth) {
+            @files = sort _breadth @files;
+        }
+        elsif ($self->depth) {
+            @files = sort _depth @files;
+        }
+    }
 
-	$dir = $dir eq '.' ? '' : "$dir/";
+    $dir = $dir eq '.' ? '' : "$dir/";
 
-	FILE:
-	for my $file (@files) {
-		next FILE if !$self->files->file_ok("$dir$file");
-		last FILE if $self->limit && $self->found >= $self->limit;
+    FILE:
+    for my $file (@files) {
+        next FILE if !$self->files->file_ok("$dir$file");
+        last FILE if $self->limit && $self->found >= $self->limit;
 
-		if (-l "$dir$file") {
-			next FILE if !$self->files->symlinks;
+        if (-l "$dir$file") {
+            next FILE if !$self->files->symlinks;
 
-			my $real = -f "$dir$file" ? file("$dir$file") : dir("$dir$file");
-			$real = $real->absolute->resolve;
-			$self->links->{$real} ||= 0;
+            my $real = -f "$dir$file" ? file("$dir$file") : dir("$dir$file");
+            $real = $real->absolute->resolve;
+            $self->links->{$real} ||= 0;
 
-			next FILE if $self->links->{$real}++;
-		}
-		if (-d "$dir$file") {
-			if ($self->recurse) {
-				$self->_find( $search, "$dir$file", $parent || $dir );
-			}
-		}
-		else {
-			$self->search_file( $search, "$dir$file", $parent || $dir );
-		}
-	}
+            next FILE if $self->links->{$real}++;
+        }
+        if (-d "$dir$file") {
+            if ($self->recurse) {
+                $self->_find( $search, "$dir$file", $parent || $dir );
+            }
+        }
+        else {
+            $self->search_file( $search, "$dir$file", $parent || $dir );
+        }
+    }
 
-	return;
+    return;
 }
 
 sub _alpha_num {
-	my $a1 = $a;
-	my $b1 = $b;
-	$a1 =~ s/(\d+)/sprintf "%5d", $1/exms;
-	$b1 =~ s/(\d+)/sprintf "%5d", $1/exms;
-	return $a1 cmp $b1;
+    my $a1 = $a;
+    my $b1 = $b;
+    $a1 =~ s/(\d+)/sprintf "%5d", $1/exms;
+    $b1 =~ s/(\d+)/sprintf "%5d", $1/exms;
+    return $a1 cmp $b1;
 }
 sub _breadth {
-	return
-		  -f $a && -d $b ? 1
-		: -d $a && -f $b ? -1
-		:                                0;
+    return
+          -f $a && -d $b ? 1
+        : -d $a && -f $b ? -1
+        :                                0;
 }
 sub _depth {
-	return
-		  -f $a && -d $b ? -1
-		: -d $a && -f $b ? 1
-		:                                0;
+    return
+          -f $a && -d $b ? -1
+        : -d $a && -f $b ? 1
+        :                                0;
 }
 
 sub search_file {
-	my ($self, $search, $file, $parent) = @_;
+    my ($self, $search, $file, $parent) = @_;
 
-	open my $fh, '<', $file or warn "Could not open the file '$file': $OS_ERROR\n" and return;
+    open my $fh, '<', $file or warn "Could not open the file '$file': $OS_ERROR\n" and return;
 
-	$self->regex->reset_file;
-	$self->regex->current_file($file);
-	my $before_max = $self->suround_before;
-	my $after_max  = $self->suround_after;
-	my @before;
-	my @after;
-	my @lines;
-	my $found = undef;
-	my %args = ( before => \@before, after => \@after, lines => \@lines, parent => $parent );
-	my @sub_matches;
+    $self->regex->reset_file;
+    $self->regex->current_file($file);
+    my $before_max = $self->suround_before;
+    my $after_max  = $self->suround_after;
+    my @before;
+    my @after;
+    my @lines;
+    my $found = undef;
+    my %args = ( before => \@before, after => \@after, lines => \@lines, parent => $parent );
+    my @sub_matches;
 
-	LINE:
-	while ( my $line = <$fh> ) {
-		if ( $self->replace ) {
-			push @lines, $line;
-		}
-		if (!defined $found) {
-			push @before, $line;
-			shift @before if @before > $before_max + 1;
-		}
-		elsif ($found) {
-			push @after, $line;
-			if (@after > $after_max) {
-				undef $found;
-			}
-		}
-		else {
-		}
+    LINE:
+    while ( my $line = <$fh> ) {
+        if ( $self->replace ) {
+            push @lines, $line;
+        }
+        if (!defined $found) {
+            push @before, $line;
+            shift @before if @before > $before_max + 1;
+        }
+        elsif ($found) {
+            push @after, $line;
+            if (@after > $after_max) {
+                undef $found;
+            }
+        }
+        else {
+        }
 
-		last LINE if @{$self->regex->sub_not_matches} && $self->regex->sub_not_match;
+        last LINE if @{$self->regex->sub_not_matches} && $self->regex->sub_not_match;
 
-		next LINE if !$self->regex->match($line);
+        next LINE if !$self->regex->match($line);
 
-		pop @before;
-		pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
+        pop @before;
+        pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
 
-		if (@{$self->regex->sub_matches}) {
-			push @sub_matches, clone [ $line, $file, $fh->input_line_number, %args ];
-		}
-		else {
-			$self->_found( $self->found + 1 );
-			$search->($line, $file, $fh->input_line_number, codesearch => $self, %args);
-			last LINE if $self->limit && $self->found >= $self->limit;
-		}
+        if (@{$self->regex->sub_matches}) {
+            push @sub_matches, clone [ $line, $file, $fh->input_line_number, %args ];
+        }
+        else {
+            $self->_found( $self->found + 1 );
+            $search->($line, $file, $fh->input_line_number, codesearch => $self, %args);
+            last LINE if $self->limit && $self->found >= $self->limit;
+        }
 
-		$args{last_line_no} = $fh->input_line_number;
-		@after = ();
-		$found = 1;
-	}
+        $args{last_line_no} = $fh->input_line_number;
+        @after = ();
+        $found = 1;
+    }
 
-	if ( @{$self->regex->sub_matches} && $self->regex->sub_match ) {
-		SUB:
-		for my $args (@sub_matches) {
-			$self->_found( $self->found + 1 );
-			$search->( @$args, codesearch => $self );
-			last SUB if $self->limit && $self->found >= $self->limit;
-		}
-	}
-	# check if the line is an after match
-	if (@after && ( ! @{$self->regex->sub_matches} || $self->regex->sub_match ) ) {
-		pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
-		@before = ();
-		$self->_found( $self->found + 1 );
-		$search->(undef, $file, $fh->input_line_number, codesearch => $self, %args);
-	}
+    if ( @{$self->regex->sub_matches} && $self->regex->sub_match ) {
+        SUB:
+        for my $args (@sub_matches) {
+            $self->_found( $self->found + 1 );
+            $search->( @$args, codesearch => $self );
+            last SUB if $self->limit && $self->found >= $self->limit;
+        }
+    }
+    # check if the line is an after match
+    if (@after && ( ! @{$self->regex->sub_matches} || $self->regex->sub_match ) ) {
+        pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
+        @before = ();
+        $self->_found( $self->found + 1 );
+        $search->(undef, $file, $fh->input_line_number, codesearch => $self, %args);
+    }
 
-	return;
+    return;
 }
 
 1;

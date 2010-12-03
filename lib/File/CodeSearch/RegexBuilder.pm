@@ -16,198 +16,198 @@ use English qw/ -no_match_vars /;
 our $VERSION     = version->new('0.5.0');
 
 has regex => (
-	is  => 'rw',
+    is  => 'rw',
 );
 has re => (
-	is  => 'ro',
-	isa => 'ArrayRef',
+    is  => 'ro',
+    isa => 'ArrayRef',
 );
 has whole => (
-	is  => 'ro',
-	isa => 'Bool',
+    is  => 'ro',
+    isa => 'Bool',
 );
 has all => (
-	is  => 'ro',
-	isa => 'Bool',
+    is  => 'ro',
+    isa => 'Bool',
 );
 has words => (
-	is  => 'ro',
-	isa => 'Bool',
+    is  => 'ro',
+    isa => 'Bool',
 );
 has ignore_case => (
-	is  => 'ro',
-	isa => 'Bool',
+    is  => 'ro',
+    isa => 'Bool',
 );
 has files => (
-	is  => 'rw',
-	isa => 'HashRef',
-	default => sub{{}},
+    is  => 'rw',
+    isa => 'HashRef',
+    default => sub{{}},
 );
 has current_file => (
-	is  => 'rw',
+    is  => 'rw',
 );
 has current_count => (
-	is  => 'rw',
-	isa => 'Int',
-	default => 0,
+    is  => 'rw',
+    isa => 'Int',
+    default => 0,
 );
 has sub_matches => (
-	is  => 'rw',
-	isa => 'ArrayRef[Str]',
-	default => sub{[]},
+    is  => 'rw',
+    isa => 'ArrayRef[Str]',
+    default => sub{[]},
 );
 has sub_match => (
-	is  => 'rw',
-	isa => 'Bool',
+    is  => 'rw',
+    isa => 'Bool',
 );
 has sub_not_matches => (
-	is  => 'rw',
-	isa => 'ArrayRef[Str]',
-	default => sub{[]},
+    is  => 'rw',
+    isa => 'ArrayRef[Str]',
+    default => sub{[]},
 );
 has sub_not_match => (
-	is  => 'rw',
-	isa => 'Bool',
+    is  => 'rw',
+    isa => 'Bool',
 );
 has last => (
-	is  => 'rw',
-	isa => 'ArrayRef[Str]',
+    is  => 'rw',
+    isa => 'ArrayRef[Str]',
 );
 has lasts => (
-	is  => 'rw',
-	isa => 'HashRef[Str]',
-	default => sub{{}},
+    is  => 'rw',
+    isa => 'HashRef[Str]',
+    default => sub{{}},
 );
 has smart => (
-	is  => 'rw',
-	isa => 'Bool',
+    is  => 'rw',
+    isa => 'Bool',
 );
 
 sub make_regex {
-	my ($self) = @_;
-	my $re;
-	my $words = $self->re;
+    my ($self) = @_;
+    my $re;
+    my $words = $self->re;
 
-	my $start = shift @{ $words };
-	if ($start && !any {$start eq $_} qw/n b ss/) {
-		unshift @{ $words }, $start;
-		undef $start;
-	}
+    my $start = shift @{ $words };
+    if ($start && !any {$start eq $_} qw/n b ss/) {
+        unshift @{ $words }, $start;
+        undef $start;
+    }
 
-	if ($self->whole) {
-		@{$words} = map { "(?<!\\w)$_(?!\\w)" } @{$words};
-	}
+    if ($self->whole) {
+        @{$words} = map { "(?<!\\w)$_(?!\\w)" } @{$words};
+    }
 
-	if ($self->all) {
-		if (@{ $words } == 2 ) {
-			$re = "$words->[0].*$words->[1]|$words->[1].*$words->[0]";
-		}
-	}
-	elsif ( $self->words ) {
-		$re = join '.*', @{ $words };
-	}
-	else {
-		$re = join ' ', @{ $words };
-	}
+    if ($self->all) {
+        if (@{ $words } == 2 ) {
+            $re = "$words->[0].*$words->[1]|$words->[1].*$words->[0]";
+        }
+    }
+    elsif ( $self->words ) {
+        $re = join '.*', @{ $words };
+    }
+    else {
+        $re = join ' ', @{ $words };
+    }
 
-	if ($self->ignore_case) {
-		$re = "(?i:$re)";
-	}
+    if ($self->ignore_case) {
+        $re = "(?i:$re)";
+    }
 
-	$re =
-		  !defined $start ? $re
-		: $start eq 'n'   ? "function(?:&?\\s+|\\s+&?\\s*)$re|$re\\s+=\\s+function"
-		: $start eq 'b'   ? "sub\\s+$re"
-		: $start eq 'ss'  ? "class\\s+$re"
-		:                   $re;
+    $re =
+          !defined $start ? $re
+        : $start eq 'n'   ? "function(?:&?\\s+|\\s+&?\\s*)$re|$re\\s+=\\s+function"
+        : $start eq 'b'   ? "sub\\s+$re"
+        : $start eq 'ss'  ? "class\\s+$re"
+        :                   $re;
 
-	return $self->regex(qr/$re/);
+    return $self->regex(qr/$re/);
 }
 
 sub match {
-	my ($self, $line) = @_;
-	my $re = $self->regex || $self->make_regex;
+    my ($self, $line) = @_;
+    my $re = $self->regex || $self->make_regex;
 
-	$self->check_sub_matches($line);
-	$self->check_lasts($line);
+    $self->check_sub_matches($line);
+    $self->check_lasts($line);
 
-	my ($match) = $line =~ /($re)/;
+    my ($match) = $line =~ /($re)/;
 
-	if (defined $match) {
-		$self->current_count( $self->current_count + 1 );
-	}
+    if (defined $match) {
+        $self->current_count( $self->current_count + 1 );
+    }
 
-	return $match;
+    return $match;
 }
 
 sub check_sub_matches {
-	my ($self, $line) = @_;
-	my $matches = $self->sub_matches;
-	my $match = 0;
-	my $not_matches = $self->sub_not_matches;
-	my $not_match = 0;
+    my ($self, $line) = @_;
+    my $matches = $self->sub_matches;
+    my $match = 0;
+    my $not_matches = $self->sub_not_matches;
+    my $not_match = 0;
 
-	return if $self->sub_match;
-	return if $self->sub_not_match;
+    return if $self->sub_match;
+    return if $self->sub_not_match;
 
-	for my $match_re (@$matches) {
-		$match ||= $line =~ /$match_re/;
-	}
+    for my $match_re (@$matches) {
+        $match ||= $line =~ /$match_re/;
+    }
 
-	$self->sub_match($match);
+    $self->sub_match($match);
 
-	for my $not_match_re (@$not_matches) {
-		$not_match ||= $line =~ /$not_match_re/;
-	}
+    for my $not_match_re (@$not_matches) {
+        $not_match ||= $line =~ /$not_match_re/;
+    }
 
-	$self->sub_not_match($not_match);
+    $self->sub_not_match($not_match);
 
-	return;
+    return;
 }
 
 sub check_lasts {
-	my ($self, $line) = @_;
+    my ($self, $line) = @_;
 
-	if ($self->last) {
-		for my $last (@{ $self->last }) {
-			my ($match) =
-				  $last eq 'function' ? $line =~ /function \s+ (?: & \s*)? (\w+)/xms
-				: $last eq 'class'    ? $line =~ /class \s+ (\w+)/xms
-				: $last eq 'sub'      ? $line =~ /sub \s+ (\w+)/xms
-				:                       $line =~ /$last \s+ (\w+)/xms;
-			$self->lasts->{$last} = $match if $match;
-		}
-	}
+    if ($self->last) {
+        for my $last (@{ $self->last }) {
+            my ($match) =
+                  $last eq 'function' ? $line =~ /function \s+ (?: & \s*)? (\w+)/xms
+                : $last eq 'class'    ? $line =~ /class \s+ (\w+)/xms
+                : $last eq 'sub'      ? $line =~ /sub \s+ (\w+)/xms
+                :                       $line =~ /$last \s+ (\w+)/xms;
+            $self->lasts->{$last} = $match if $match;
+        }
+    }
 
-	return;
+    return;
 }
 
 sub get_last_found {
-	my ($self) = @_;
-	my $out    = '';
+    my ($self) = @_;
+    my $out    = '';
 
-	return '' if ! %{$self->lasts};
+    return '' if ! %{$self->lasts};
 
-	for my $last (keys %{$self->lasts} ) {
-		$out .= "$last " . $self->lasts->{$last} . "\n";
-	}
+    for my $last (keys %{$self->lasts} ) {
+        $out .= "$last " . $self->lasts->{$last} . "\n";
+    }
 
-	return $out;
+    return $out;
 }
 
 sub reset_file {
-	my ($self, $file) = @_;
-	if ( $self->current_count() && $self->current_file ) {
-		$self->files->{$self->current_file} = $self->current_count;
-	}
+    my ($self, $file) = @_;
+    if ( $self->current_count() && $self->current_file ) {
+        $self->files->{$self->current_file} = $self->current_count;
+    }
 
-	$self->sub_match(0);
-	$self->sub_not_match(0);
-	$self->current_count(0);
-	$self->current_file($file);
-	$self->lasts({});
+    $self->sub_match(0);
+    $self->sub_not_match(0);
+    $self->current_count(0);
+    $self->current_file($file);
+    $self->lasts({});
 
-	return;
+    return;
 }
 
 

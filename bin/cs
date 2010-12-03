@@ -36,14 +36,14 @@ my $ON_RED   = ON_RED;
 my $ON_GREEN = ON_GREEN;
 
 my %option = (
-	verbose => 0,
-	man     => 0,
-	help    => 0,
-	VERSION => 0,
+    verbose => 0,
+    man     => 0,
+    help    => 0,
+    VERSION => 0,
 );
 
 if ( !@ARGV ) {
-	pod2usage( -verbose => 1 );
+    pod2usage( -verbose => 1 );
 }
 
 main();
@@ -51,344 +51,344 @@ exit 0;
 
 sub main {
 
-	Getopt::Long::Configure('bundling');
-	GetOptions(
-		\%option,
-		'sre_all|all|A',
-		'sre_words|words|W',
-		'sre_ignore_case|ignore|i',
-		'sre_whole|whole|w',
-		'sre_sub_matches|contains|c=s@',
-		'sre_sub_no_matches|not-contains|notcontains|S=s@',
-		'sre_last|last|L=s@',
-		'sre_smart|smart|m',
-		'replace|r=s',
-		'path|p=s@',
-		'file_symlinks|links|l',
-		'file_recurse|R!',
-		'file_contains=s',
-		'file_not_contains=s',
-		'file_include|include|n=s@',
-		'file_include_type|include_type|int|N=s@',
-		'file_exclude|exclude|x=s@',
-		'file_exclude_type|exclude_type|ext|X=s@',
-		'file_ignore=s',
-		'file_ignore_add|d=s',
-		'file_ignore_remove|I=s',
-		'out_suround|suround|s=n',
-		'out_suround_before|before|b=n',
-		'out_suround_after|after|a=n',
-		'out_totals|totals|t',
-		'out_files_only|files-only|f',
-		'out_unique|unique|u!',
-		'out_limit|limit=i',
-		'project|P=s',
-		'execute|execute-files|E=s',
-		'config|C=s',
-		'bw|g',
-		'verbose|v+',
-		'man',
-		'help',
-		'VERSION!',
-	) or pod2usage(2);
+    Getopt::Long::Configure('bundling');
+    GetOptions(
+        \%option,
+        'sre_all|all|A',
+        'sre_words|words|W',
+        'sre_ignore_case|ignore|i',
+        'sre_whole|whole|w',
+        'sre_sub_matches|contains|c=s@',
+        'sre_sub_no_matches|not-contains|notcontains|S=s@',
+        'sre_last|last|L=s@',
+        'sre_smart|smart|m',
+        'replace|r=s',
+        'path|p=s@',
+        'file_symlinks|links|l',
+        'file_recurse|R!',
+        'file_contains=s',
+        'file_not_contains=s',
+        'file_include|include|n=s@',
+        'file_include_type|include_type|int|N=s@',
+        'file_exclude|exclude|x=s@',
+        'file_exclude_type|exclude_type|ext|X=s@',
+        'file_ignore=s',
+        'file_ignore_add|d=s',
+        'file_ignore_remove|I=s',
+        'out_suround|suround|s=n',
+        'out_suround_before|before|b=n',
+        'out_suround_after|after|a=n',
+        'out_totals|totals|t',
+        'out_files_only|files-only|f',
+        'out_unique|unique|u!',
+        'out_limit|limit=i',
+        'project|P=s',
+        'execute|execute-files|E=s',
+        'config|C=s',
+        'bw|g',
+        'verbose|v+',
+        'man',
+        'help',
+        'VERSION!',
+    ) or pod2usage(2);
 
-	if ( $option{'VERSION'} ) {
-		print "$name Version = $VERSION\n";
-		exit 1;
-	}
-	elsif ( $option{'man'} ) {
-		pod2usage( -verbose => 2 );
-	}
-	elsif ( $option{'help'} ) {
-		pod2usage( -verbose => 1 );
-	}
+    if ( $option{'VERSION'} ) {
+        print "$name Version = $VERSION\n";
+        exit 1;
+    }
+    elsif ( $option{'man'} ) {
+        pod2usage( -verbose => 2 );
+    }
+    elsif ( $option{'help'} ) {
+        pod2usage( -verbose => 1 );
+    }
 
-	# do stuff here
+    # do stuff here
 
-	$option{path} = $option{path} ? [ map {split /:/, $_} @{$option{path}} ] : ['.'];
+    $option{path} = $option{path} ? [ map {split /:/, $_} @{$option{path}} ] : ['.'];
 
-	if ($option{out_suround}) {
-		$option{out_suround_before} ||= $option{out_suround};
-		$option{out_suround_after}  ||= $option{out_suround};
-		delete $option{out_suround};
-	}
+    if ($option{out_suround}) {
+        $option{out_suround_before} ||= $option{out_suround};
+        $option{out_suround_after}  ||= $option{out_suround};
+        delete $option{out_suround};
+    }
 
-	parse_config(\%option);
+    parse_config(\%option);
 
-	my $lines = 80;
-	if ($option{sre_smart}) {
-		($lines) = split /\s+/, `stty size` || 40;
-		if (( !$option{file_include_type} || !@{ $option{file_include_type} }) && grep {$_ eq $ARGV[0]} qw/n b ss/) {
-			$option{file_include_type}[0] = 'programing';
-		}
-		if ( !exists $option{ignore} ) {
-			my $re = join ' ', @ARGV;
-			if ( $re =~ /[A-Z]/ && /[a-z]/ ) {
-				$option{ignore} = 0;
-			}
-			else {
-				$option{ignore} = 1;
-			}
-		}
-	}
+    my $lines = 80;
+    if ($option{sre_smart}) {
+        ($lines) = split /\s+/, `stty size` || 40;
+        if (( !$option{file_include_type} || !@{ $option{file_include_type} }) && grep {$_ eq $ARGV[0]} qw/n b ss/) {
+            $option{file_include_type}[0] = 'programing';
+        }
+        if ( !exists $option{ignore} ) {
+            my $re = join ' ', @ARGV;
+            if ( $re =~ /[A-Z]/ && /[a-z]/ ) {
+                $option{ignore} = 0;
+            }
+            else {
+                $option{ignore} = 1;
+            }
+        }
+    }
 
-	warn Dumper { params('file', %option) } if $option{verbose};
-	my $files = File::CodeSearch::Files->new(params('file', %option));
+    warn Dumper { params('file', %option) } if $option{verbose};
+    my $files = File::CodeSearch::Files->new(params('file', %option));
 
-	warn Dumper { params('sre', %option), re => \@ARGV } if $option{verbose};
-	my $hl =
-		$option{replace} ? File::CodeSearch::Replacer->new( params('sre', %option), re => \@ARGV, replace => $option{replace} )
-		:                  File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
+    warn Dumper { params('sre', %option), re => \@ARGV } if $option{verbose};
+    my $hl =
+        $option{replace} ? File::CodeSearch::Replacer->new( params('sre', %option), re => \@ARGV, replace => $option{replace} )
+        :                  File::CodeSearch::Highlighter->new( params('sre', %option), re => \@ARGV );
 
-	if ($option{bw}) {
-		$REVERSE = '';
-		$RESET   = '';
-		$BLUE    = '';
-		$BOLD    = '';
-		$ON_RED  = '';
-		$hl->before_match('');
-		$hl->after_match('');
-		$hl->before_nomatch('');
-		$hl->after_nomatch('');
-	}
-	warn Dumper {params('out',%option)}, \%option if $option{verbose};
-	my $cs = File::CodeSearch->new( regex => $hl, files => $files, replace => !!$option{replace}, params('out',%option) );
+    if ($option{bw}) {
+        $REVERSE = '';
+        $RESET   = '';
+        $BLUE    = '';
+        $BOLD    = '';
+        $ON_RED  = '';
+        $hl->before_match('');
+        $hl->after_match('');
+        $hl->before_nomatch('');
+        $hl->after_nomatch('');
+    }
+    warn Dumper {params('out',%option)}, \%option if $option{verbose};
+    my $cs = File::CodeSearch->new( regex => $hl, files => $files, replace => !!$option{replace}, params('out',%option) );
 
-	my $fh = \*STDOUT;
-	my %match;
-	my %found;
-	my $out = '';
-	if ( !$option{sre_smart} || $option{replace} ) {
-		$option{bw} = 1;
-	}
-	$cs->search(
-		searcher(\%found, \$out, \%match, $hl, $lines, $fh),
-		@{ $option{path} }
-	);
-	if ($out) {
-		if ($option{sre_smart}) {
-			print $out;
-		}
-		else {
-			print {$fh} $out;
-		}
-	}
+    my $fh = \*STDOUT;
+    my %match;
+    my %found;
+    my $out = '';
+    if ( !$option{sre_smart} || $option{replace} ) {
+        $option{bw} = 1;
+    }
+    $cs->search(
+        searcher(\%found, \$out, \%match, $hl, $lines, $fh),
+        @{ $option{path} }
+    );
+    if ($out) {
+        if ($option{sre_smart}) {
+            print $out;
+        }
+        else {
+            print {$fh} $out;
+        }
+    }
 
-	if ($option{out_unique}) {
-		print join "\n", sort keys %match;
-		print "\n";
-	}
-	if ($option{execute}) {
-		system $option{execute} . ' ' . join ' ', sort keys %found;
-	}
-	if ($option{out_totals}) {
-		print "\nTotal matches " . (sum values %found) . "\n";
-	}
+    if ($option{out_unique}) {
+        print join "\n", sort keys %match;
+        print "\n";
+    }
+    if ($option{execute}) {
+        system $option{execute} . ' ' . join ' ', sort keys %found;
+    }
+    if ($option{out_totals}) {
+        print "\nTotal matches " . (sum values %found) . "\n";
+    }
 
-	return;
+    return;
 }
 
 sub searcher {
-	my ($found, $out, $match, $hl, $lines, $fh) = @_;
-	my $last_file = undef;
-	my $answer = {};
-	my $content = '';
+    my ($found, $out, $match, $hl, $lines, $fh) = @_;
+    my $last_file = undef;
+    my $answer = {};
+    my $content = '';
 
-	return sub {
-		my ($line, $file, $line_no, %stuff ) = @_;
-		confess "No line number provided!\n" if !defined $line_no;
-		my $saved = 0;
+    return sub {
+        my ($line, $file, $line_no, %stuff ) = @_;
+        confess "No line number provided!\n" if !defined $line_no;
+        my $saved = 0;
 
-		if ( !$found->{$file} && !$option{out_unique} && !($option{out_files_only} && $option{out_totals}) ) {
-			$$out .= "${file}\n";
-		}
-		$found->{$file}++;
-		if (!defined $last_file || $file ne $last_file) {
-			if ( defined $last_file ) {
-				if ( $option{out_files_only} && $option{out_totals} ) {
-					$$out .= "$last_file ($found->{$last_file})\n";
-				}
-			}
-			$last_file = $file;
-		}
-		return if $option{out_files_only};
+        if ( !$found->{$file} && !$option{out_unique} && !($option{out_files_only} && $option{out_totals}) ) {
+            $$out .= "${file}\n";
+        }
+        $found->{$file}++;
+        if (!defined $last_file || $file ne $last_file) {
+            if ( defined $last_file ) {
+                if ( $option{out_files_only} && $option{out_totals} ) {
+                    $$out .= "$last_file ($found->{$last_file})\n";
+                }
+            }
+            $last_file = $file;
+        }
+        return if $option{out_files_only};
 
-		# check if there were lines after the last match and display them
-		if ( $stuff{after} && @{ $stuff{after} } ) {
-			my @after = @{ $stuff{after} };
-			my $count = $stuff{last_line_no} + 1;
-			for my $after_line ( @after ) {
-				last if $line && $line eq $after_line;
-				$$out .= sprintf $REVERSE . '%4i: ' . $RESET . '%s', $count++, $after_line;
-			}
-		}
-		# check if there were lines before this match and display them
-		if ( $stuff{before} && @{ $stuff{before} } ) {
-			my @before = @{ $stuff{before} };
-			my $count = @before;
-			for my $before_line ( @before ) {
-				confess Dumper(\%stuff) . "Bad line" if !defined $before_line || !defined $count;
-				$$out .= sprintf $REVERSE . '%4i: ' . $RESET . $before_line, $line_no - $count--;
-			}
-		}
+        # check if there were lines after the last match and display them
+        if ( $stuff{after} && @{ $stuff{after} } ) {
+            my @after = @{ $stuff{after} };
+            my $count = $stuff{last_line_no} + 1;
+            for my $after_line ( @after ) {
+                last if $line && $line eq $after_line;
+                $$out .= sprintf $REVERSE . '%4i: ' . $RESET . '%s', $count++, $after_line;
+            }
+        }
+        # check if there were lines before this match and display them
+        if ( $stuff{before} && @{ $stuff{before} } ) {
+            my @before = @{ $stuff{before} };
+            my $count = @before;
+            for my $before_line ( @before ) {
+                confess Dumper(\%stuff) . "Bad line" if !defined $before_line || !defined $count;
+                $$out .= sprintf $REVERSE . '%4i: ' . $RESET . $before_line, $line_no - $count--;
+            }
+        }
 
-		if ($option{out_unique}) {
-			$match->{$hl->match($line)}++ if ($line);
-		}
-		elsif ($line) {
-			my $last = $hl->get_last_found();
-			if ($last) {
-				$$out .= $BLUE . $last . $RESET;
-			}
+        if ($option{out_unique}) {
+            $match->{$hl->match($line)}++ if ($line);
+        }
+        elsif ($line) {
+            my $last = $hl->get_last_found();
+            if ($last) {
+                $$out .= $BLUE . $last . $RESET;
+            }
 
-			my ( $found, $before, $after, $to ) = $hl->highlight($line);
-			if ($found) {
-				$$out .= sprintf $REVERSE . $BOLD . $ON_RED . '%4i: ' . $RESET . '%s', $line_no, $found;
-			}
-			elsif ($before) {
-				my $ans = '';
-				if ( $answer->{all} ) {
-					$$out .= sprintf $REVERSE . $BOLD . $ON_GREEN . '%4i: ' . $RESET . '%s', $line_no, $after;
-				}
-				else {
-					$$out .= sprintf $REVERSE . $BOLD . $ON_RED . 'From: ' . $RESET . '%s', $before;
-					$$out .= sprintf $REVERSE . $BOLD . $ON_RED . 'To    ' . $RESET . '%s', $after;
-					print {$fh} $$out;
-					$$out = '';
+            my ( $found, $before, $after, $to ) = $hl->highlight($line);
+            if ($found) {
+                $$out .= sprintf $REVERSE . $BOLD . $ON_RED . '%4i: ' . $RESET . '%s', $line_no, $found;
+            }
+            elsif ($before) {
+                my $ans = '';
+                if ( $answer->{all} ) {
+                    $$out .= sprintf $REVERSE . $BOLD . $ON_GREEN . '%4i: ' . $RESET . '%s', $line_no, $after;
+                }
+                else {
+                    $$out .= sprintf $REVERSE . $BOLD . $ON_RED . 'From: ' . $RESET . '%s', $before;
+                    $$out .= sprintf $REVERSE . $BOLD . $ON_RED . 'To    ' . $RESET . '%s', $after;
+                    print {$fh} $$out;
+                    $$out = '';
 
-					$ans = lc prompt(-prompt => $RESET . "Change? [yNa] ", -default => 'n', '-1t');
-					print "\n";
-				}
+                    $ans = lc prompt(-prompt => $RESET . "Change? [yNa] ", -default => 'n', '-1t');
+                    print "\n";
+                }
 
-				if ( $ans eq 'a') {
-					$answer->{all} = 1;
-				}
-				if ( $ans eq 'y' || $answer->{all} ) {
-					$stuff{lines}[-1] = $to;
-					$answer->{yes} = 1;
-					#warn $changed;
-				}
-			}
-		}
+                if ( $ans eq 'a') {
+                    $answer->{all} = 1;
+                }
+                if ( $ans eq 'y' || $answer->{all} ) {
+                    $stuff{lines}[-1] = $to;
+                    $answer->{yes} = 1;
+                    #warn $changed;
+                }
+            }
+        }
 
-		if ( $stuff{lines} && @{ $stuff{lines} } ) {
-			$content .= join '', @{ $stuff{lines} };
-			@{ $stuff{lines} } = ();
-		}
+        if ( $stuff{lines} && @{ $stuff{lines} } ) {
+            $content .= join '', @{ $stuff{lines} };
+            @{ $stuff{lines} } = ();
+        }
 
-		if ( !$line && $out ) {
-			save_replace( $last_file, $content, $answer );
-			$content = '';
-		}
+        if ( !$line && $out ) {
+            save_replace( $last_file, $content, $answer );
+            $content = '';
+        }
 
-		if ($option{bw}) {
-			print {$fh} $$out;
-			$$out = '';
-		}
-		if ( $$out && ( !$option{sre_smart} || (my @tmp = split /\n/, $$out) >= $lines) ) {
-			if ($option{sre_smart}) {
-				open my $tmp, '|-', 'less -R';
-				$fh = $tmp || $fh;
-			}
-			print {$fh} $$out;
-			$$out = '';
-			$option{sre_smart} = 0;
-		}
+        if ($option{bw}) {
+            print {$fh} $$out;
+            $$out = '';
+        }
+        if ( $$out && ( !$option{sre_smart} || (my @tmp = split /\n/, $$out) >= $lines) ) {
+            if ($option{sre_smart}) {
+                open my $tmp, '|-', 'less -R';
+                $fh = $tmp || $fh;
+            }
+            print {$fh} $$out;
+            $$out = '';
+            $option{sre_smart} = 0;
+        }
 
-		return;
-	};
+        return;
+    };
 }
 
 sub save_replace {
-	my ( $file, $content, $answer ) = @_;
+    my ( $file, $content, $answer ) = @_;
 
-	# check that we have something to do
-	return if !$answer->{yes};
+    # check that we have something to do
+    return if !$answer->{yes};
 
-	delete $answer->{yes};
+    delete $answer->{yes};
 
-	my $ans = $answer->{save_all} ? 'y' : 'n';
-	if ( !$answer->{save_all} ) {
-		$ans = prompt "Save changes to $file? [yNa] ", -default => 'n', '-1t';
-	}
+    my $ans = $answer->{save_all} ? 'y' : 'n';
+    if ( !$answer->{save_all} ) {
+        $ans = prompt "Save changes to $file? [yNa] ", -default => 'n', '-1t';
+    }
 
-	if ( $ans eq 'a' ) {
-		$answer->{save_all} = 1;
-	}
-	if ( $ans eq 'y' || $answer->{save_all} ) {
-		$file = file($file);
-		my $backup = $file->parent->file($file->basename . '~');
-		my $i = 1;
-		while (-f $backup) {
-			$backup = $file->parent->file($file->basename . '~' . $i);
-		}
-		move $file, $backup;
-		my $fh = $file->openw;
-		print {$fh} $content;
-		close $fh;
-		$content = '';
-		print "Saved $file\n";
-	}
+    if ( $ans eq 'a' ) {
+        $answer->{save_all} = 1;
+    }
+    if ( $ans eq 'y' || $answer->{save_all} ) {
+        $file = file($file);
+        my $backup = $file->parent->file($file->basename . '~');
+        my $i = 1;
+        while (-f $backup) {
+            $backup = $file->parent->file($file->basename . '~' . $i);
+        }
+        move $file, $backup;
+        my $fh = $file->openw;
+        print {$fh} $content;
+        close $fh;
+        $content = '';
+        print "Saved $file\n";
+    }
 
-	return;
+    return;
 }
 
 sub params {
-	my ($name, %var) = @_;
-	my %params;
+    my ($name, %var) = @_;
+    my %params;
 
-	VAR:
-	for my $key (keys %var) {
-		next VAR if $key !~ /^ $name _ /xms;
-		my $new_key = $key;
-		$new_key =~ s/^ $name _ //xms;
-		$params{$new_key} = $var{$key};
-	}
+    VAR:
+    for my $key (keys %var) {
+        next VAR if $key !~ /^ $name _ /xms;
+        my $new_key = $key;
+        $new_key =~ s/^ $name _ //xms;
+        $params{$new_key} = $var{$key};
+    }
 
-	return %params;
+    return %params;
 }
 
 sub parse_config {
-	my ($opt) = @_;
+    my ($opt) = @_;
 
-	my $conf_file = $opt->{config} || "$ENV{HOME}/.csrc";
+    my $conf_file = $opt->{config} || "$ENV{HOME}/.csrc";
 
-	return if !-r $conf_file;
+    return if !-r $conf_file;
 
-	my $conf = Config::General->new($conf_file);
-	my %conf = $conf->getall();
+    my $conf = Config::General->new($conf_file);
+    my %conf = $conf->getall();
 
-	$conf{default} ||= {};
-	$conf{project} ||= {};
+    $conf{default} ||= {};
+    $conf{project} ||= {};
 
-	my $default = $conf{default};
+    my $default = $conf{default};
 
-	my $project =
-		$opt->{project} ? $opt->{project}
-		: $name ne 'cs' ? $name
-		:                 undef;
-	if ( $project && $conf{project} && keys %{$conf{project}} && $conf{project}{$project} ) {
-		$default = merge($conf{project}{$project} || {}, $default);
-	}
+    my $project =
+        $opt->{project} ? $opt->{project}
+        : $name ne 'cs' ? $name
+        :                 undef;
+    if ( $project && $conf{project} && keys %{$conf{project}} && $conf{project}{$project} ) {
+        $default = merge($conf{project}{$project} || {}, $default);
+    }
 
-	%$opt = %{ merge($default, $opt) };
+    %$opt = %{ merge($default, $opt) };
 
-	return;
+    return;
 }
 
 sub merge {
-	my ($hash1, $hash2, @rest) = @_;
-	my $merge = {};
+    my ($hash1, $hash2, @rest) = @_;
+    my $merge = {};
 
-	for my $key (uniq sort keys %{$hash1}, keys %{$hash2}) {
-		$merge->{$key} =
-			exists $hash1->{$key} ? $hash1->{$key}
-		:                           $hash2->{$key};
-	}
+    for my $key (uniq sort keys %{$hash1}, keys %{$hash2}) {
+        $merge->{$key} =
+            exists $hash1->{$key} ? $hash1->{$key}
+        :                           $hash2->{$key};
+    }
 
-	return merge($merge, @rest) if @rest;
+    return merge($merge, @rest) if @rest;
 
-	return $merge;
+    return $merge;
 }
 
 __DATA__

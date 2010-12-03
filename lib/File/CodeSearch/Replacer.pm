@@ -18,64 +18,64 @@ our $VERSION     = version->new('0.5.0');
 extends 'File::CodeSearch::Highlighter';
 
 has replace_re => (
-	is  => 'rw',
+    is  => 'rw',
 );
 has replace => (
-	is  => 'rw',
+    is  => 'rw',
 );
 has level => (
-	is => 'rw',
+    is => 'rw',
 );
 has all => (
-	is => 'rw',
-	isa => 'Int',
+    is => 'rw',
+    isa => 'Int',
 );
 
 sub make_replace_re {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	return $self->replace_re if $self->replace_re;
+    return $self->replace_re if $self->replace_re;
 
-	my $re = $self->regex || $self->make_regex;
+    my $re = $self->regex || $self->make_regex;
 
-	# make sure that all brackets are for non capture groups
-	$re =~ s/ (?<! \\ | \[ ) [(] (?! [?] ) /(?:/gxms;
+    # make sure that all brackets are for non capture groups
+    $re =~ s/ (?<! \\ | \[ ) [(] (?! [?] ) /(?:/gxms;
 
-	return $self->replace_re($re);
+    return $self->replace_re($re);
 }
 
 sub highlight {
-	my ($self, $string) = @_;
-	my $re  = $self->highlight_re || $self->make_highlight_re;
-	my $replace_re = $self->make_replace_re;;
-	my $replace = $self->replace;
-	my $before = '';
-	my $after = '';
-	my $changed = '';
+    my ($self, $string) = @_;
+    my $re  = $self->highlight_re || $self->make_highlight_re;
+    my $replace_re = $self->make_replace_re;;
+    my $replace = $self->replace;
+    my $before = '';
+    my $after = '';
+    my $changed = '';
 
-	my @parts = split /($re)/, $string;
+    my @parts = split /($re)/, $string;
 
-	for my $i ( 0 .. @parts - 1 ) {
-		if ( $i % 2 ) {
-			$before .= $self->before_match . $parts[$i] . $self->after_match;
-			my $part = $parts[$i];
-			$part =~ s/$replace_re/$replace/;
-			$after   .= $self->before_match . $part . $self->after_match;
-			$changed .= $part;
-		}
-		else {
-			$before  .= $self->before_nomatch . $parts[$i] . $self->after_nomatch;
-			$after   .= $self->before_nomatch . $parts[$i] . $self->after_nomatch;
-			$changed .= $parts[$i];
-		}
-	}
+    for my $i ( 0 .. @parts - 1 ) {
+        if ( $i % 2 ) {
+            $before .= $self->before_match . $parts[$i] . $self->after_match;
+            my $part = $parts[$i];
+            $part =~ s/$replace_re/$replace/;
+            $after   .= $self->before_match . $part . $self->after_match;
+            $changed .= $part;
+        }
+        else {
+            $before  .= $self->before_nomatch . $parts[$i] . $self->after_nomatch;
+            $after   .= $self->before_nomatch . $parts[$i] . $self->after_nomatch;
+            $changed .= $parts[$i];
+        }
+    }
 
-	if ($string !~ /\n/xms) {
-		$before .= "\\N\n";
-		$after  .= "\\N\n";
-	}
+    if ($string !~ /\n/xms) {
+        $before .= "\\N\n";
+        $after  .= "\\N\n";
+    }
 
-	return ( '', $before, $after, $changed );
+    return ( '', $before, $after, $changed );
 }
 
 1;
