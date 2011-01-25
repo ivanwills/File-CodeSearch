@@ -232,12 +232,12 @@ __END__
 
 =head1 NAME
 
-File::CodeSearch::Files - <One-line description of module's purpose>
+File::CodeSearch::Files - Handles the testing file types, symlinks and file
+name positive & negative matching.
 
 =head1 VERSION
 
 This documentation refers to File::CodeSearch::Files version 0.5.0.
-
 
 =head1 SYNOPSIS
 

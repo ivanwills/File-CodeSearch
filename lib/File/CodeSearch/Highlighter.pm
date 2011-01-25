@@ -153,7 +153,7 @@ __END__
 
 =head1 NAME
 
-File::CodeSearch::Highlighter - <One-line description of module's purpose>
+File::CodeSearch::Highlighter - Highlights matched parts of a line.
 
 =head1 VERSION
 
