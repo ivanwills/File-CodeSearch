@@ -152,7 +152,7 @@ sub main {
         $hl->after_nomatch('');
     }
     warn Dumper {params('out',%option)}, \%option if $option{verbose};
-    my $cs = File::CodeSearch->new( regex => $hl, files => $files, replace => !!$option{replace}, params('out',%option) );
+    my $cs = File::CodeSearch->new( regex => $hl, files => $files, params('out',%option) );
 
     my $fh = \*STDOUT;
     my %match;

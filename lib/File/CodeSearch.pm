@@ -59,20 +59,17 @@ has limit => (
     default => 0,
 );
 has links => (
-    is      => 'rw',
-    isa     => 'HashRef',
-    default => sub{{}},
+    is       => 'rw',
+    isa      => 'HashRef',
+    default  => sub{{}},
+    init_arg => undef,
 );
 has found => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 0,
-    writer  => '_found',
-);
-has replace => (
-    is      => 'rw',
-    isa     => 'Bool',
-    default => 0,
+    is       => 'ro',
+    isa      => 'Int',
+    default  => 0,
+    writer   => '_found',
+    init_arg => undef,
 );
 
 sub search {
@@ -172,7 +169,7 @@ sub search_file {
 
     LINE:
     while ( my $line = <$fh> ) {
-        if ( $self->replace ) {
+        if ( $self->regex->isa('File::CodeSearch::Replacer') ) {
             push @lines, $line;
         }
         if (!defined $found) {
@@ -259,13 +256,83 @@ This documentation refers to File::CodeSearch version 0.5.0.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 C<serach ( $search, @dirs )>
+=head2 C<new ( %params )>
 
-Param: C<$search> - code ref - subroutine to be executed each time a match is found
+B<Params>:
 
-Param: C<@dir> - paths - an array of the directory paths to search through
+=over 4
 
-Description:
+=item C<regex> - L<File::CodeSearch::RegexBuilder>
+
+This is the object that handles the testing of individual lines in a file
+and must be created with the search options desired, note you can also use
+the C<F::C::Highlighter> and C<F::C::Replacer> modules interchangably with
+C<F::C::RegexBuilder>.
+
+=item C<files> - L<File::CodeSearch::Files>
+
+If you desire to limit files by file type, name, symlink status pass this
+object, other wise a default object will be created.
+
+=item C<recurse> - Bool
+
+Set to false to not recurse into sub directories.
+
+=item C<breadth> - Bool
+
+Changes the search order to breadth first ie the searching will search all
+the ordinary files in a directory before searching the directories. The
+default is to search directories when they are found.
+
+=item C<depth> - Bool
+
+Changes the search order to depth first ie the searching will search all the
+sub directories in a directory before searching the ordinary files. The
+default is to search directories when they are found. If both C<breadth> and
+C<depth> are both true C<breadth> will be used.
+
+=item C<suround_before> - Int
+
+Specifies the maximum number of lines before a match is found that should be
+passed to the searching code reference.
+
+=item C<suround_after> - Int
+
+Specifies the maximum number of lines after a match is found that should be
+passed to the searching code reference. B<Note> the after match lines are
+passed to the next matched line in a file or to a call at the end of a file
+with matches.
+
+=item C<limit> - Int
+
+Stops matching after C<limit> matches have been found accross all files that
+have been searched.
+
+=back
+
+B<Return>: C<File::CodeSearch> - new object
+
+B<Description>: Creates & configure a C<File::CodeSearch> object.
+
+=head2 C<search ( $search, @dirs )>
+
+B<Params>:
+
+=over 4
+
+=item C<$search> - code ref
+
+Subroutine to be executed each time a match is found.
+
+=item C<@dir> - paths
+
+An array of the directory paths to search through.
+
+=back
+
+B<Return>:
+
+B<Description>:
 
 =head2 C<serach_file ( $search, $file, $parent )>
 
@@ -307,7 +374,7 @@ Ivan Wills - (ivan.wills@gmail.com)
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2009 Ivan Wills (14 Mullion Close, Hornsby Heights, NSW Australia 2077).
+Copyright (c) 2009-2011 Ivan Wills (14 Mullion Close, Hornsby Heights, NSW Australia 2077).
 All rights reserved.
 
 This module is free software; you can redistribute it and/or modify it under
