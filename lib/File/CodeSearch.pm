@@ -164,7 +164,7 @@ sub search_file {
     my @after;
     my @lines;
     my $found = undef;
-    my %args = ( before => \@before, after => \@after, lines => \@lines, parent => $parent );
+    my %args = ( codesearch => $self, before => \@before, after => \@after, lines => \@lines, parent => $parent );
     my @sub_matches;
 
     LINE:
@@ -182,8 +182,6 @@ sub search_file {
                 undef $found;
             }
         }
-        else {
-        }
 
         last LINE if @{$self->regex->sub_not_matches} && $self->regex->sub_not_match;
 
@@ -197,7 +195,7 @@ sub search_file {
         }
         else {
             $self->_found( $self->found + 1 );
-            $search->($line, $file, $fh->input_line_number, codesearch => $self, %args);
+            $search->($line, $file, $fh->input_line_number, %args);
             last LINE if $self->limit && $self->found >= $self->limit;
         }
 
@@ -210,7 +208,7 @@ sub search_file {
         SUB:
         for my $args (@sub_matches) {
             $self->_found( $self->found + 1 );
-            $search->( @$args, codesearch => $self );
+            $search->( @$args );
             last SUB if $self->limit && $self->found >= $self->limit;
         }
     }
@@ -219,7 +217,7 @@ sub search_file {
         pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
         @before = ();
         $self->_found( $self->found + 1 );
-        $search->(undef, $file, $fh->input_line_number, codesearch => $self, %args);
+        $search->(undef, $file, $fh->input_line_number, %args);
     }
 
     return;
@@ -322,7 +320,58 @@ B<Params>:
 
 =item C<$search> - code ref
 
-Subroutine to be executed each time a match is found.
+Subroutine to be executed each time a match in a file is found.
+
+The subroutine shoul have accept parameters as
+
+ $search->($line, $file, $line_number, %named);
+
+=over 4
+
+=item C<$line> - string
+
+The line from the file that was matched by C<regex>. If searching with
+C<after> set this may be undefined when called with the lines found after
+the last match at the end of the file.
+
+=item C<$file>
+
+The file name that the line was found in (relative to the supplied directory
+
+=item C<$line_number>
+
+The line number in the said file
+
+=item C<%named>
+
+This contains all the other helpful values
+
+=over 4
+
+=item C<codesearch> - C<F::CodeSearch>
+
+The object that is doing the searching.
+
+=item C<before> - ArrayRef
+
+An array of lines that were found before the matched line.
+
+=item C<after> - ArrayRef
+
+An array of lines that were found after the last matched line.
+
+=item C<lines> - ArrayRef
+
+An array of lines of the file. This is only present if C<regex> is a
+C<F::C::Replacer> object.
+
+=item C<parent> - path
+
+The parent path from @path
+
+=back
+
+=back
 
 =item C<@dir> - paths
 
@@ -334,23 +383,27 @@ B<Return>:
 
 B<Description>:
 
-=head2 C<serach_file ( $search, $file, $parent )>
+=head2 C<search_file ( $search, $file, $parent )>
 
-Param: C<$search> - code ref - subroutine to be executed each time a match is found
-
-Param: C<$file> - file - A file to search through line by line
-
-Param: C<$parent> - path - The directory from @dirs which the file was found in
-
-Description:
+B<Param>:
 
 =over 4
 
-=item search
+=item C<$search> - CodeRef
 
-=item search_file
+See C<search> above for details.
+
+=item C<$file> - file
+
+A file to search through line by line
+
+=item C<$parent> - path
+
+The directory from @dirs which the file was found in
 
 =back
+
+B<Description>:
 
 =head1 DIAGNOSTICS
 
