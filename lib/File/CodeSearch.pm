@@ -256,7 +256,7 @@ This documentation refers to File::CodeSearch version 0.5.0.
 
 =head2 C<new ( %params )>
 
-B<Params>:
+B<Parameters>:
 
 =over 4
 
@@ -264,7 +264,7 @@ B<Params>:
 
 This is the object that handles the testing of individual lines in a file
 and must be created with the search options desired, note you can also use
-the C<F::C::Highlighter> and C<F::C::Replacer> modules interchangably with
+the C<F::C::Highlighter> and C<F::C::Replacer> modules interchangeably with
 C<F::C::RegexBuilder>.
 
 =item C<files> - L<File::CodeSearch::Files>
@@ -278,13 +278,13 @@ Set to false to not recurse into sub directories.
 
 =item C<breadth> - Bool
 
-Changes the search order to breadth first ie the searching will search all
+Changes the search order to breadth first i.e. the searching will search all
 the ordinary files in a directory before searching the directories. The
 default is to search directories when they are found.
 
 =item C<depth> - Bool
 
-Changes the search order to depth first ie the searching will search all the
+Changes the search order to depth first i.e. the searching will search all the
 sub directories in a directory before searching the ordinary files. The
 default is to search directories when they are found. If both C<breadth> and
 C<depth> are both true C<breadth> will be used.
@@ -303,7 +303,7 @@ with matches.
 
 =item C<limit> - Int
 
-Stops matching after C<limit> matches have been found accross all files that
+Stops matching after C<limit> matches have been found across all files that
 have been searched.
 
 =back
@@ -314,7 +314,7 @@ B<Description>: Creates & configure a C<File::CodeSearch> object.
 
 =head2 C<search ( $search, @dirs )>
 
-B<Params>:
+B<Arguments>:
 
 =over 4
 
@@ -322,7 +322,7 @@ B<Params>:
 
 Subroutine to be executed each time a match in a file is found.
 
-The subroutine shoul have accept parameters as
+The subroutine should have accept parameters as
 
  $search->($line, $file, $line_number, %named);
 
@@ -403,7 +403,7 @@ The directory from @dirs which the file was found in
 
 =back
 
-B<Description>:
+B<Description>: Searches an individual file for matches.
 
 =head1 DIAGNOSTICS
 
