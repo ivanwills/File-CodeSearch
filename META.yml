@@ -17,19 +17,19 @@ name: File-CodeSearch
 provides:
   File::CodeSearch:
     file: lib/File/CodeSearch.pm
-    version: v0.5.0
+    version: v0.5.1
   File::CodeSearch::Files:
     file: lib/File/CodeSearch/Files.pm
-    version: v0.5.0
+    version: v0.5.1
   File::CodeSearch::Highlighter:
     file: lib/File/CodeSearch/Highlighter.pm
-    version: v0.5.0
+    version: v0.5.1
   File::CodeSearch::RegexBuilder:
     file: lib/File/CodeSearch/RegexBuilder.pm
-    version: v0.5.0
+    version: v0.5.1
   File::CodeSearch::Replacer:
     file: lib/File/CodeSearch/Replacer.pm
-    version: v0.5.0
+    version: v0.5.1
 requires:
   Carp: 0
   Clone: 0
@@ -55,4 +55,4 @@ resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-CodeSearch
   license: http://dev.perl.org/licenses/
   repository: http://github.com/ivanwills/File-CodeSearch
-version: v0.5.0
+version: v0.5.1

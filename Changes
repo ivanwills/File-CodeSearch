@@ -1,5 +1,20 @@
 Revision history for File-CodeSearch
 
+0.5.1   2011-01-29
+        Fixed spelling misstakes
+        Cleaned up more POD
+        Cleaned some redundant code
+        Fixed loosly specified attribute, removed replace attribute as it can be determined from regex
+        Added smart ignore case
+        Added to change log and made version a development version
+        Upped version number for release including replacing
+        Fixed not clearing last files contents
+        Almost working (fails for final files
+        Started trying to get replaceing working
+        Updated the distribution description
+        Added Replace to tested modules
+        Fixed problem when tests are not run in TEST_AUTHOR mode
+
 0.5.0_1 2010-09-15
         Fixed not clearing last files contents
         Almost working (fails for final files)
