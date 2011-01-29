@@ -13,7 +13,7 @@ use Carp;
 use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
 
-our $VERSION     = version->new('0.5.0');
+our $VERSION     = version->new('0.5.1');
 
 extends 'File::CodeSearch::Highlighter';
 
@@ -88,7 +88,7 @@ File::CodeSearch::Replacer - Sorts out file content that should be changed.
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Replacer version 0.5.0.
+This documentation refers to File::CodeSearch::Replacer version 0.5.1.
 
 =head1 SYNOPSIS
 

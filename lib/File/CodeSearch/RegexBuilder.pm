@@ -13,7 +13,7 @@ use Carp;
 use List::MoreUtils qw/any/;
 use English qw/ -no_match_vars /;
 
-our $VERSION     = version->new('0.5.0');
+our $VERSION     = version->new('0.5.1');
 
 has regex => (
     is  => 'rw',
@@ -222,7 +222,7 @@ regular expression to check lines of a file
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::RegexBuilder version 0.5.0.
+This documentation refers to File::CodeSearch::RegexBuilder version 0.5.1.
 
 =head1 SYNOPSIS
 
