@@ -519,6 +519,13 @@ Please report problems to Ivan Wills (ivan.wills@gmail.com).
 
 Patches are welcome.
 
+=head1 ALSO SEE
+
+C<grep -r> - Recursive grep, can be much faster but will search into version
+control directories.
+
+L<ack> - This a very similar in syntax to grep but can't do replacements.
+
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
