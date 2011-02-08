@@ -19,6 +19,7 @@ my $builder = Module::Build->new(
         'File::Spec'      => 0,
         'File::chdir'     => 0,
         'IO::Handle'      => 0,
+        'IO::Prompt'      => 0,
         'List::MoreUtils' => 0,
         'List::Util'      => 0,
         'Moose'           => 0,
