@@ -123,7 +123,7 @@ sub main {
         }
         if ( !exists $option{ignore} ) {
             my $re = join ' ', @ARGV;
-            if ( $re =~ /[A-Z]/ && /[a-z]/ ) {
+            if ( $re =~ /[A-Z]/ && $re =~ /[a-z]/ ) {
                 $option{ignore} = 0;
             }
             else {
