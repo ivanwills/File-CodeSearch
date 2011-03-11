@@ -136,7 +136,7 @@ Readonly my %TYPE_SUFFIXES => (
             none     => 0,
         },
         package => {
-            definite => [qw/ [.]PL$ MANIFEST$ MANIFEST.SKIP$ Meta.yml$ README$ Changes$ /],
+            definite => [qw/ [.]PL$ MANIFEST$ MANIFEST.SKIP$ META.yml$ MYMETA.yml$ README$ Changes$ Debian_CPANTS.txt$ Makefile$ LICENSE$ /],
             possible => [qw/  /],
             other_types => [qw/  /],
             none     => 0,
