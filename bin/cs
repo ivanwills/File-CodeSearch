@@ -404,6 +404,7 @@ This documentation refers to cs version 0.5.1.
 =head1 SYNOPSIS
 
    cs [option] search
+   cs [option] search -r replace
    cr [option] search replace
 
  OPTIONS:
@@ -414,20 +415,20 @@ This documentation refers to cs version 0.5.1.
    -i --ignore-case
                  Turn off case sensitive searching
    -w --whole    Makes the match only whole words (ie wraps with (?<\W) & (?=\W))
-   -c --contains=re
+   -c --contains[=]re
                  Only show matches if the file also matches this sub regex.
                  This may be declared more that once and the results are ORed.
-   -S --not-contains=re
+   -S --not-contains[=]re
                  Ignore any files whoes contents match this regex.
-   -m --smart    converts multi part regexes baised on what is imput
+   -m --smart    Converts multi part regexes baised on what is imput
                  eg cs ss Class is converted to cs class Class
                     cs n func                   cs function func
                     cs b subroutine             cs sub subroutine
   Replace:
-   -r --replace=string
+   -r --replace[=]string
                  String to replace found text with
   Files:
-   -p --path=string
+   -p --path[=]string
                  A colon seperated list of directories to search in
                  (Default current directory)
    -l --follow-symlinks
@@ -437,56 +438,93 @@ This documentation refers to cs version 0.5.1.
       --recurse  Recurse into subdirectories (Default)
       --no-recurse
                  Turns off recursing into subdirectories
-   -n --file-include=string
+   -n --file-include[=]string
                  Only include files mathcing the regex (Multiple)
-   -N --int=string
-      --include-type=string
+   -N --int[=]string
+      --include-type[=]string
                  Only include files the specified type (Mulitple)
                  see perldoc File::CodeSearch::Files available types
-   -x --file-exclude=string
+   -x --file-exclude[=]string
                  Don't include files mathcing the regex (Multiple)
-   -X --ext=string
-      --exclude-type=string
+   -X --ext[=]string
+      --exclude-type[=]string
                  Don't include files the specified type (Mulitple)
                  see perldoc File::CodeSearch::Files available types
-      --file-ignore=string
+      --file-ignore[=]string
                  Replace the default ignore regex
-   -d --file-ignore-add=string
+   -d --file-ignore-add[=]string
                  Add this regex to the list of ignored files
-   -r --file-ignore-remove=string
+   -r --file-ignore-remove[=]string
                  Remove this regex to the list of ignored files
   Output:
-   -s --suround=int
+   -s --suround[=]int
                  Show int lines before and after a match
-   -b --before=int
+   -b --before[=]int
                  Show int lines before a match
-   -a --after=int
+   -a --after[=]int
                  Show int lines after a match
    -t --totals
                  Show the total number of lines & files matched
    -f --files-only
                  Show only the file names containg matches
-   -L --last=[function|class|sub]
+   -L --last[=][function|class|sub]
                  Show the last function, class or sub name found before the
                  matched line.
    -u --unique   Show only unique matches (just the match not the whole line)
-      --limit=int
+      --limit[=]int
                  Only show this number of found search results
   Other:
-   -E --execute=cmd
+   -E --execute[=]cmd
                  Run this command with the found files as arguments
-   -P --project=string
+   -P --project[=]string
                  Use the specified projects default settings
-   -C --config=file
+   -C --config[=]file
                  Use the specified file as the config file instead of the
                  deafult ~/.cs
 
    -v --verbose  Show more detailed option
       --version  Prints the version information
       --help     Prints this help information
-      --man      Prints the full documentation for cs
+      --man      Prints the full documentation for cs with example usage
 
 =head1 DESCRIPTION
+
+The C<cs> command is aimed at searching large quantities of text files with
+the ability to easily select searching files by type (or excluding files of a
+certain type). Also by default C<cs> excludes version controll directories eg
+.svn or .git.
+
+=head2 Examples
+
+ cs --path lib:t query
+
+This would search both the directories lib/ and t/ for files containing the
+work query.
+
+ cs --include-type=perl --smart b do_stuff
+
+This would search only perl files (.pl, .pm and files with the first line
+containg perl eg #!/usr/bin/perl or #!/usr/bin/env perl) for any declaration
+of a subroutine who's name starts with do_stuff eg sub do_stuff_again.
+
+ cs --exclude-type=html input
+
+Would search all non-html files (.html, .htm, .xhtml etc) for the word input
+
+ cs --after 5 text
+
+This would show up to 5 lines of text following any lins that match text
+
+ cs --files-oly text
+
+This would show only the names of files that contain text. This can speed
+the serach considerably as files are stopped being searched after a single
+match is found
+
+ cs --unique 'CONST_[A-Z0-9]'
+
+This will search for all upper case words starting with CONST_ and show a
+unique list of matched words, no files or matched lines are shown.
 
 =head1 SUBROUTINES/METHODS
 
@@ -495,19 +533,55 @@ This documentation refers to cs version 0.5.1.
 =head1 CONFIGURATION AND ENVIRONMENT
 
 A configuration file placed in ~/.csrc (or specified through --conf) allows
-allows the setting of default values
+allows the setting of default values. See L<Config::General> for full details
+of the file format.
+
+Eg
 
   <default>
       smart = 1
   </default>
+
+  <file_types>
+      <perl>
+          definite    = [.]pl$  # Definite match regexps can be specified mulitple
+          definite    = [.]pm$  # times to form a list of definit matches
+          definite    = [.]pod$ # Note this replaces the predefined list
+          definite    = [.]PL$
+
+          possible    = [.]t$   # As can possiple matches
+          possible    = [.]cgi$
+
+          none        = 1       # set files with out a suffix to match as perl files
+          bang        = perl    # Causes the reading of the first line of a file
+                                # to check if it contains /perl/ (and there fore matches)
+      </perl>
+      <python>
+          +definite   = [.]pthony$ # Adds this regexp to the default list of
+                                   # regexps that definitly phyton files
+      </python>
+  <file_types>
+
   <project proj>
     exclude = /path/to/excluded/dir
   </project>
 
-If you were to create a symlink to cs called proj the proj options would be
-selected automatically (unless you specify a project with --project).
+  <project other_work>
+    file-exclude = large[.]file$
+  </project>
+
+In the C<default> section, default values for command line options can be specified.
+
+In the C<file_types> section, you can add new file types or override or change
+existing file types.
+
+In the project section, you can add defaults specific to a project which can
+be specified on the command line as --project=proj
 
 =head1 DEPENDENCIES
+
+Some of the --smart capabilities (ie paging output) require the C<less> command
+to be installed other wise the paging wont available.
 
 =head1 INCOMPATIBILITIES
 
@@ -521,10 +595,11 @@ Patches are welcome.
 
 =head1 ALSO SEE
 
-C<grep -r> - Recursive grep, can be much faster but will search into version
-control directories.
+C<grep -r> - Recursive C<grep>, can be much faster but will search into version
+control directories and has to be used with C<find> to limit the searched files.
 
-L<ack> - This a very similar in syntax to grep but can't do replacements.
+L<ack> - This a very similar in syntax to C<grep> but can't do replacements which
+C<cs> can.
 
 =head1 AUTHOR
 
