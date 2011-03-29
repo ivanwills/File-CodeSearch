@@ -50,24 +50,28 @@ has links => (
     default => sub {{}},
 );
 
-Readonly my %TYPE_SUFFIXES => (
+has type_suffixes => (
+    is      => 'rw',
+    isa     => 'HashRef',
+    default => sub {{
         perl => {
-            definite => [qw/ [.]pl$ [.]pm$ [.]pod$ [.]PL$ /],
-            possible => [qw/ [.]t$ [.]cgi$ /],
+            definite    => [qw/ [.]pl$ [.]pm$ [.]pod$ [.]PL$ /],
+            possible    => [qw/ [.]t$ [.]cgi$ /],
             other_types => [qw/  /],
-            none     => 1,
+            none        => 1,
+            bang        => 'perl',
         },
         php => {
-            definite => [qw/ [.]php$ /],
-            possible => [qw/ [.]lib$ [.]pkg$ [.]t$ /],
+            definite    => [qw/ [.]php$ /],
+            possible    => [qw/ [.]lib$ [.]pkg$ [.]t$ /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         c => {
-            definite => [qw/ [.]c$ [.]cpp$ [.]c[+][+]$ [.]h$ [.]hpp$ [.]hxx$ [.]h[+][+]$ /],
-            possible => [qw/  /],
+            definite    => [qw/ [.]c$ [.]cpp$ [.]c[+][+]$ [.]h$ [.]hpp$ [.]hxx$ [.]h[+][+]$ /],
+            possible    => [qw/  /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         html => {
             definite => [qw/ [.]html$ [.]xhtml$ /],
