@@ -395,7 +395,7 @@ __DATA__
 
 =head1 NAME
 
-cs - Search & replace text (with some intelligence)
+cs - Search and/or replace text (with some intelligence)
 
 =head1 VERSION
 
