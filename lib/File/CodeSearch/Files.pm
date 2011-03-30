@@ -19,7 +19,7 @@ our $VERSION     = version->new('0.5.1');
 has ignore => (
     is  => 'rw',
     isa => 'ArrayRef[Str]',
-    default => sub{[qw{.git .bzr .svn CVS logs?(?:$|/) cover_db .orig$ .copy$ ~\d*$ _build blib \\.sw[po]$ [.]png$ [.]jpe?g$ [.]gif$ [.]swf$ [.]ttf$ }]},
+    default => sub{[qw{.git .bzr .svn CVS logs?(?:$|/) cover_db .orig$ .copy$ ~\d*$ _build blib \\.sw[po]$ [.]png$ [.]jpe?g$ [.]gif$ [.]swf$ [.]ttf$ }, ',v$' ]},
 );
 has include => (
     is  => 'rw',
