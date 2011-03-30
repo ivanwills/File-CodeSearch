@@ -221,6 +221,15 @@ sub types_match {
         return 2 if $file =~ /$suffix/;
     }
 
+    if ( $types->{$type}{bang} ) {
+        open my $fh, '<', $$file;
+        if ($fh) {
+            my $line = <$fh>;
+            close $fh;
+            return 3 if $line =~ /$types->{$type}{bang}/;
+        }
+    }
+
     return 1 if $types->{$type}{none} && $file !~ m{ [^/] [.] [^/]+ $}xms;
 
     for my $other ( @{ $types->{$type}{other_types} } ) {
