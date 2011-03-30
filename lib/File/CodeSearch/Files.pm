@@ -160,6 +160,35 @@ has type_suffixes => (
     }},
 );
 
+sub BUILD {
+    my ($self) = @_;
+
+    my $conf_file = "$ENV{HOME}/.csrc";
+
+    return if !-r $conf_file;
+
+    my $conf = Config::General->new($conf_file);
+    my %conf = $conf->getall();
+    $conf{file_types} ||= {};
+
+    for my $file_type ( keys %{ $conf{file_types} } ) {
+        $self->type_suffixes->{$file_type} ||= {};
+        for my $setting ( keys %{ $conf{file_types}{$file_type} } ) {
+            if ( $setting =~ s/^[+]//xms ) {
+                push @{ $self->type_suffixes->{$file_type}{$setting} }
+                     , ref $conf{file_types}{$file_type}{$setting} eq 'ARRAY'
+                     ? @{ $conf{file_types}{$file_type}{$setting} }
+                     : $conf{file_types}{$file_type}{$setting};
+            }
+            else {
+                $self->type_suffixes->{$file_type}{$setting}
+                     = ref $conf{file_types}{$file_type}{$setting} eq 'ARRAY'
+                     ? $conf{file_types}{$file_type}{$setting}
+                     : [ $conf{file_types}{$file_type}{$setting} ];
+            }
+        }
+    }
+}
 
 sub file_ok {
     my ($self, $file) = @_;
