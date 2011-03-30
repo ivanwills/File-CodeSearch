@@ -74,90 +74,91 @@ has type_suffixes => (
             none        => 0,
         },
         html => {
-            definite => [qw/ [.]html$ [.]xhtml$ /],
-            possible => [qw/ [.]xml$ /],
+            definite    => [qw/ [.]html$ [.]xhtml$ /],
+            possible    => [qw/ [.]xml$ /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         test => {
-            definite => [qw/ [.]t$ /],
-            possible => [qw/  /],
+            definite    => [qw/ [.]t$ /],
+            possible    => [qw/  /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         svg => {
-            definite => [qw/ svg /],
-            possible => [qw/  /],
+            definite    => [qw/ svg /],
+            possible    => [qw/  /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         sql => {
-            definite => [qw/ [.]sql$ [.]plsql$ /],
-            possible => [qw/  /],
+            definite    => [qw/ [.]sql$ [.]plsql$ /],
+            possible    => [qw/  /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         css => {
-            definite => [qw/ [.]css$ /],
-            possible => [qw/  /],
+            definite    => [qw/ [.]css$ /],
+            possible    => [qw/  /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         javascript => {
-            definite => [qw/ [.]js$ /],
-            possible => [qw/ /],
+            definite    => [qw/ [.]js$ /],
+            possible    => [qw/ /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         js => {
-            definite => [qw/  /],
-            possible => [qw/  /],
+            definite    => [qw/  /],
+            possible    => [qw/  /],
             other_types => [qw/ javascript /],
-            none     => 0,
+            none        => 0,
         },
         xml => {
-            definite => [qw/xml$ [.]xsd$ [.]xslt$ [.]dtd/],
-            possible => [qw/  /],
+            definite    => [qw/xml$ [.]xsd$ [.]xslt$ [.]dtd/],
+            possible    => [qw/  /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         web => {
-            definite => [qw/  /],
-            possible => [qw/  /],
+            definite    => [qw/  /],
+            possible    => [qw/  /],
             other_types => [qw/ html svg css javascript /],
-            none     => 0,
+            none        => 0,
         },
         scripting => {
-            definite => [qw/  /],
-            possible => [qw/  /],
+            definite    => [qw/  /],
+            possible    => [qw/  /],
             other_types => [qw/ perl php javascript /],
-            none     => 0,
+            none        => 0,
         },
         programing => {
-            definite => [qw/  /],
-            possible => [qw/  /],
+            definite    => [qw/  /],
+            possible    => [qw/  /],
             other_types => [qw/ scripting c /],
-            none     => 0,
+            none        => 0,
         },
         package => {
-            definite => [qw/ [.]PL$ MANIFEST$ MANIFEST.SKIP$ META.yml$ MYMETA.yml$ README$ Changes$ Debian_CPANTS.txt$ Makefile$ LICENSE$ /],
-            possible => [qw/  /],
+            definite    => [qw/ [.]PL$ MANIFEST$ MANIFEST.SKIP$ META.yml$ MYMETA.yml$ README$ Changes$ Debian_CPANTS.txt$ Makefile$ LICENSE$ /],
+            possible    => [qw/  /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         config => {
-            definite => [qw/  /],
-            possible => [qw/ rc$ tab$ [.]cfg$ [.]conf$ [.]config$  [.]yml$ /],
+            definite    => [qw/  /],
+            possible    => [qw/ rc$ tab$ [.]cfg$ [.]conf$ [.]config$  [.]yml$ /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
         binary => {
-            definite => [qw/ [.]jpe?g$ [.]png$ [.]gif$ [.]bmp$ [.]swf$ [.]psd$ [.]exe$ /],
-            possible => [qw/  /],
+            definite    => [qw/ [.]jpe?g$ [.]png$ [.]gif$ [.]bmp$ [.]swf$ [.]psd$ [.]exe$ /],
+            possible    => [qw/  /],
             other_types => [qw/  /],
-            none     => 0,
+            none        => 0,
         },
-    );
+    }},
+);
 
 
 sub file_ok {
@@ -208,7 +209,7 @@ sub file_ok {
 sub types_match {
     my ($self, $file, $type) = @_;
 
-    my $types = \%TYPE_SUFFIXES;
+    my $types = $self->type_suffixes;
 
     return 0 if !exists $types->{$type};
 
