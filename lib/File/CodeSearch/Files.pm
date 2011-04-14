@@ -15,7 +15,7 @@ use Carp;
 use English qw{ -no_match_vars };
 use Config::General;
 
-our $VERSION     = version->new('0.5.1');
+our $VERSION     = version->new('0.5.2');
 
 has ignore => (
     is  => 'rw',
@@ -285,7 +285,7 @@ name positive & negative matching.
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Files version 0.5.1.
+This documentation refers to File::CodeSearch::Files version 0.5.2.
 
 =head1 SYNOPSIS
 

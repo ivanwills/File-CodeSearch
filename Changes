@@ -1,5 +1,20 @@
 Revision history for File-CodeSearch
 
+0.5.2   2011-04-15
+        Added IO::Prompt dependency
+        Changed test regexes to being proper quoted regexes to fix issue with perl 5.13
+        Fixed bug in checking for included file types
+        Added ,v RCS files to ignored list
+        Added BUILD method to read the ~/.csrc file for any updated file types
+        Added "bang" check which looks at the first line of a file to determine if the matches a file type
+        Fixed missing bracket and unchanged type suffix name
+        Updated documentation to being more usable and complete
+        Changed so that file type groups can be updated
+        Fixed copyright
+        More ignore sorting
+        Added script to make cs not require all other modules to be installed
+        Fixed bad regex match
+
 0.5.1   2011-01-29
         Fixed spelling misstakes
         Cleaned up more POD
