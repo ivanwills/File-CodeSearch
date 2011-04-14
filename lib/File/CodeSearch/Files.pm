@@ -301,6 +301,10 @@ This documentation refers to File::CodeSearch::Files version 0.5.1.
 
 =head1 SUBROUTINES/METHODS
 
+=head2 C<BUILD>
+
+Applies any configuration details found in the ~/.csrc file
+
 =head2 C<file_ok ($file)>
 
 Determines weather B<$file> should be searched

@@ -491,7 +491,7 @@ This documentation refers to cs version 0.5.1.
 
 The C<cs> command is aimed at searching large quantities of text files with
 the ability to easily select searching files by type (or excluding files of a
-certain type). Also by default C<cs> excludes version controll directories eg
+certain type). Also by default C<cs> excludes version control directories eg
 .svn or .git.
 
 =head2 Examples
@@ -504,7 +504,7 @@ work query.
  cs --include-type=perl --smart b do_stuff
 
 This would search only perl files (.pl, .pm and files with the first line
-containg perl eg #!/usr/bin/perl or #!/usr/bin/env perl) for any declaration
+containing perl eg #!/usr/bin/perl or #!/usr/bin/env perl) for any declaration
 of a subroutine who's name starts with do_stuff eg sub do_stuff_again.
 
  cs --exclude-type=html input
@@ -513,12 +513,12 @@ Would search all non-html files (.html, .htm, .xhtml etc) for the word input
 
  cs --after 5 text
 
-This would show up to 5 lines of text following any lins that match text
+This would show up to 5 lines of text following any links that match text
 
  cs --files-oly text
 
 This would show only the names of files that contain text. This can speed
-the serach considerably as files are stopped being searched after a single
+the search considerably as files are stopped being searched after a single
 match is found
 
  cs --unique 'CONST_[A-Z0-9]'
