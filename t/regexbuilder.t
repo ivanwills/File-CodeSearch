@@ -21,13 +21,13 @@ sub simple {
         re             => ['test'],
     );
     $re->make_regex;
-    is($re->regex, '(?-xism:test)', 'simple');
+    is($re->regex, qr/test/, 'simple');
 
     $re = File::CodeSearch::RegexBuilder->new(
         re             => ['(test)'],
     );
     $re->make_regex;
-    is($re->regex, '(?-xism:(test))', 'simple');
+    is($re->regex, qr/(test)/, 'simple');
 
 }
 
@@ -37,7 +37,7 @@ sub whole {
         whole          => 1,
     );
     $re->make_regex;
-    is($re->regex, '(?-xism:(?<!\w)test(?!\w))', 'whole');
+    is($re->regex, qr/(?<!\w)test(?!\w)/, 'whole');
 
 }
 
@@ -46,14 +46,14 @@ sub array {
         re             => ['test', 'words'],
     );
     $re->make_regex;
-    is($re->regex, '(?-xism:test words)', 'words concatinated with spaces');
+    is($re->regex, qr/test words/, 'words concatinated with spaces');
 
     $re = File::CodeSearch::RegexBuilder->new(
         re             => ['test', 'words'],
         whole          => 1,
     );
     $re->make_regex;
-    is($re->regex, '(?-xism:(?<!\w)test(?!\w) (?<!\w)words(?!\w))', 'simple');
+    is($re->regex, qr/(?<!\w)test(?!\w) (?<!\w)words(?!\w)/, 'simple');
 
 }
 
@@ -63,7 +63,7 @@ sub array_words {
         words          => 1,
     );
     $re->make_regex;
-    is($re->regex, '(?-xism:test.*words)', 'words');
+    is($re->regex, qr/test.*words/, 'words');
 
     $re = File::CodeSearch::RegexBuilder->new(
         re             => ['test', 'words'],
@@ -71,7 +71,7 @@ sub array_words {
         whole          => 1,
     );
     $re->make_regex;
-    is($re->regex, '(?-xism:(?<!\w)test(?!\w).*(?<!\w)words(?!\w))', 'simple');
+    is($re->regex, qr/(?<!\w)test(?!\w).*(?<!\w)words(?!\w)/, 'simple');
 
 }
 
@@ -81,7 +81,7 @@ sub array_all {
         all            => 1,
     );
     $re->make_regex;
-    is($re->regex, '(?-xism:test.*words|words.*test)', 'all');
+    is($re->regex, qr/test.*words|words.*test/, 'all');
 
     $re = File::CodeSearch::RegexBuilder->new(
         re             => ['test', 'words'],
@@ -89,7 +89,7 @@ sub array_all {
         whole          => 1,
     );
     $re->make_regex;
-    is($re->regex, '(?-xism:(?<!\w)test(?!\w).*(?<!\w)words(?!\w)|(?<!\w)words(?!\w).*(?<!\w)test(?!\w))', 'simple');
+    is($re->regex, qr/(?<!\w)test(?!\w).*(?<!\w)words(?!\w)|(?<!\w)words(?!\w).*(?<!\w)test(?!\w)/, 'simple');
 
 }
 

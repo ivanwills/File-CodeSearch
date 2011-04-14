@@ -44,19 +44,19 @@ sub regexes {
     my $hl = File::CodeSearch::Highlighter->new( re => ['test'] );
     $hl->make_regex;
     $hl->make_highlight_re;
-    is($hl->highlight_re, '(?-xism:test)', 'simple re returns simple string');
+    is($hl->highlight_re, qr/test/, 'simple re returns simple string');
 
     $hl = File::CodeSearch::Highlighter->new( re => ['(test)'] );
     $hl->make_highlight_re;
-    is($hl->highlight_re, '(?-xism:(?:test))', 'simple re returns simple string');
+    is($hl->highlight_re, qr/(?:test)/, 'simple re returns simple string');
 
     $hl = File::CodeSearch::Highlighter->new( re => ['(?:test)'] );
     $hl->make_highlight_re;
-    is($hl->highlight_re, '(?-xism:(?:test))', 'simple re returns simple string');
+    is($hl->highlight_re, qr/(?:test)/, 'simple re returns simple string');
 
     $hl = File::CodeSearch::Highlighter->new( re => ['(?xmsi:test)'] );
     $hl->make_highlight_re;
-    is($hl->highlight_re, '(?-xism:(?xmsi:test))', 'simple re returns simple string');
+    is($hl->highlight_re, qr/(?xmsi:test)/, 'simple re returns simple string');
 
     return;
 }
