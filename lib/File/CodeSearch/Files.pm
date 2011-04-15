@@ -203,7 +203,6 @@ sub file_ok {
     my $possible = 0;
     my $matched = 0;
     if ( @{ $self->include_type }) {
-        my $matched = 0;
         for my $type (@{ $self->include_type }) {
             my $match = $self->types_match($file, $type);
             $possible-- if $match == 2;
