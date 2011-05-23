@@ -20,7 +20,7 @@ our $VERSION     = version->new('0.5.2');
 has ignore => (
     is  => 'rw',
     isa => 'ArrayRef[Str]',
-    default => sub{[qw{ [.]git [.]bzr [.]svn CVS logs?(?:$|/) cover_db [.]orig$ [.]copy$ ~\d*$ _build blib \\.sw[ponx]$ [.]png$ [.]jpe?g$ [.]gif$ [.]swf$ [.]ttf$ }, ',v$' ]},
+    default => sub{[qw{ ignore }]},
 );
 has include => (
     is  => 'rw',
@@ -55,6 +55,42 @@ has type_suffixes => (
     is      => 'rw',
     isa     => 'HashRef',
     default => sub {{
+        ignore => {
+            definite    => [qw{  }],
+            possible    => [qw{  }],
+            other_types => [qw{ build backups vcs images logs }],
+            none        => 0,
+        },
+        images => {
+            definite    => [qw{ [.]png$ [.]jpe?g$ [.]gif$ [.]swf$ [.]ttf$ }],
+            possible    => [qw{  }],
+            other_types => [qw{  }],
+            none        => 0,
+        },
+        logs => {
+            definite    => [qw{ logs?(?:$|/) }],
+            possible    => [qw{  }],
+            other_types => [qw{  }],
+            none        => 0,
+        },
+        backups => {
+            definite    => [qw{ [.]orig$ [.]copy$ ~\d*$ }],
+            possible    => [qw{  }],
+            other_types => [qw{  }],
+            none        => 0,
+        },
+        vcs => {
+            definite    => [qw{ [.]git [.]bzr [.]svn CVS RCS }, ',v$' ],
+            possible    => [qw{  }],
+            other_types => [qw{  }],
+            none        => 0,
+        },
+        build => {
+            definite    => [qw{ _build blib }],
+            possible    => [qw{  }],
+            other_types => [qw{  }],
+            none        => 0,
+        },
         perl => {
             definite    => [qw{ [.]pl$ [.]pm$ [.]pod$ [.]PL$ }],
             possible    => [qw{ [.]t$ [.]cgi$ }],
@@ -195,7 +231,7 @@ sub file_ok {
     my ($self, $file) = @_;
 
     for my $ignore (@{ $self->ignore }) {
-        return 0 if $file =~ /$ignore/;
+        return 0 if $self->types_match($file, $ignore);
     }
 
     return 1 if -d $file;
