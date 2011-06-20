@@ -291,8 +291,7 @@ sub types_match {
     }
 
     if ( $types->{$type}{bang} ) {
-        open my $fh, '<', $file;
-        if ($fh) {
+        if ( open my $fh, '<', $file ) {
             my $line = <$fh>;
             close $fh;
             return 3 if $line && $line =~ /$types->{$type}{bang}/;
