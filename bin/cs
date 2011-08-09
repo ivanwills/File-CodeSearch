@@ -408,10 +408,17 @@ This documentation refers to cs version 0.5.2.
    cr [option] search replace
 
  OPTIONS:
+  search         A perl regular expression. if it is written in multiple parts
+                 eg search this on the command line (ie no joinded together
+                 with quotes) the parts will be joined together with \s or
+                 if --all is used a regular expression will be written
+                 containing each part in every order, if --words the parts are
+                 seperated by .*'s.
+  replace        The value to substitute for the values found by search
+
   Search:
    -a --all      Find all parts on regardless of order on the line
-   -W --words
-                 Similar to --all but with out the reordering
+   -W --words    Similar to --all but with out the reordering
    -i --ignore-case
                  Turn off case sensitive searching
    -w --whole    Makes the match only whole words (ie wraps with (?<\W) & (?=\W))
