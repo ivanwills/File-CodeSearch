@@ -287,8 +287,7 @@ sub searcher {
         }
         if ( $$out && ( !$option{sre_smart} || (my @tmp = split /\n/, $$out) >= $lines) ) {
             if ($option{sre_smart}) {
-                open my $tmp, '|-', 'less -R';
-                $fh = $tmp || $fh;
+                $fh = $tmp if open my $tmp, '|-', $ENV{CS_PAGER_COLOR) || 'less -Rx4SFX';
             }
             print {$fh} $$out;
             $$out = '';
@@ -577,6 +576,12 @@ existing file types.
 
 In the project section, you can add defaults specific to a project which can
 be specified on the command line as --project=proj
+
+=head2 Pager
+
+By default cs uses the command C<less -Rx4SFX> if it can run other wise it
+falls back just writing to C<STDOUT>. You can change this environment variable
+C<CS_PAGER_COLOR>
 
 =head1 DEPENDENCIES
 
