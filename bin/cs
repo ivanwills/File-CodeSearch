@@ -287,7 +287,8 @@ sub searcher {
         }
         if ( $$out && ( !$option{sre_smart} || (my @tmp = split /\n/, $$out) >= $lines) ) {
             if ($option{sre_smart}) {
-                $fh = $tmp if open my $tmp, '|-', $ENV{CS_PAGER_COLOR) || 'less -Rx4SFX';
+                my $tmp;
+                $fh = $tmp if open $tmp, '|-', $ENV{CS_PAGER_COLOR} || 'less -Rx4SFX';
             }
             print {$fh} $$out;
             $$out = '';
