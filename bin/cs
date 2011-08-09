@@ -54,7 +54,7 @@ sub main {
     Getopt::Long::Configure('bundling');
     GetOptions(
         \%option,
-        'sre_all|all|A',
+        'sre_all|all|a',
         'sre_words|words|W',
         'sre_ignore_case|ignore|i',
         'sre_whole|whole|w',
@@ -75,9 +75,9 @@ sub main {
         'file_ignore=s',
         'file_ignore_add|d=s',
         'file_ignore_remove|I=s',
-        'out_suround|suround|s=n',
-        'out_suround_before|before|b=n',
-        'out_suround_after|after|a=n',
+        'out_suround|suround|context|C=n',
+        'out_suround_before|before|B=n',
+        'out_suround_after|after|A=n',
         'out_totals|totals|t',
         'out_files_only|files-only|f',
         'out_unique|unique|u!',
@@ -409,7 +409,7 @@ This documentation refers to cs version 0.5.2.
 
  OPTIONS:
   Search:
-   -A --all      Find all parts on regardless of order on the line
+   -a --all      Find all parts on regardless of order on the line
    -W --words
                  Similar to --all but with out the reordering
    -i --ignore-case
@@ -457,11 +457,11 @@ This documentation refers to cs version 0.5.2.
    -r --file-ignore-remove[=]string
                  Remove this regex to the list of ignored files
   Output:
-   -s --suround[=]int
-                 Show int lines before and after a match
-   -b --before[=]int
+   -C --context[=]int
+                 Show int lines of context before and after a match
+   -B --before[=]int
                  Show int lines before a match
-   -a --after[=]int
+   -A --after[=]int
                  Show int lines after a match
    -t --totals
                  Show the total number of lines & files matched
