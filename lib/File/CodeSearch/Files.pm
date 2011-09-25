@@ -200,6 +200,7 @@ has type_suffixes => (
 sub BUILD {
     my ($self) = @_;
 
+    $ENV{HOME} ||= $ENV{USERPROFILE};
     my $conf_file = "$ENV{HOME}/.csrc";
 
     return if !-r $conf_file;

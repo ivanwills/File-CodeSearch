@@ -351,6 +351,7 @@ sub params {
 sub parse_config {
     my ($opt) = @_;
 
+    $ENV{HOME} ||= $ENV{USERPROFILE};
     my $conf_file = $opt->{config} || "$ENV{HOME}/.csrc";
 
     return if !-r $conf_file;
