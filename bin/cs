@@ -102,6 +102,10 @@ sub main {
     elsif ( $option{'help'} ) {
         pod2usage( -verbose => 1 );
     }
+    elsif ( !@ARGV ) {
+        warn "No search term specified\n";
+        pod2usage( -verbose => 1 );
+    }
 
     # do stuff here
 
