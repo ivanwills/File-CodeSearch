@@ -16,6 +16,7 @@ use English qw{ -no_match_vars };
 use Config::General;
 
 our $VERSION     = version->new('0.5.2');
+our %warned_once;
 
 has ignore => (
     is  => 'rw',
@@ -58,7 +59,19 @@ has type_suffixes => (
         ignore => {
             definite    => [qw{  }],
             possible    => [qw{  }],
-            other_types => [qw{ build backups vcs images logs }],
+            other_types => [qw{ build backups vcs images logs editors }],
+            none        => 0,
+        },
+        editors => {
+            definite    => [qw{ ~\d*$ }],
+            possible    => [qw{  }],
+            other_types => [qw{ vim }],
+            none        => 0,
+        },
+        vim => {
+            definite    => [qw{ (^|/)[.][^/]+[.]sw[ponx]$ }],
+            possible    => [qw{  }],
+            other_types => [qw{  }],
             none        => 0,
         },
         images => {
@@ -280,7 +293,7 @@ sub types_match {
 
     my $types = $self->type_suffixes;
 
-    warn "No type $type" if !exists $types->{$type};
+    warn "No type $type" if !exists $types->{$type} && !$warned_once{$type}++;
     return 0 if !exists $types->{$type};
 
     for my $suffix ( @{ $types->{$type}{definite} } ) {
