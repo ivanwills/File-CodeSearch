@@ -84,7 +84,7 @@ sub main {
         'out_limit|limit=i',
         'project|P=s',
         'execute|execute-files|E=s',
-        'config|C=s',
+        'config|c=s',
         'bw|g',
         'verbose|v+',
         'man',
@@ -490,7 +490,7 @@ This documentation refers to cs version 0.5.5.
                  Run this command with the found files as arguments
    -P --project[=]string
                  Use the specified projects default settings
-   -C --config[=]file
+   -c --config[=]file
                  Use the specified file as the config file instead of the
                  deafult ~/.cs
 
