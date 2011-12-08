@@ -15,7 +15,7 @@ use Carp;
 use English qw{ -no_match_vars };
 use Config::General;
 
-our $VERSION     = version->new('0.5.2');
+our $VERSION     = version->new('0.5.5');
 our %warned_once;
 
 has ignore => (
@@ -333,7 +333,7 @@ name positive & negative matching.
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Files version 0.5.2.
+This documentation refers to File::CodeSearch::Files version 0.5.5.
 
 =head1 SYNOPSIS
 

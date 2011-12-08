@@ -14,7 +14,7 @@ use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
 use Term::Size::Any;
 
-our $VERSION     = version->new('0.5.2');
+our $VERSION     = version->new('0.5.5');
 
 extends 'File::CodeSearch::RegexBuilder';
 
@@ -157,7 +157,7 @@ File::CodeSearch::Highlighter - Highlights matched parts of a line.
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Highlighter version 0.5.2.
+This documentation refers to File::CodeSearch::Highlighter version 0.5.5.
 
 
 =head1 SYNOPSIS
