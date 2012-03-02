@@ -109,7 +109,7 @@ sub main {
 
     # do stuff here
 
-    $option{path} = $option{path} ? [ map {split /:/, $_} @{$option{path}} ] : ['.'];
+    $option{path} = [ map {glob $_} map {split /:/, $_} $option{path} ? @{$option{path}} : ('.') ];
 
     if ($option{out_suround}) {
         $option{out_suround_before} ||= $option{out_suround};
@@ -441,8 +441,10 @@ This documentation refers to cs version 0.5.5.
                  String to replace found text with
   Files:
    -p --path[=]string
-                 A colon seperated list of directories to search in
-                 (Default current directory)
+                 A colon seperated list of directories to search in, which may
+                 include globing but you must quote so the shell doesn't do
+                 the globbing itself.
+                 (Default is current directory)
    -l --follow-symlinks
                  Follow symlinks to directories
       --no-follow-symlinks
