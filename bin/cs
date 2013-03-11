@@ -18,7 +18,7 @@ use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use FindBin qw/$Bin/;
 use Term::ANSIColor qw/:constants/;
-use Path::Class;
+use Path::Tiny;
 use File::Copy;
 use File::CodeSearch;
 use File::CodeSearch::Replacer;
@@ -320,11 +320,11 @@ sub save_replace {
         $answer->{save_all} = 1;
     }
     if ( $ans eq 'y' || $answer->{save_all} ) {
-        $file = file($file);
-        my $backup = $file->parent->file($file->basename . '~');
+        $file = path($file);
+        my $backup = $file->parent->child($file->basename . '~');
         my $i = 1;
         while (-f $backup) {
-            $backup = $file->parent->file($file->basename . '~' . $i);
+            $backup = $file->parent->child($file->basename . '~' . $i++);
         }
         move $file, $backup;
         my $fh = $file->openw;

@@ -14,7 +14,7 @@ use IO::Handle;
 use File::chdir;
 use File::CodeSearch::Files;
 use Clone qw/clone/;
-use Path::Class qw/file dir/;
+use Path::Tiny;
 
 our $VERSION     = version->new('0.5.5');
 
@@ -112,8 +112,8 @@ sub _find {
         if (-l "$dir$file") {
             next FILE if !$self->files->symlinks;
 
-            my $real = -f "$dir$file" ? file("$dir$file") : dir("$dir$file");
-            $real = $real->absolute->resolve;
+            my $real = path("$dir$file");
+            $real = $real->realpath;
             $self->links->{$real} ||= 0;
 
             next FILE if $self->links->{$real}++;

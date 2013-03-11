@@ -17,7 +17,7 @@ use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use FindBin qw/$Bin/;
-use Path::Class;
+use Path::Tiny;
 
 our $VERSION = version->new('0.0.1');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
@@ -48,7 +48,6 @@ sub main {
         'help',
         'VERSION!',
     ) or pod2usage(2);
-    #my $file = join ' ', @ARGV;
 
     if ( $option{'VERSION'} ) {
         print "$name Version = $VERSION\n";
@@ -63,12 +62,12 @@ sub main {
 
     # do stuff here
     my $out;
-    my $cs  = dir($0)->parent->parent->subdir('bin')->file('cs');
+    my $cs  = path($0)->parent->parent->child('bin')->child('cs');
 
     $out = $cs->slurp;
     $out =~ s/^__DATA__\n//xms;
 
-    my $lib = dir($0)->parent->parent->subdir('lib');
+    my $lib = path($0)->parent->parent->child('lib');
     my @children = $lib->children;
 
     while ( my $child = shift @children ) {
