@@ -59,7 +59,7 @@ sub main {
         'sre_ignore_case|ignore|i',
         'sre_whole|whole|w',
         'sre_sub_matches|contains|c=s@',
-        'sre_sub_no_matches|not-contains|notcontains|S=s@',
+        'sre_sub_not_matches|not-contains|notcontains|S=s@',
         'sre_last|last|L=s@',
         'sre_smart|smart|m',
         'replace|r=s',
