@@ -83,6 +83,8 @@ sub main {
         'out_unique|unique|u!',
         'out_limit|limit=i',
         'project|P=s',
+        'yes|y',
+        'no',
         'execute|execute-files|E=s',
         'config|c=s',
         'bw|g',
@@ -91,6 +93,7 @@ sub main {
         'help',
         'VERSION!',
     ) or pod2usage(2);
+    warn Dumper \%option;
 
     if ( $option{'VERSION'} ) {
         print "$name Version = $VERSION\n";
@@ -195,11 +198,12 @@ sub main {
 sub searcher {
     my ($found, $out, $match, $hl, $lines, $fh) = @_;
     my $last_file = undef;
-    my $answer = {};
+    warn Dumper my $answer = { all => $option{yes}, save_all => $option{yes} };
     my $content = '';
 
     return sub {
         my ($line, $file, $line_no, %stuff ) = @_;
+                    warn Dumper $answer;
         confess "No line number provided!\n" if !defined $line_no;
         my $saved = 0;
 
@@ -260,6 +264,7 @@ sub searcher {
                     print {$fh} $$out;
                     $$out = '';
 
+                    warn Dumper $answer;
                     $ans = lc prompt(-prompt => $RESET . "Change? [yNa] ", -default => 'n', '-1t');
                     print "\n";
                 }
@@ -283,6 +288,10 @@ sub searcher {
         if ( !$line && $out ) {
             save_replace( $last_file, $content, $answer );
             $content = '';
+        }
+        else {
+            warn "not saving\n";
+            warn Dumper $line, $out;
         }
 
         if ($option{bw}) {
@@ -312,6 +321,7 @@ sub save_replace {
     delete $answer->{yes};
 
     my $ans = $answer->{save_all} ? 'y' : 'n';
+    warn Dumper $answer, $ans;
     if ( !$answer->{save_all} ) {
         $ans = prompt "Save changes to $file? [yNa] ", -default => 'n', '-1t';
     }
