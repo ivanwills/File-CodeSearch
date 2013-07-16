@@ -99,7 +99,7 @@ has type_suffixes => (
             none        => 0,
         },
         build => {
-            definite    => [qw{ _build blib }],
+            definite    => [qw{ _build blib (MY)?META[.](yml|json) LICENCE Changes Build([.]PL)? MANIFEST([.]SKIP)? README }],
             possible    => [qw{  }],
             other_types => [qw{  }],
             none        => 0,
@@ -168,7 +168,7 @@ has type_suffixes => (
         xml => {
             definite    => [qw{ xml$ [.]xsd$ [.]xslt$ [.]dtd }],
             possible    => [qw{  }],
-            other_types => [qw{  }],
+            other_types => [qw{ svg }],
             none        => 0,
         },
         web => {
