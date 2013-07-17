@@ -166,6 +166,7 @@ sub search_file {
     my $found = undef;
     my %args = ( codesearch => $self, before => \@before, after => \@after, lines => \@lines, parent => $parent );
     my @sub_matches;
+    my $post;
 
     LINE:
     while ( my $line = <$fh> ) {
@@ -195,7 +196,7 @@ sub search_file {
         }
         else {
             $self->_found( $self->found + 1 );
-            $search->($line, $file, $fh->input_line_number, %args);
+            $post = $search->($line, $file, $fh->input_line_number, %args);
             last LINE if $self->limit && $self->found >= $self->limit;
         }
 
@@ -208,12 +209,22 @@ sub search_file {
         SUB:
         for my $args (@sub_matches) {
             $self->_found( $self->found + 1 );
-            $search->( @$args );
+            $post = $search->( @$args );
             last SUB if $self->limit && $self->found >= $self->limit;
         }
     }
+
     # check if the line is an after match
-    if (@after && ( ! @{$self->regex->sub_matches} || $self->regex->sub_match ) ) {
+    if (
+        $post
+        || (
+            @after
+            && (
+                ! @{$self->regex->sub_matches}
+                || $self->regex->sub_match
+            )
+        )
+    ) {
         pop @after if $args{last_line_no} && $fh->input_line_number - $args{last_line_no} > $after_max - 1;
         @before = ();
         $self->_found( $self->found + 1 );
