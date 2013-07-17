@@ -93,7 +93,6 @@ sub main {
         'help',
         'VERSION!',
     ) or pod2usage(2);
-    warn Dumper \%option;
 
     if ( $option{'VERSION'} ) {
         print "$name Version = $VERSION\n";
@@ -198,14 +197,14 @@ sub main {
 sub searcher {
     my ($found, $out, $match, $hl, $lines, $fh) = @_;
     my $last_file = undef;
-    warn Dumper my $answer = { all => $option{yes}, save_all => $option{yes} };
+    my $answer = { all => $option{yes}, save_all => $option{yes} };
     my $content = '';
 
     return sub {
         my ($line, $file, $line_no, %stuff ) = @_;
-                    warn Dumper $answer;
         confess "No line number provided!\n" if !defined $line_no;
         my $saved = 0;
+        my $post  = 0;
 
         if ( !$found->{$file} && !$option{out_unique} && !($option{out_files_only} && $option{out_totals}) ) {
             $$out .= "${file}\n";
@@ -257,6 +256,7 @@ sub searcher {
                 my $ans = '';
                 if ( $answer->{all} ) {
                     $$out .= sprintf $REVERSE . $BOLD . $ON_GREEN . '%4i: ' . $RESET . '%s', $line_no, $after;
+                    $post = 1;
                 }
                 else {
                     $$out .= sprintf $REVERSE . $BOLD . $ON_RED . 'From: ' . $RESET . '%s', $before;
@@ -271,11 +271,13 @@ sub searcher {
 
                 if ( $ans eq 'a') {
                     $answer->{all} = 1;
+                    $post = 1;
                 }
                 if ( $ans eq 'y' || $answer->{all} ) {
                     $stuff{lines}[-1] = $to;
                     $answer->{yes} = 1;
                     #warn $changed;
+                    $post = 1;
                 }
             }
         }
@@ -288,10 +290,6 @@ sub searcher {
         if ( !$line && $out ) {
             save_replace( $last_file, $content, $answer );
             $content = '';
-        }
-        else {
-            warn "not saving\n";
-            warn Dumper $line, $out;
         }
 
         if ($option{bw}) {
@@ -308,7 +306,7 @@ sub searcher {
             $option{sre_smart} = 0;
         }
 
-        return;
+        return $post;
     };
 }
 
@@ -321,7 +319,6 @@ sub save_replace {
     delete $answer->{yes};
 
     my $ans = $answer->{save_all} ? 'y' : 'n';
-    warn Dumper $answer, $ans;
     if ( !$answer->{save_all} ) {
         $ans = prompt "Save changes to $file? [yNa] ", -default => 'n', '-1t';
     }
