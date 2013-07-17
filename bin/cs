@@ -331,7 +331,7 @@ sub save_replace {
 
         # Create a backup of the file if we don't appear to be in a revision control system environment
         # TODO make this smarter to check that the files are currently part of the rcs system
-        if ( grep { -d $_ } qw/ .git .bzr .svn CSV RCS / ) {
+        if ( !grep { -d $_ } qw/ .git .bzr .svn CSV RCS / ) {
             my $backup = $file->parent->child($file->basename . '~');
             my $i = 1;
             while (-f $backup) {
