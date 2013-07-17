@@ -16,7 +16,7 @@ use File::CodeSearch::Files;
 use Clone qw/clone/;
 use Path::Tiny;
 
-our $VERSION     = version->new('0.5.6');
+our $VERSION     = version->new('0.5.7');
 
 has regex => (
     is       => 'rw',
@@ -244,7 +244,7 @@ File::CodeSearch - Search file contents in code repositories
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch version 0.5.6.
+This documentation refers to File::CodeSearch version 0.5.7.
 
 =head1 SYNOPSIS
 

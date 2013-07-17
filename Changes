@@ -1,5 +1,14 @@
 Revision history for File-CodeSearch
 
+0.5.7   2013-07-17
+        Added missing "not" (Ivan Wills)
+        Added skipping making backups for version controlled files (Ivan Wills)
+        Added forcing processing the end of a file when replacing (Ivan Wills)
+        Added check for processing the end of a file (Ivan Wills)
+        Trying to get replace --yes working (Ivan Wills)
+        Improved default types (Ivan Wills)
+        Added configure_requires section (Ivan Wills)
+
 0.5.6   2013-05-13
         Fixed ignores/skips
         Fixed kwalitee test
