@@ -80,6 +80,7 @@ sub main {
         'out_suround_after|after|A=n',
         'out_totals|totals|t',
         'out_files_only|files-only|f',
+        'out_quiet|q!',
         'out_unique|unique|u!',
         'out_limit|limit=i',
         'project|P=s',

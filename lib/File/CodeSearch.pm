@@ -43,6 +43,11 @@ has depth => (
     isa     => 'Bool',
     default => 0,
 );
+has quiet => (
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
+);
 has suround_before => (
     is      => 'rw',
     isa     => 'Int',
@@ -92,7 +97,7 @@ sub _find {
 
     {
         local $CWD = $dir;
-        opendir my $dirh, '.' or warn "Could not open the directory '$dir': $OS_ERROR ($CWD)\n" and return;
+        opendir my $dirh, '.' or $self->_message(directory => $dir, $OS_ERROR) and return;
         @files = sort _alpha_num grep { $_ ne '.' && $_ ne '..' } readdir $dirh;
 
         if ($self->breadth) {
@@ -155,7 +160,7 @@ sub _depth {
 sub search_file {
     my ($self, $search, $file, $parent) = @_;
 
-    open my $fh, '<', $file or warn "Could not open the file '$file': $OS_ERROR\n" and return;
+    open my $fh, '<', $file or $self->_message(file => $file, $OS_ERROR) and return;
 
     $self->regex->reset_file;
     $self->regex->current_file($file);
@@ -233,6 +238,16 @@ sub search_file {
     }
 
     return;
+}
+
+sub _message {
+    my ($self, $type, $name, $error) = @_;
+
+    if ( !$self->quiet ) {
+        warn "Could not open the $type '$name': $error\n";
+    }
+
+    return 1;
 }
 
 1;
