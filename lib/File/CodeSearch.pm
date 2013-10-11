@@ -87,7 +87,8 @@ sub _find {
     my @files;
     $dir =~ s{/$}{};
 
-    return if !-d $dir;
+    # check if we have a directory and we can change into it
+    return if !-d $dir || !-r $dir || !-x $dir;
 
     {
         local $CWD = $dir;
