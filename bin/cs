@@ -80,7 +80,7 @@ sub main {
         'out_suround_after|after|A=n',
         'out_totals|totals|t',
         'out_files_only|files-only|f',
-        'out_quiet|q!',
+        'out_quiet|quiet|q!',
         'out_unique|unique|u!',
         'out_limit|limit=i',
         'project|P=s',
@@ -498,6 +498,7 @@ This documentation refers to cs version 0.5.7.
    -L --last[=][function|class|sub]
                  Show the last function, class or sub name found before the
                  matched line.
+   -q --quiet    Turn off warnings about unreadable files & directories.
    -u --unique   Show only unique matches (just the match not the whole line)
       --limit[=]int
                  Only show this number of found search results
