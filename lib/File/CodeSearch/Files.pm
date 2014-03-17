@@ -328,8 +328,7 @@ __END__
 
 =head1 NAME
 
-File::CodeSearch::Files - Handles the testing file types, symlinks and file
-name positive & negative matching.
+File::CodeSearch::Files - Handles the testing file types, symlinks and file name positive & negative matching.
 
 =head1 VERSION
 

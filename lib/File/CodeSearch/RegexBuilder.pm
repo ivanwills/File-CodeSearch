@@ -217,8 +217,7 @@ __END__
 
 =head1 NAME
 
-File::CodeSearch::RegexBuilder - Takes in various options and builds a
-regular expression to check lines of a file
+File::CodeSearch::RegexBuilder - Takes in various options and builds a regular expression to check lines of a file
 
 =head1 VERSION
 
