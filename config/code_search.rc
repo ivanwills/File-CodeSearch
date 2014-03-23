@@ -1,0 +1,211 @@
+
+ignore = build
+ignore = backups
+ignore = vcs
+ignore = images
+ignore = logs
+ignore = editors
+
+<type_suffixes>
+    <ignore>
+        other_types = build
+        other_types = backups
+        other_types = vcs
+        other_types = images
+        other_types = logs
+        other_types = editors
+        none        = 0
+    </ignore>
+    <editors>
+        definite    = ~\d*$
+        other_types = vim
+        none        = 0
+    </editors>
+    <vim>
+        definite    = (^|/)[.][^/]+[.]sw[ponx]$
+        none        = 0
+    </vim>
+    <images>
+        definite    = [.]png$
+        definite    = [.]jpe?g$
+        definite    = [.]gif$
+        definite    = [.]swf$
+        definite    = [.]bmp$
+        definite    = [.]psd$
+        none        = 0
+    </images>
+    <logs>
+        definite    = logs?(?:$|/)
+        none        = 0
+    </logs>
+    <backups>
+        definite    = [.]orig$
+        definite    = [.]copy$
+        definite    = ~\d*$
+        none        = 0
+    </backups>
+    <git>
+        definite    = [.]git$
+        definite    = [.]gitignore$
+        definite    = [.]gitconfig$
+        definite    = [.]gitattributes$
+    </git>
+    <svn>
+        definite    = [.]svn(?:ignore)?$
+    </svn>
+    <bzr>
+        definite    = [.]bzr(?:ignore)?$
+    </bzr>
+    <vcs>
+        definite    = CVS$
+        definite    = RCS$
+        definite    = ,v$
+        other_types = git
+        other_types = svn
+        other_types = bzr
+        none        = 0
+    </vcs>
+    <build>
+        definite    = _build
+        definite    = blib
+        definite    = (MY)?META[.](yml|json)
+        definite    = LICENCE
+        definite    = Changes
+        definite    = Build([.]PL)?
+        definite    = MANIFEST([.]SKIP)?
+        definite    = README
+        none        = 0
+    </build>
+    <perl>
+        definite    = [.]pl$
+        definite    = [.]pm$
+        definite    = [.]pod$
+        definite    = [.]PL$
+        possible    = [.]t$
+        possible    = [.]cgi$
+        none        = 1
+        bang        = perl
+    </perl>
+    <php>
+        definite    = [.]php$
+        possible    = [.]lib$
+        possible    = [.]pkg$
+        possible    = [.]t$
+        none        = 0
+    </php>
+    <python>
+        definite    = [.]py$
+        none        = 0
+    </python>
+    <ruby>
+        definite    = [.]rb$
+        none        = 0
+    </ruby>
+    <c>
+        definite    = [.]c$
+        definite    = [.]cpp$
+        definite    = [.]c[+][+]$
+        definite    = [.]h$
+        definite    = [.]hpp$
+        definite    = [.]hxx$
+        definite    = [.]h[+][+]$
+        none        = 0
+    </c>
+    <html>
+        definite    = [.]html$
+        definite    =[.]xhtml$
+        possible    = [.]xml$
+        none        = 0
+    </html>
+    <test>
+        definite    = \/tx?\/[.]t$
+        definite    =test[.]pl$
+        none        = 0
+    </test>
+    <svg>
+        definite    = svg
+        none        = 0
+    </svg>
+    <sql>
+        definite    = [.]sql$
+        definite    =
+        none        = 0
+    </sql>
+    <css>
+        definite    = [.]css$
+        possible    = [.]less$
+        possible    =[.]scss$
+        none        = 0
+    </css>
+    <javascript>
+        definite    = [.]js$
+        possible    = [.]json$
+        none        = 0
+    </javascript>
+    <js>
+        other_types = javascript
+        none        = 0
+    </js>
+    <java>
+        definite    = [.]java$
+    </java>
+    <jar>
+        definite    = [.](?:jar|jsa|war)$
+    </jar>
+    <xml>
+        definite    = xml$
+        definite    = [.]xsd$
+        definite    = [.]xslt$
+        definite    = [.]dtd
+        other_types = svg
+        none        = 0
+    </xml>
+    <web>
+        other_types = html
+        other_types = svg
+        other_types = css
+        other_types = javascript
+        none        = 0
+    </web>
+    <scripting>
+        other_types = perl
+        other_types = php
+        other_types = python
+        other_types = ruby
+        other_types = javascript
+        none        = 0
+    </scripting>
+    <programing>
+        other_types = scripting
+        other_types = c
+        none        = 0
+    </programing>
+    <package>
+        definite    = [.]PL$
+        definite    = MANIFEST$
+        definite    = MANIFEST.SKIP$
+        definite    = META.yml$
+        definite    = MYMETA.yml$
+        definite    = README$
+        definite    = Changes$
+        definite    = Debian_CPANTS.txt$
+        definite    = Makefile$
+        definite    = LICENSE$
+        none        = 0
+    </package>
+    <config>
+        possible    = rc$
+        possible    = tab$
+        possible    = [.]cfg$
+        possible    = [.]conf$
+        possible    = [.]config$
+        possible    = [.]ya?ml$
+        none        = 0
+    </config>
+    <binary>
+        definite    = [.]exe$
+        definite    = [.]dll$
+        other_types = images
+        none        = 0
+    </binary>
+</type_suffixes>

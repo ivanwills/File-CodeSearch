@@ -15,6 +15,7 @@ my $builder = Module::Build->new(
         'Config::General' => 0,
         'File::chdir'     => 0,
         'File::Slurp'     => 0,
+        'File::ShareDir'  => 0,
         'File::Basename'  => 0,
         'File::Spec'      => 0,
         'File::chdir'     => 0,
@@ -39,6 +40,9 @@ my $builder = Module::Build->new(
         'File::Spec'       => 0,
         'Test::More'       => 0,
         'Test::NoWarnings' => 0,
+    },
+    share_dir => {
+        dist   => 'config',
     },
     add_to_cleanup     => [ 'File-CodeSearch-*' ],
     create_makefile_pl => 'traditional',

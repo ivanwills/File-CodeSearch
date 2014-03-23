@@ -23,6 +23,7 @@ use File::Copy;
 use File::CodeSearch;
 use File::CodeSearch::Replacer;
 use File::CodeSearch::Files;
+use File::ShareDir qw/dist_dir/;
 use Config::General;
 use IO::Prompt qw/prompt/;
 
