@@ -1,5 +1,21 @@
 Revision history for File-CodeSearch
 
+0.5.8   2014-08-21
+        Updated manifest (Ivan Wills)
+        Fixed travis-ci config (Ivan Wills)
+        Added travis config (Ivan Wills)
+        Fixed abstracts to match spec per http://neilb.org/2014/02/19/compliant-abstract.html (Ivan Wills)
+        Adding tag files (Ivan Wills)
+        Documented quiet mode (Ivan Wills)
+        Added quiet mode to hide warnings (Ivan Wills)
+        Fixed not checking that the user can change into a directory (Ivan Wills)
+        Updating for release of version 0.5.7 (Ivan Wills)
+        Added missing "not" (Ivan Wills)
+        Added skipping making backups for version controlled files (Ivan Wills)
+        Added forcing processing the end of a file when replacing (Ivan Wills)
+        Added check for processing the end of a file (Ivan Wills)
+        Trying to get replace --yes working (Ivan Wills)
+
 0.5.7   2013-07-17
         Added missing "not" (Ivan Wills)
         Added skipping making backups for version controlled files (Ivan Wills)

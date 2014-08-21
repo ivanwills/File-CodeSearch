@@ -15,7 +15,7 @@ use Carp;
 use English qw{ -no_match_vars };
 use Config::General;
 
-our $VERSION     = version->new('0.5.7');
+our $VERSION     = version->new('0.5.8');
 our %warned_once;
 
 has ignore => (
@@ -332,7 +332,7 @@ File::CodeSearch::Files - Handles the testing file types, symlinks and file name
 
 =head1 VERSION
 
-This documentation refers to File::CodeSearch::Files version 0.5.7.
+This documentation refers to File::CodeSearch::Files version 0.5.8.
 
 =head1 SYNOPSIS
 
