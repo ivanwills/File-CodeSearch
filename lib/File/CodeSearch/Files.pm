@@ -99,7 +99,7 @@ has type_suffixes => (
             none        => 0,
         },
         build => {
-            definite    => [qw{ _build blib (MY)?META[.](yml|json) LICENCE Changes Build([.]PL)? MANIFEST([.]SKIP)? README }],
+            definite    => [qw{ [_.]build blib (MY)?META[.](yml|json) LICENCE Changes Build$ Makefile$ MANIFEST([.]SKIP)? README }],
             possible    => [qw{  }],
             other_types => [qw{  }],
             none        => 0,
