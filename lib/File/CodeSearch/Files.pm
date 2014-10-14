@@ -59,7 +59,7 @@ has type_suffixes => (
         ignore => {
             definite    => [qw{  }],
             possible    => [qw{  }],
-            other_types => [qw{ build backups vcs images logs editors }],
+            other_types => [qw{ build backups vcs images logs editors min }],
             none        => 0,
         },
         editors => {
@@ -99,7 +99,22 @@ has type_suffixes => (
             none        => 0,
         },
         build => {
-            definite    => [qw{ [_.]build blib (MY)?META[.](yml|json) LICENCE Changes Build$ Makefile$ MANIFEST([.]SKIP)? README }],
+            definite    => [qw{
+                [_.]build
+                blib
+                (MY)?META[.](yml|json)
+                LICENCE
+                Changes
+                Build$
+                Makefile$
+                MANIFEST([.]SKIP)?
+                README
+                packages/[^/]/[.]build
+                Debian_CPANTS.txt
+                [.]class$
+                target/
+                cover_db
+            }],
             possible    => [qw{  }],
             other_types => [qw{  }],
             none        => 0,
@@ -137,32 +152,37 @@ has type_suffixes => (
         },
         svg => {
             definite    => [qw{ svg }],
-            possible    => [qw{  }],
-            other_types => [qw{  }],
             none        => 0,
         },
         sql => {
             definite    => [qw{ [.]sql$ [.]plsql$ }],
-            possible    => [qw{  }],
-            other_types => [qw{  }],
             none        => 0,
         },
         css => {
             definite    => [qw{ [.]css$ }],
-            possible    => [qw{  }],
+            other_types => [qw{ scss less }],
+            none        => 0,
+        },
+        scss => {
+            definite    => [qw{ [.]scss$ }],
+            other_types => [qw{  }],
+            none        => 0,
+        },
+        less => {
+            definite    => [qw{ [.]less$ }],
             other_types => [qw{  }],
             none        => 0,
         },
         javascript => {
             definite    => [qw{ [.]js$ }],
-            possible    => [qw{  }],
-            other_types => [qw{  }],
             none        => 0,
         },
         js => {
-            definite    => [qw{  }],
-            possible    => [qw{  }],
             other_types => [qw{ javascript }],
+            none        => 0,
+        },
+        json => {
+            definite    => [qw{ [.]ja?son$ }],
             none        => 0,
         },
         xml => {
@@ -172,15 +192,12 @@ has type_suffixes => (
             none        => 0,
         },
         web => {
-            definite    => [qw{  }],
-            possible    => [qw{  }],
-            other_types => [qw{ html svg css javascript }],
+            possible    => [qw{ xml }],
+            other_types => [qw{ html svg css js }],
             none        => 0,
         },
         scripting => {
-            definite    => [qw{  }],
-            possible    => [qw{  }],
-            other_types => [qw{ perl php javascript }],
+            other_types => [qw{ perl php python ruby javascript }],
             none        => 0,
         },
         programing => {
@@ -197,14 +214,54 @@ has type_suffixes => (
         },
         config => {
             definite    => [qw{  }],
-            possible    => [qw{ rc$ tab$ [.]cfg$ [.]conf$ [.]config$  [.]yml$ }],
-            other_types => [qw{  }],
+            possible    => [qw{ rc$ tab$ [.]cfg$ [.]conf$ [.]config$ }],
+            other_types => [qw{ yaml }],
             none        => 0,
         },
         binary => {
             definite    => [qw{ [.]jpe?g$ [.]png$ [.]gif$ [.]bmp$ [.]swf$ [.]psd$ [.]exe$ }],
             possible    => [qw{  }],
             other_types => [qw{  }],
+            none        => 0,
+        },
+        python => {
+            definite    => [qw{ [.]py$ }],
+            none        => 0,
+        },
+        yaml => {
+            definite    => [qw{ [.]ya?ml$ }],
+            none        => 0,
+        },
+        shell => {
+            definite    => [qw{ [.](?:ba|k|z)sh\d?$ }],
+            none        => 0,
+        },
+        ruby => {
+            definite    => [qw{ [.]rb$ }],
+            none        => 0,
+        },
+        groovy => {
+            definite    => [qw{ [.]groovy$ }],
+            none        => 0,
+        },
+        java => {
+            definite    => [qw{ [.]java$ }],
+            none        => 0,
+        },
+        min => {
+            definite    => [qw{ [.]min[.](?:css|js)$ }],
+            none        => 0,
+        },
+        jsp => {
+            definite    => [qw{ [.]jps$ }],
+            none        => 0,
+        },
+        ftl => {
+            definite    => [qw{ [.]ftl$ }],
+            none        => 0,
+        },
+        jt => {
+            other_types => [qw{ jsp ftl }],
             none        => 0,
         },
     }},
