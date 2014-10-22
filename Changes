@@ -1,5 +1,10 @@
 Revision history for File-CodeSearch
 
+0.5.9   2014-10-22
+        Readded removed test (Ivan Wills)
+        Added lots more types (Ivan Wills)
+        Added dzil build files (Ivan Wills)
+
 0.5.8   2014-08-21
         Updated manifest (Ivan Wills)
         Fixed travis-ci config (Ivan Wills)
