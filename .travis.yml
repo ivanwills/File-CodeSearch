@@ -11,3 +11,4 @@ before_install:
     - git clean -xfd
     - perl Build.PL
     - ./Build distmeta
+    - cpanm --installdeps --notest .
