@@ -23,7 +23,6 @@ use File::Copy;
 use File::CodeSearch;
 use File::CodeSearch::Replacer;
 use File::CodeSearch::Files;
-use Config::General;
 use IO::Prompt qw/prompt/;
 
 our $VERSION = version->new('0.5.9');
@@ -374,6 +373,7 @@ sub parse_config {
 
     return if !-r $conf_file;
 
+    require Config::General;
     my $conf = Config::General->new($conf_file);
     my %conf = $conf->getall();
 
