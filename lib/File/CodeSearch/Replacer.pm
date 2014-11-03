@@ -36,7 +36,7 @@ sub make_replace_re {
 
     return $self->replace_re if $self->replace_re;
 
-    my $re = $self->regex || $self->make_regex;
+    my $re = $self->make_regex;
 
     # make sure that all brackets are for non capture groups
     $re =~ s/ (?<! \\ | \[ ) [(] (?! [?] ) /(?:/gxms;
@@ -46,8 +46,8 @@ sub make_replace_re {
 
 sub highlight {
     my ($self, $string) = @_;
-    my $re  = $self->highlight_re || $self->make_highlight_re;
-    my $replace_re = $self->make_replace_re;;
+    my $re  = $self->make_highlight_re;
+    my $replace_re = $self->make_replace_re;
     my $replace = $self->replace;
     my $before = '';
     my $after = '';

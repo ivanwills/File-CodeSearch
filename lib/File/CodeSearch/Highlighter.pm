@@ -70,7 +70,7 @@ sub make_highlight_re {
 
     return $self->highlight_re if $self->highlight_re;
 
-    my $re = $self->regex || $self->make_regex;
+    my $re = $self->make_regex;
 
     # make sure that all brackets are for non capture groups
     $re =~ s/ (?<! \\ | \[ ) [(] (?! [?] ) /(?:/gxms;

@@ -85,6 +85,8 @@ has smart => (
 
 sub make_regex {
     my ($self) = @_;
+    return $self->regex if ref $self->regex eq 'Regexp';
+
     my $re;
     my $words = $self->re;
 
@@ -126,7 +128,7 @@ sub make_regex {
 
 sub match {
     my ($self, $line) = @_;
-    my $re = $self->regex || $self->make_regex;
+    my $re = $self->make_regex;
 
     $self->check_sub_matches($line);
     $self->check_lasts($line);
