@@ -2,14 +2,15 @@
 
 use strict;
 use warnings;
-use Test::More tests => 12 + 1;
-use Test::NoWarnings;
+use Test::More;
+use Test::Warnings;
 use Term::ANSIColor qw/:constants/;
 use File::CodeSearch::Files;
 
 files_ok();
 files_nok();
 files_exclude();
+done_testing();
 
 sub files_ok {
     my $files = File::CodeSearch::Files->new();

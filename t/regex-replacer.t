@@ -2,12 +2,13 @@
 
 use strict;
 use warnings;
-use Test::More tests => 3 + 1;
-use Test::NoWarnings;
+use Test::More;
+use Test::Warnings;
 use Term::ANSIColor qw/:constants/;
 use File::CodeSearch::Replacer;
 
 highlights();
+done_testing();
 
 sub highlights {
     my $hl = File::CodeSearch::Replacer->new(

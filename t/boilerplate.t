@@ -2,8 +2,8 @@
 
 use strict;
 use warnings;
-use Test::More tests => 8 + 1;
-use Test::NoWarnings;
+use Test::More;
+use Test::Warnings;
 
 sub not_in_file_ok {
     my ($filename, %regex) = @_;
@@ -52,3 +52,4 @@ module_boilerplate_ok('lib/File/CodeSearch/Files.pm');
 module_boilerplate_ok('lib/File/CodeSearch/Highlighter.pm');
 module_boilerplate_ok('lib/File/CodeSearch/RegexBuilder.pm');
 module_boilerplate_ok('lib/File/CodeSearch/Replacer.pm');
+done_testing();

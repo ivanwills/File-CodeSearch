@@ -2,8 +2,8 @@
 
 use strict;
 use warnings;
-use Test::More tests => 21 + 1;
-use Test::NoWarnings;
+use Test::More;
+use Test::Warnings;
 use Term::ANSIColor qw/:constants/;
 use File::CodeSearch::RegexBuilder;
 
@@ -15,6 +15,7 @@ array_words();
 match();
 sub_match();
 reset_file();
+done_testing();
 
 sub simple {
     my $re = File::CodeSearch::RegexBuilder->new(
