@@ -1,5 +1,15 @@
 Revision history for File-CodeSearch
 
+0.6.0   2014-11-04
+        Fixed changed build dependency (Ivan Wills)
+        Converted from Test::NoWarnings to Test::Warnings (Ivan Wills)
+        Added test of the _message method (Ivan Wills)
+        Delayed loading of Config::General (Ivan Wills)
+        Test for F::C::Replacer module (Ivan Wills)
+        Removed unnessesary logic (Ivan Wills)
+        Noisy deps install (Ivan Wills)
+        Trying to get travis to work correctly (Ivan Wills)
+
 0.5.9   2014-10-22
         Readded removed test (Ivan Wills)
         Added lots more types (Ivan Wills)
