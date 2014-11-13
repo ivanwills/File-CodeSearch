@@ -9,7 +9,6 @@ META.json
 Makefile.PL
 README
 lib/File/CodeSearch.pm
-lib/File/CodeSearch/Files.pm
 lib/File/CodeSearch/Highlighter.pm
 lib/File/CodeSearch/RegexBuilder.pm
 lib/File/CodeSearch/Replacer.pm
@@ -23,5 +22,4 @@ t/spelling.t
 t/highlighter.t
 t/regexbuilder.t
 t/codesearch.t
-t/files.t
 helper/onefile.pl

@@ -7,7 +7,6 @@ use Test::Warnings;
 
 BEGIN {
     use_ok( 'File::CodeSearch' );
-    use_ok( 'File::CodeSearch::Files' );
     use_ok( 'File::CodeSearch::Highlighter' );
     use_ok( 'File::CodeSearch::RegexBuilder' );
     use_ok( 'File::CodeSearch::Replacer' );

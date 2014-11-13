@@ -48,7 +48,6 @@ not_in_file_ok(Changes =>
 
 module_boilerplate_ok('bin/cs');
 module_boilerplate_ok('lib/File/CodeSearch.pm');
-module_boilerplate_ok('lib/File/CodeSearch/Files.pm');
 module_boilerplate_ok('lib/File/CodeSearch/Highlighter.pm');
 module_boilerplate_ok('lib/File/CodeSearch/RegexBuilder.pm');
 module_boilerplate_ok('lib/File/CodeSearch/Replacer.pm');
