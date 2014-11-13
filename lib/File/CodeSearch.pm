@@ -12,7 +12,7 @@ use version;
 use English qw/ -no_match_vars /;
 use IO::Handle;
 use File::chdir;
-use File::CodeSearch::Files;
+use File::TypeCategories;
 use Clone qw/clone/;
 use Path::Tiny;
 
@@ -25,8 +25,8 @@ has regex => (
 );
 has files => (
     is      => 'rw',
-    isa     => 'File::CodeSearch::Files',
-    default => sub { File::CodeSearch::Files->new },
+    isa     => 'File::TypeCategories',
+    default => sub { File::TypeCategories->new },
 );
 has recurse => (
     is      => 'rw',
@@ -294,7 +294,7 @@ and must be created with the search options desired, note you can also use
 the C<F::C::Highlighter> and C<F::C::Replacer> modules interchangeably with
 C<F::C::RegexBuilder>.
 
-=item C<files> - L<File::CodeSearch::Files>
+=item C<files> - L<File::TypeCategories>
 
 If you desire to limit files by file type, name, symlink status pass this
 object, other wise a default object will be created.

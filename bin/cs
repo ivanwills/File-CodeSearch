@@ -22,7 +22,7 @@ use Path::Tiny;
 use File::Copy;
 use File::CodeSearch;
 use File::CodeSearch::Replacer;
-use File::CodeSearch::Files;
+use File::TypeCategories;
 use IO::Prompt qw/prompt/;
 
 our $VERSION = version->new('0.6.0');
@@ -139,7 +139,7 @@ sub main {
     }
 
     warn Dumper { params('file', %option) } if $option{verbose};
-    my $files = File::CodeSearch::Files->new(params('file', %option));
+    my $files = File::TypeCategories->new(params('file', %option));
 
     warn Dumper { params('sre', %option), re => \@ARGV } if $option{verbose};
     my $hl =
@@ -471,13 +471,13 @@ This documentation refers to cs version 0.6.0.
    -N --int[=]string
       --include-type[=]string
                  Only include files the specified type (Mulitple)
-                 see perldoc File::CodeSearch::Files available types
+                 see perldoc File::TypeCategories available types
    -x --file-exclude[=]string
                  Don't include files mathcing the regex (Multiple)
    -X --ext[=]string
       --exclude-type[=]string
                  Don't include files the specified type (Mulitple)
-                 see perldoc File::CodeSearch::Files available types
+                 see perldoc File::TypeCategories available types
       --file-ignore[=]string
                  Replace the default ignore regex
    -d --file-ignore-add[=]string
