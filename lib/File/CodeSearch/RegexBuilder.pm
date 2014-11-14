@@ -97,7 +97,7 @@ sub make_regex {
     }
 
     if ($self->whole) {
-        @{$words} = map { "(?<!\\w)$_(?!\\w)" } @{$words};
+        @{$words} = map { "\\b$_\\b" } @{$words};
     }
 
     if ($self->all) {
@@ -153,13 +153,15 @@ sub check_sub_matches {
     return if $self->sub_not_match;
 
     for my $match_re (@$matches) {
-        $match ||= $line =~ /$match_re/;
+        $match = $line =~ /$match_re/;
+        last if $match;
     }
 
     $self->sub_match($match);
 
     for my $not_match_re (@$not_matches) {
-        $not_match ||= $line =~ /$not_match_re/;
+        $not_match = $line =~ /$not_match_re/;
+        last if $not_match;
     }
 
     $self->sub_not_match($not_match);
@@ -173,10 +175,10 @@ sub check_lasts {
     if ($self->last) {
         for my $last (@{ $self->last }) {
             my ($match) =
-                  $last eq 'function' ? $line =~ /function \s+ (?: & \s*)? (\w+)/xms
-                : $last eq 'class'    ? $line =~ /class \s+ (\w+)/xms
-                : $last eq 'sub'      ? $line =~ /sub \s+ (\w+)/xms
-                :                       $line =~ /$last \s+ (\w+)/xms;
+                  $last eq 'function' ? $line =~ /function \s+ (?: & \s*)? ([\w-]+)/xms
+                : $last eq 'class'    ? $line =~ /class \s+ ([\w-]+)/xms
+                : $last eq 'sub'      ? $line =~ /sub \s+ ([\w-]+)/xms
+                :                       $line =~ /$last \s+ ([\w-]+)/xms;
             $self->lasts->{$last} = $match if $match;
         }
     }
@@ -190,7 +192,7 @@ sub get_last_found {
 
     return '' if ! %{$self->lasts};
 
-    for my $last (keys %{$self->lasts} ) {
+    for my $last (sort keys %{$self->lasts} ) {
         $out .= "$last " . $self->lasts->{$last} . "\n";
     }
 
