@@ -80,7 +80,7 @@ sub make_highlight_re {
 
 sub highlight {
     my ($self, $string) = @_;
-    my $re  = $self->highlight_re || $self->make_highlight_re;
+    my $re  = $self->make_highlight_re;
     my $out = '';
 
     my @parts = split /($re)/, $string;
@@ -91,6 +91,7 @@ sub highlight {
             $match_length += length $parts[$i];
         }
     }
+
     # 5 is the magic number of characters used to show the line number
     my $limit = $self->limit - $match_length - 5;
     my $joins = @parts - ( @parts - 1 ) / 2;
@@ -101,7 +102,7 @@ sub highlight {
     if (length $parts[-1] < $chars * 2) {
         $total -= $chars_front + $chars_back - length $parts[-1];
     }
-    #warn "Big\n" if $limit - $total > $joins * 2;
+
     my $inc = $limit - $total > $joins * 2 ? 1 : 0;
     $chars += $inc;
     $chars_front = int $chars;
@@ -141,7 +142,7 @@ sub highlight {
     }
 
     $out .= RESET;
-    $out .= "\\N\n" if $string !~ /\n/xms;
+    $out .= "\\N" if $string !~ /\n/xms;
     $out .= "\n" if $out !~ /\n/xms;
 
     return $out;
