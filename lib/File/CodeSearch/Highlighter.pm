@@ -132,6 +132,7 @@ sub highlight {
                 }
                 # Check if
                 if ($chars_front_tmp + $chars_back_tmp < length $parts[$i]) {
+            $DB::single = 1;
                     my ($front) = $parts[$i] =~ /\A (.{$chars_front_tmp}) /xms;
                     my ($back)  = $parts[$i] =~ / (.{$chars_back_tmp}) \Z/xms;
                     $part = (defined $front ? $front : '') . $self->before_snip  . '...' . $self->after_snip . $self->before_nomatch . (defined $back ? $back : '');
