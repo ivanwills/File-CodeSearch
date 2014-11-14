@@ -91,7 +91,9 @@ sub make_regex {
     my $words = $self->re;
 
     my $start = shift @{ $words };
-    if ($start && !any {$start eq $_} qw/n b ss/) {
+    return $self->regex(qr//) if !defined $start;
+
+    if (!any {$start eq $_} qw/n b ss/) {
         unshift @{ $words }, $start;
         undef $start;
     }
@@ -103,6 +105,9 @@ sub make_regex {
     if ($self->all) {
         if (@{ $words } == 2 ) {
             $re = "$words->[0].*$words->[1]|$words->[1].*$words->[0]";
+        }
+        else {
+            $re = join ' ', @$words;
         }
     }
     elsif ( $self->words ) {
@@ -116,12 +121,12 @@ sub make_regex {
         $re = "(?i:$re)";
     }
 
+    $DB::single = 1;
     $re =
           !defined $start ? $re
         : $start eq 'n'   ? "function(?:&?\\s+|\\s+&?\\s*)$re|$re\\s+=\\s+function"
         : $start eq 'b'   ? "sub\\s+$re"
-        : $start eq 'ss'  ? "class\\s+$re"
-        :                   $re;
+        :                   "class\\s+$re";
 
     return $self->regex(qr/$re/);
 }

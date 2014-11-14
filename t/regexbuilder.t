@@ -11,6 +11,8 @@ simple();
 whole();
 array();
 array_all();
+ignore();
+shortcuts();
 array_words();
 match();
 sub_match();
@@ -92,6 +94,51 @@ sub array_all {
     );
     $re->make_regex;
     is($re->regex, qr/\btest\b.*\bwords\b|\bwords\b.*\btest\b/, 'simple');
+
+    $re = File::CodeSearch::RegexBuilder->new(
+        re             => ['test'],
+        all            => 1,
+        whole          => 1,
+    );
+    $re->make_regex;
+    is($re->regex, qr/\btest\b/, 'simple');
+
+}
+
+sub ignore {
+    my $re = File::CodeSearch::RegexBuilder->new(
+        re             => ['test', 'words'],
+        ignore_case    => 1,
+    );
+    $re->make_regex;
+    is($re->regex, qr/(?i:test words)/, 'ignore');
+
+}
+
+sub shortcuts {
+    my $re = File::CodeSearch::RegexBuilder->new(
+        re => ['b', 'test'],
+    );
+    $re->make_regex;
+    is($re->regex, qr/sub\s+test/, 'shortcut b for sub');
+
+    $re = File::CodeSearch::RegexBuilder->new(
+        re => ['n', 'test'],
+    );
+    $re->make_regex;
+    is($re->regex, qr/function(?:&?\s+|\s+&?\s*)test|test\s+=\s+function/, 'shortcut n for function');
+
+    $re = File::CodeSearch::RegexBuilder->new(
+        re => ['ss', 'test'],
+    );
+    $re->make_regex;
+    is($re->regex, qr/class\s+test/, 'shortcut ss for class');
+
+    $re = File::CodeSearch::RegexBuilder->new(
+        re => [],
+    );
+    $re->make_regex;
+    is($re->regex, qr//, 'empty');
 
 }
 
