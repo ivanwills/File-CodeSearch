@@ -235,6 +235,76 @@ This documentation refers to File::CodeSearch::RegexBuilder version 0.5.6.
 
 =head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=over 4
+
+=item C<regex>
+
+The compiled regex
+
+=item C<re (ArrayRef)>
+
+The strings to compile the regular expression from
+
+=item C<whole (Bool)>
+
+Makes sure each element of C<re> is matched as a whole word
+
+=item C<all (Bool)>
+
+Makes sure that the elements of C<re> are matched in any order (currently only two elemnts supported)
+
+=item C<words (Bool)>
+
+Match each word seperated by arbitrary number of characters (default seperation is one space)
+
+=item C<ignore_case (Bool)>
+
+Ignore case in the final regex
+
+=item C<files (HashRef)>
+
+Stores a count of matches in each file
+
+=item C<current_file>
+
+Reference to the current file being searched
+
+=item C<current_count (Int)>
+
+The number of matches found in the currently searched file
+
+=item C<sub_matches (ArrayRef[Str])>
+
+Terms to search on that the file should also contain to be considered to have matched
+
+=item C<sub_match (Bool)>
+
+Stores if a sub match has been found
+
+=item C<sub_not_matches (ArrayRef[Str])>
+
+Terms to search on that the file should not contain to be considered to have matched
+
+=item C<sub_not_match (Bool)>
+
+Stores if a not sub match has been found
+
+=item C<last (ArrayRef[Str])>
+
+A list of types to keep track of for context of a match (eg the last function, class or sub)
+
+=item C<lasts (HashRef[Str])>
+
+The current state of requested "last" types
+
+=item C<smart (Bool)>
+
+Create smart regular expression
+
+=back
+
 =head1 SUBROUTINES/METHODS
 
 =head2 C<make_regex ()>
