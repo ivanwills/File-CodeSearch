@@ -121,7 +121,6 @@ sub make_regex {
         $re = "(?i:$re)";
     }
 
-    $DB::single = 1;
     $re =
           !defined $start ? $re
         : $start eq 'n'   ? "function(?:&?\\s+|\\s+&?\\s*)$re|$re\\s+=\\s+function"
