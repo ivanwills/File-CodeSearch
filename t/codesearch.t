@@ -8,6 +8,7 @@ use Term::ANSIColor qw/:constants/;
 use FindBin qw/$Bin/;
 use File::CodeSearch::Highlighter;
 use File::CodeSearch;
+use Data::Dumper qw/Dumper/;
 
 simple();
 message();
@@ -15,16 +16,61 @@ done_testing();
 
 sub simple {
     my $re = File::CodeSearch::RegexBuilder->new(
-        re             => ['test'],
+        re => ['.'],
     );
     my $cs = File::CodeSearch->new(
         regex  => $re,
     );
-    $cs->search(sub{}, $Bin);
+
+    my %files;
+    $cs->search(sub{
+        $files{$_[1]} = 1;
+    }, $Bin);
+    is +(scalar keys %files), 11, 'Find all files';
+
+    %files = ();
+    $cs->search(sub{
+        $files{$_[1]} = 1;
+    }, 'missing-dir');
+    is +(scalar keys %files), 0, 'Find no files';
+
+    my @files;
+    $cs->search(sub{
+        push @files, $_[1] if !@files || $files[-1] ne $_[1];
+    }, 'lib');
+    is_deeply \@files, [
+        'lib/File/CodeSearch/Highlighter.pm',
+        'lib/File/CodeSearch/RegexBuilder.pm',
+        'lib/File/CodeSearch/Replacer.pm',
+        'lib/File/CodeSearch.pm',
+    ], 'Default search'
+        or diag explain \@files;
+
+    @files = ();
     $cs->depth(1);
-    $cs->search(sub{}, $Bin);
+    $cs->search(sub{
+        push @files, $_[1] if !@files || $files[-1] ne $_[1];
+    }, 'lib');
+    is_deeply \@files, [
+        'lib/File/CodeSearch.pm',
+        'lib/File/CodeSearch/Highlighter.pm',
+        'lib/File/CodeSearch/RegexBuilder.pm',
+        'lib/File/CodeSearch/Replacer.pm',
+    ], 'Depth firs search'
+        or diag explain \@files;
+
+    @files = ();
     $cs->breadth(1);
-    $cs->search(sub{}, $Bin);
+    $cs->search(sub{
+        push @files, $_[1] if !@files || $files[-1] ne $_[1];
+    }, 'lib');
+    is_deeply \@files, [
+        'lib/File/CodeSearch/Highlighter.pm',
+        'lib/File/CodeSearch/RegexBuilder.pm',
+        'lib/File/CodeSearch/Replacer.pm',
+        'lib/File/CodeSearch.pm',
+    ], 'Bredth first search'
+        or diag explain \@files;
 }
 
 sub message {

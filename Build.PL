@@ -10,6 +10,7 @@ my $builder = Module::Build->new(
     dist_version_from => 'lib/File/CodeSearch.pm',
     requires          => {
         perl                   => 5.006,
+        autodie                => 0,
         'Carp'                 => 0,
         'Clone'                => 0,
         'Config::General'      => 0,

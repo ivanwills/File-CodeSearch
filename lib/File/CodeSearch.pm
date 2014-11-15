@@ -9,6 +9,7 @@ package File::CodeSearch;
 use Moose;
 use warnings;
 use version;
+use autodie;
 use English qw/ -no_match_vars /;
 use IO::Handle;
 use File::chdir;
@@ -97,7 +98,7 @@ sub _find {
 
     {
         local $CWD = $dir;
-        opendir my $dirh, '.' or $self->_message(directory => $dir, $OS_ERROR) and return;
+        opendir my $dirh, '.';
         @files = sort _alpha_num grep { $_ ne '.' && $_ ne '..' } readdir $dirh;
 
         if ($self->breadth) {
