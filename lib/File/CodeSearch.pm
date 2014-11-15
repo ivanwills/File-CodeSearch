@@ -270,7 +270,7 @@ This documentation refers to File::CodeSearch version 0.7.0.
    # Simple usage
    code_search {
        my ($file, $line) = @_;
-       // do stuff
+       # do stuff
    },
    @dirs;
 
