@@ -13,7 +13,7 @@ use Carp;
 use List::MoreUtils qw/any/;
 use English qw/ -no_match_vars /;
 
-our $VERSION     = version->new('0.5.6');
+our $VERSION = version->new('0.5.6');
 
 has regex => (
     is  => 'rw',
@@ -259,11 +259,11 @@ Makes sure each element of C<re> is matched as a whole word
 
 =item C<all (Bool)>
 
-Makes sure that the elements of C<re> are matched in any order (currently only two elemnts supported)
+Makes sure that the elements of C<re> are matched in any order (currently only two elements supported)
 
 =item C<words (Bool)>
 
-Match each word seperated by arbitrary number of characters (default seperation is one space)
+Match each word separated by arbitrary number of characters (default separation is one space)
 
 =item C<ignore_case (Bool)>
 

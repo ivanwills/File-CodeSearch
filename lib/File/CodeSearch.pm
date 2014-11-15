@@ -17,7 +17,7 @@ use File::TypeCategories;
 use Clone qw/clone/;
 use Path::Tiny;
 
-our $VERSION     = version->new('0.6.0');
+our $VERSION = version->new('0.6.0');
 
 has regex => (
     is       => 'rw',

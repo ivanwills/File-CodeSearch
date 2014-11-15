@@ -14,7 +14,7 @@ use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
 use Term::Size::Any;
 
-our $VERSION     = version->new('0.6.0');
+our $VERSION = version->new('0.6.0');
 
 extends 'File::CodeSearch::RegexBuilder';
 

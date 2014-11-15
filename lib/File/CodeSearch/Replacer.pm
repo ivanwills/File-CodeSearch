@@ -13,7 +13,7 @@ use Carp;
 use English qw/ -no_match_vars /;
 use Term::ANSIColor qw/:constants/;
 
-our $VERSION     = version->new('0.6.0');
+our $VERSION = version->new('0.6.0');
 
 extends 'File::CodeSearch::Highlighter';
 
