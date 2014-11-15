@@ -100,6 +100,28 @@ This documentation refers to File::CodeSearch::Replacer version 0.7.0.
 
 =head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=over 4
+
+=item C<replace_re>
+
+The regular expression to replace text with
+
+=item C<replace>
+
+The text to be used for replacement
+
+=item C<level>
+
+??
+
+=item C<all (Int)>
+
+??
+
+=back
+
 =head1 SUBROUTINES/METHODS
 
 =head3 C<highlight ( $search, )>

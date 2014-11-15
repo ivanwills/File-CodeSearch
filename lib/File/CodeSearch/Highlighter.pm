@@ -173,6 +173,48 @@ This documentation refers to File::CodeSearch::Highlighter version 0.7.0.
 
 =head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=over 4
+
+=item C<highlight_re>
+
+The regular expression used to find what to highlight
+
+=item C<before_match (Str, BOLD RED)>
+
+A string put before a match
+
+=item C<after_match (Str RESET)>
+
+A string put after a match
+
+=item C<before_nomatch (Str, CYAN)>
+
+A string for before text that doesn't match
+
+=item C<after_nomatch (Str, RESET)>
+
+A string for after text that doesn't match
+
+=item C<before_snip (Str, RESET . RED . ON_BLACK)>
+
+A string for before snipped out text.
+
+=item C<after_snip (Str, RESET)>
+
+A string for after snipped out text.
+
+=item C<limit (Int, columns in terminal)>
+
+The size of the limit for line length of text that is extreemly long.
+
+=item C<snip (Bool, 1)>
+
+Cut out non-matching text so that one line of text matches on line of output
+
+=back
+
 =head1 SUBROUTINES/METHODS
 
 =head3 C<highlight ( $search, )>
