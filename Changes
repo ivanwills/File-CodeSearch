@@ -1,5 +1,9 @@
 Revision history for File-CodeSearch
 
+0.7.1   2014-11-15
+        Updated documentation (Ivan Wills)
+        [RT 100350] Fixed comment in SYNOPSIS (Ivan Wills)
+
 0.7.0   2014-11-15
         Fixed spelling (Ivan Wills)
         Removed breakpoint (Ivan Wills)
