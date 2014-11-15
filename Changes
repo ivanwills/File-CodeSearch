@@ -1,5 +1,20 @@
 Revision history for File-CodeSearch
 
+0.7.0   2014-11-15
+        Fixed spelling (Ivan Wills)
+        Removed breakpoint (Ivan Wills)
+        Better tests for File::CodeSearch using autodie (Ivan Wills)
+        Improving code coverage (Ivan Wills)
+        Improved test coverage (Ivan Wills)
+        Removed break point (Ivan Wills)
+        Added more tests to get to 100% code coverage for ::RegexBuilder (Ivan Wills)
+        More tests to improve code coverage (Ivan Wills)
+        Added documentation on new parameters (Ivan Wills)
+        Updated manifest (Ivan Wills)
+        Removed File::CodeSearch::Files (Ivan Wills)
+        Added File::TypeCategories as dependency (Ivan Wills)
+        Moving to File::TypeCategories (Ivan Wills)
+
 0.6.0   2014-11-04
         Fixed changed build dependency (Ivan Wills)
         Converted from Test::NoWarnings to Test::Warnings (Ivan Wills)
