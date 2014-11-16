@@ -23,9 +23,6 @@ has replace_re => (
 has replace => (
     is  => 'rw',
 );
-has level => (
-    is => 'rw',
-);
 has all => (
     is => 'rw',
     isa => 'Int',
@@ -112,13 +109,9 @@ The regular expression to replace text with
 
 The text to be used for replacement
 
-=item C<level>
-
-??
-
 =item C<all (Int)>
 
-??
+Answer yes to all questions
 
 =back
 
