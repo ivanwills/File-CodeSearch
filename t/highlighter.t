@@ -41,6 +41,7 @@ sub highlights {
         after_match    => '=',
         before_nomatch => '*',
         after_nomatch  => '#',
+        limit          => 212,
     );
     is($hl->highlight('this test string with test again'), '*this #-test=* string with #-test=* again#' . RESET . "\\N\n", 'the appropriate higlights are put in');
     is($hl->highlight('this test string with test again' . 'n' x 29), '*this #-test=* string with #-test=* again'.('n' x 29).'#' . RESET . "\\N\n", 'the appropriate higlights are put in');
