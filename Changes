@@ -1,5 +1,10 @@
 Revision history for File-CodeSearch
 
+0.7.2   2014-11-19
+        Updating for release of version 0.7.2 (Ivan Wills)
+        Added setting limit so those with other terminal sizes won't break the test (Ivan Wills)
+        Femoved unused argument, added documentation of all argument (Ivan Wills)
+
 0.7.1   2014-11-15
         Updated documentation (Ivan Wills)
         [RT 100350] Fixed comment in SYNOPSIS (Ivan Wills)
