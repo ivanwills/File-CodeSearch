@@ -7,11 +7,6 @@ perl:
       - "5.12"
       - "5.10"
       - "5.8"
-before_install:
-    - git clean -xfd
-    - perl Build.PL
-    - ./Build distmeta
-    - cpanm --installdeps --notest .
 
 install:
      - export RELEASE_TESTING=1 AUTOMATED_TESTING=1 AUTHOR_TESTING=1 HARNESS_OPTIONS=c HARNESS_TIMER=1
