@@ -207,7 +207,7 @@ A string for after snipped out text.
 
 =item C<limit (Int, columns in terminal)>
 
-The size of the limit for line length of text that is extreemly long.
+The size of the limit for line length of text that is extremely long.
 
 =item C<snip (Bool, 1)>
 
