@@ -24,3 +24,4 @@ t/pod.t
 t/regex-replacer.t
 t/regexbuilder.t
 t/spelling.t
+TODO.md
