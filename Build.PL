@@ -6,7 +6,6 @@ my $builder = Module::Build->new(
     module_name       => 'File::CodeSearch',
     license           => 'perl',
     dist_author       => 'Ivan Wills <ivan.wills@gmail.com>',
-    #dist_version      => '0.5.0_1',
     dist_version_from => 'lib/File/CodeSearch.pm',
     requires          => {
         perl                   => 5.006,
@@ -50,7 +49,7 @@ my $builder = Module::Build->new(
             repository => 'http://github.com/ivanwills/File-CodeSearch',
             bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-CodeSearch',
         },
-        abstract => 'Search file contents in code repositories or other places',
+        abstract => 'Search file contents in code repositories',
     },
 );
 
