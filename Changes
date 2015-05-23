@@ -1,5 +1,21 @@
 Revision history for File-CodeSearch
 
+0.7.3   2015-05-23
+        Updating for release of version 0.7.3
+        Added todo to manifest (Ivan Wills)
+        Fixed Build.PL (Ivan Wills)
+        Updated dates (Ivan Wills)
+        Fixed spelling (Ivan Wills)
+        Fixed renamed README (Ivan Wills)
+        Fixed file that lost it's correct version (Ivan Wills)
+        Removed unneeded tag (Ivan Wills)
+        Added missing =cut (Ivan Wills)
+        Updated README to being a pod file, and removed all the references to VCS::Which (Ivan Wills)
+        Added specific Test::More version for the features being used (Ivan Wills)
+        Reverting bad fix attempt (Ivan Wills)
+        Added config for coveralls.io (Ivan Wills)
+        New TODO file (Ivan Wills)
+
 0.7.2   2014-11-19
         Updating for release of version 0.7.2 (Ivan Wills)
         Added setting limit so those with other terminal sizes won't break the test (Ivan Wills)
