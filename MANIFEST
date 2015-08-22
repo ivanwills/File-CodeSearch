@@ -7,7 +7,6 @@ lib/File/CodeSearch/Highlighter.pm
 lib/File/CodeSearch/RegexBuilder.pm
 lib/File/CodeSearch/Replacer.pm
 LICENSE
-Makefile.PL
 MANIFEST
 META.json
 META.yml
