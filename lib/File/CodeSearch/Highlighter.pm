@@ -133,9 +133,13 @@ sub highlight {
 
                 # Check if
                 if ($chars_front_tmp + $chars_back_tmp < length $parts[$i]) {
-                    my ($front) = $parts[$i] =~ /\A (.{$chars_front_tmp}) /xms;
-                    my ($back)  = $parts[$i] =~ / (.{$chars_back_tmp}) \Z/xms;
-                    $part = (defined $front ? $front : '') . $self->before_snip  . '...' . $self->after_snip . $self->before_nomatch . (defined $back ? $back : '');
+                    my ($front) = $chars_front_tmp > 0 ? $parts[$i] =~ /\A(.{$chars_front_tmp})/xms : ('');
+                    my ($back)  = $chars_back_tmp  > 0 ? $parts[$i] =~ /(.{$chars_back_tmp})\Z/xms  : ('');
+                    $part = (defined $front ? $front : '')
+                        . $self->before_snip  . '...'
+                        . $self->after_snip
+                        . $self->before_nomatch
+                        . (defined $back ? $back : '');
                 }
             }
             $out .= $self->before_nomatch . $part . $self->after_nomatch;
