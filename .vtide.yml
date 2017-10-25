@@ -5,8 +5,12 @@ default:
   wait: 1
 editor:
   files:
-    eg:
-      - some-file.eg
+    main:
+      - lib/File/CodeSearch.pm
+      - lib/File/CodeSearch/RegexBuilder.pm
+    helpers:
+      - lib/File/CodeSearch/Highlighter.pm
+      - lib/File/CodeSearch/Replacer.pm
 name: cs
 terminals:
   1a:
@@ -17,9 +21,9 @@ terminals:
       - lib
       - bin
       - tests
-  2: []
-
-  3: []
-
+  2:
+    edit: main
+  3:
+    edit: helpers
   4: []
 
