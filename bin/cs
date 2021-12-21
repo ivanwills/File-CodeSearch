@@ -491,11 +491,11 @@ This documentation refers to cs version 0.7.5.
                  Don't include files the specified type (Mulitple)
                  see perldoc File::TypeCategories available types
        --ignore[=]type
-                  Add type to the types to be ignored (multiples ok, overwrites default types)
+                 Add type to the types to be ignored (multiples ok, overwrites default types)
     -d --ignore_add[=]type
-                  Add extra type to default types (multiples ok)
+                 Add extra type to default types (multiples ok)
     -I --ignore_remove[=]type
-                  Remove type from default types (multiples ok)
+                 Remove type from default types (multiples ok)
   Output:
    -C --context[=]int
                  Show int lines of context before and after a match
